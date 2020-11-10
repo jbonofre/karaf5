@@ -15,13 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.examples.generate;
+package org.apache.karaf.core;
 
-// should be annotated with Karaf @Service annotation
-public class SimpleService {
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public String greeting(String message) {
-        return "greeting " + message;
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class KarafApplicationTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(KarafApplicationTest.class);
+    private static final String fwkCacheDir = "/tmp/cache";
+
+    @Test
+    @Order(1)
+    public void testKarafApplicationRun() {
+        logger.info("Using temp cache {}", fwkCacheDir);
+        KarafApplication.withConfig(
+                KarafApplication.Config.build().withCache(fwkCacheDir)).run();
     }
-
 }
