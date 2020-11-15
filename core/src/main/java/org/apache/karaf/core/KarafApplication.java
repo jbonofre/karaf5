@@ -21,28 +21,35 @@ import org.apache.felix.framework.FrameworkFactory;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.osgi.framework.startlevel.FrameworkStartLevel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class KarafApplication {
 
-    private static final Logger logger = LoggerFactory.getLogger(KarafApplication.class);
+    private static final Logger logger = Logger.getLogger(KarafApplication.class.getName());
 
-    private Config config;
+    private KarafConfig config;
     private Framework fwk = null;
 
-    private KarafApplication(Config config) {
+    public KarafApplication(KarafConfig config) {
         this.config = config;
     }
 
+    public static KarafApplication withConfig(KarafConfig config) {
+        return new KarafApplication(config);
+    }
+
     public void run() {
+        logger.info("Starting Karaf Application...");
         FrameworkFactory fwkFactory = new FrameworkFactory();
         Map<String, String> fwkConfig = new HashMap<>();
         fwkConfig.put(Constants.FRAMEWORK_STORAGE, config.cache);
-        fwkConfig.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
+        if (config.clearCache) {
+            fwkConfig.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
+        }
         fwk = fwkFactory.newFramework(fwkConfig);
 
         try {
@@ -52,28 +59,9 @@ public class KarafApplication {
             throw new RuntimeException(e);
         }
 
+        FrameworkStartLevel sl = fwk.adapt(FrameworkStartLevel.class);
+        sl.setInitialBundleStartLevel(config.defaultBundleStartlevel);
         logger.info("Karaf started!");
     }
 
-    public static class Config {
-
-        public String cache;
-
-        private Config() {
-        }
-
-        public Config withCache(String cache) {
-            this.cache = cache;
-            return this;
-        }
-
-        public static Config build() {
-            return new Config();
-        }
-
-    }
-
-    public static KarafApplication withConfig(Config config) {
-        return new KarafApplication(config);
-    }
 }

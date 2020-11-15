@@ -17,27 +17,31 @@
  */
 package org.apache.karaf.core;
 
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+public class KarafConfig {
 
-import java.util.logging.Logger;
+    public String cache = "/tmp/karaf/cache";
+    public boolean clearCache = false;
+    public int defaultBundleStartlevel;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class KarafApplicationTest {
+    private KarafConfig() {
+    }
 
-    private static final Logger logger = Logger.getLogger(KarafApplicationTest.class.getName());
-    private static final String fwkCacheDir = "/tmp/cache";
+    public KarafConfig withCache(String cache) {
+        this.cache = cache;
+        return this;
+    }
 
-    @Test
-    @Order(1)
-    public void testKarafApplicationRun() {
-        logger.info("Using temp cache = " + fwkCacheDir);
-        KarafApplication.withConfig(
-                KarafConfig.build()
-                        .withCache(fwkCacheDir)
-                        .withClearCache(true)
-                        .withDefaultBundleStartLevel(50)).run();
+    public KarafConfig withClearCache(boolean clearCache) {
+        this.clearCache = clearCache;
+        return this;
+    }
+
+    public KarafConfig withDefaultBundleStartLevel(int level) {
+        this.defaultBundleStartlevel = level;
+        return this;
+    }
+
+    public static KarafConfig build() {
+        return new KarafConfig();
     }
 }
