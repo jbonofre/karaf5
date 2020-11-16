@@ -17,11 +17,14 @@
  */
 package org.apache.karaf.core;
 
+import java.util.List;
+
 public class KarafConfig {
 
     public String cache = "/tmp/karaf/cache";
     public boolean clearCache = false;
-    public int defaultBundleStartlevel;
+    public int defaultBundleStartLevel;
+    public List<String> applications;
 
     private KarafConfig() {
     }
@@ -37,7 +40,12 @@ public class KarafConfig {
     }
 
     public KarafConfig withDefaultBundleStartLevel(int level) {
-        this.defaultBundleStartlevel = level;
+        this.defaultBundleStartLevel = level;
+        return this;
+    }
+
+    public KarafConfig withApplication(String url) {
+        this.applications.add(url);
         return this;
     }
 

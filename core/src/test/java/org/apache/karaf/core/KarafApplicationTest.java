@@ -17,27 +17,41 @@
  */
 package org.apache.karaf.core;
 
+import lombok.extern.java.Log;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import java.util.logging.Logger;
-
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Log
 public class KarafApplicationTest {
 
-    private static final Logger logger = Logger.getLogger(KarafApplicationTest.class.getName());
     private static final String fwkCacheDir = "/tmp/cache";
 
     @Test
     @Order(1)
-    public void testKarafApplicationRun() {
-        logger.info("Using temp cache = " + fwkCacheDir);
-        KarafApplication.withConfig(
+    public void testKarafApplicationRunWithModule() throws Exception {
+        log.info("Using cache " + fwkCacheDir);
+        KarafApplication application = KarafApplication.withConfig(
                 KarafConfig.build()
                         .withCache(fwkCacheDir)
                         .withClearCache(true)
-                        .withDefaultBundleStartLevel(50)).run();
+                        .withDefaultBundleStartLevel(50));
+        application.run();
+        application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url-aether-2.6.3.jar");
+    }
+
+    @Test
+    @Order(2)
+    public void testKarafApplicationRunWithExtension() throws Exception {
+        KarafApplication application = KarafApplication.withConfig(
+                KarafConfig.build()
+                    .withCache(fwkCacheDir)
+                    .withClearCache(true)
+                    .withDefaultBundleStartLevel(50));
+        application.run();
+        application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url-aether-2.6.3.jar");
+        application.addExtension("src/test/resources/test-extension.jar");
     }
 }
