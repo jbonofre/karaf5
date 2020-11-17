@@ -173,6 +173,7 @@
                             <excludes>
                                 <exclude>**/*.pub</exclude>
                                 <exclude>**/target/**/*</exclude>
+                                <exclude>**/*.packages</exclude>
                                 <!-- GIT files -->
                                 <exclude>**/.git/**/*</exclude>
                                 <!-- IDEA files -->

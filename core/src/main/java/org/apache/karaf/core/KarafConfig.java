@@ -23,7 +23,7 @@ public class KarafConfig {
 
     public String cache = "/tmp/karaf/cache";
     public boolean clearCache = false;
-    public int defaultBundleStartLevel;
+    public int defaultBundleStartLevel = 50;
     public List<String> applications;
 
     private KarafConfig() {

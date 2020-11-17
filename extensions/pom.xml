@@ -30,6 +30,7 @@
     </parent>
 
     <artifactId>extensions</artifactId>
+    <name>Apache Karaf :: Extensions</name>
     <packaging>pom</packaging>
 
     <modules>

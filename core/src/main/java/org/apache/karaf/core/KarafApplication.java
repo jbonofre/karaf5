@@ -19,7 +19,6 @@ package org.apache.karaf.core;
 
 import lombok.extern.java.Log;
 import org.apache.felix.framework.FrameworkFactory;
-import org.apache.felix.framework.Logger;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.Bundle;
@@ -29,7 +28,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
-import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.framework.wiring.FrameworkWiring;
 
 import java.io.BufferedReader;
@@ -37,8 +35,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -51,6 +47,10 @@ public class KarafApplication {
 
     public KarafApplication(KarafConfig config) {
         this.config = config;
+    }
+
+    public static KarafApplication build() {
+        return new KarafApplication(KarafConfig.build());
     }
 
     public static KarafApplication withConfig(KarafConfig config) {

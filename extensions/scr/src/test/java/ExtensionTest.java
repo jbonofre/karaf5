@@ -15,13 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.extension.model;
+import org.apache.karaf.core.KarafApplication;
+import org.junit.jupiter.api.Test;
 
-import lombok.Data;
+public class ExtensionTest {
 
-@Data
-public class Bundle {
-
-    private String location;
+    @Test
+    public void test() throws Exception {
+        KarafApplication application = KarafApplication.build();
+        application.run();
+        application.addExtension("target/scr-5.0.0-SNAPSHOT.jar");
+    }
 
 }

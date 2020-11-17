@@ -19,10 +19,6 @@ package org.apache.karaf.core;
 
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.*;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-
-import java.util.Enumeration;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
