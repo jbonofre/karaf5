@@ -127,16 +127,20 @@ public class KarafApplication {
     public void loadModules() throws Exception {
         log.info("Loading KARAF-INF/modules");
         URL modulesUrl = this.getClass().getClassLoader().getResource("KARAF-INF/modules");
-        File modulesFile = new File(modulesUrl.getPath());
-        File[] modules = modulesFile.listFiles();
-        for (File module : modules) {
-            addModule(module.toURI().toURL().toString());
+        if (modulesUrl != null) {
+            File modulesFile = new File(modulesUrl.getPath());
+            File[] modules = modulesFile.listFiles();
+            for (File module : modules) {
+                addModule(module.toURI().toURL().toString());
+            }
         }
         log.info("Loading KARAF_MODULES env");
         String modulesEnv = System.getenv("KARAF_MODULES");
-        String[] modulesSplit = modulesEnv.split(",");
-        for (String module : modulesSplit) {
-            addModule(module);
+        if (modulesEnv != null) {
+            String[] modulesSplit = modulesEnv.split(",");
+            for (String module : modulesSplit) {
+                addModule(module);
+            }
         }
     }
 
@@ -144,16 +148,20 @@ public class KarafApplication {
     public void loadExtensions() throws Exception {
         log.info("Loading KARAF-INF/extensions");
         URL extensionsUrl = this.getClass().getClassLoader().getResource("KARAF-INF/extensions");
-        File extensionsFile = new File(extensionsUrl.getPath());
-        File[] extensions = extensionsFile.listFiles();
-        for (File extension : extensions) {
-            addExtension(extension.toURI().toURL().toString());
+        if (extensionsUrl != null) {
+            File extensionsFile = new File(extensionsUrl.getPath());
+            File[] extensions = extensionsFile.listFiles();
+            for (File extension : extensions) {
+                addExtension(extension.toURI().toURL().toString());
+            }
         }
         log.info("Loading KARAF_EXTENSIONS env");
         String extensionsEnv = System.getenv("KARAF_EXTENSIONS");
-        String[] extensionsSplit = extensionsEnv.split(",");
-        for (String extension : extensionsSplit) {
-            addExtension(extension);
+        if (extensionsEnv != null) {
+            String[] extensionsSplit = extensionsEnv.split(",");
+            for (String extension : extensionsSplit) {
+                addExtension(extension);
+            }
         }
     }
 
