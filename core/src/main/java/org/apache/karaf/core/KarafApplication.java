@@ -18,30 +18,33 @@
 package org.apache.karaf.core;
 
 import lombok.extern.java.Log;
+import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.Logger;
+import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
+import org.osgi.framework.wiring.FrameworkWiring;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.zip.ZipEntry;
 
 @Log
 public class KarafApplication {
 
     private KarafConfig config;
-    private Framework fwk = null;
+    private Felix framework = null;
 
     public KarafApplication(KarafConfig config) {
         this.config = config;
@@ -53,10 +56,9 @@ public class KarafApplication {
 
     public void run() throws Exception {
         log.info("Starting Karaf Application...");
-        FrameworkFactory fwkFactory = new FrameworkFactory();
-        Map<String, Object> fwkConfig = new HashMap<>();
-        fwkConfig.put(Constants.FRAMEWORK_STORAGE, config.cache);
-        fwkConfig.put(Constants.FRAMEWORK_BOOTDELEGATION, "com.sun.*," +
+        Map<String, Object> config = new HashMap<>();
+        config.put(Constants.FRAMEWORK_STORAGE, this.config.cache);
+        config.put(Constants.FRAMEWORK_BOOTDELEGATION, "com.sun.*," +
                 "javax.transaction," +
                 "javax.transaction.*," +
                 "javax.xml.crypto," +
@@ -68,30 +70,37 @@ public class KarafApplication {
         String systemPackages = loadSystemPackages();
         if (systemPackages != null) {
             log.info("Using predefined system packages");
-            fwkConfig.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
+            config.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
         }
-        fwkConfig.put("felix.log.level", "4");
-        fwkConfig.put("felix.log.logger", new KarafLogger());
-        if (config.clearCache) {
-            fwkConfig.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
+        config.put(FelixConstants.LOG_LEVEL_PROP, "4");
+        Logger logger = new Logger();
+        logger.setLogger(log);
+        config.put(FelixConstants.LOG_LOGGER_PROP, logger);
+        if (this.config.clearCache) {
+            config.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
-        fwk = fwkFactory.newFramework(fwkConfig);
+
+        framework = new Felix(config);
 
         try {
-            fwk.init();
-            fwk.start();
+            framework.init();
+            framework.start();
         } catch (BundleException e) {
             throw new RuntimeException(e);
         }
 
-        FrameworkStartLevel sl = fwk.adapt(FrameworkStartLevel.class);
-        sl.setInitialBundleStartLevel(config.defaultBundleStartLevel);
+        FrameworkStartLevel sl = framework.adapt(FrameworkStartLevel.class);
+        sl.setInitialBundleStartLevel(this.config.defaultBundleStartLevel);
 
-        loadModules();
+        if (framework.getBundleContext().getBundles().length == 1) {
 
-        loadExtensions();
+            loadModules();
 
-        loadApplication();
+            loadExtensions();
+
+            loadApplication();
+
+        }
 
         log.info("Karaf Application started!");
     }
@@ -168,22 +177,37 @@ public class KarafApplication {
     // module == bundle
     public void addModule(String url) throws Exception {
         log.info("Installing module " + url);
-        Bundle bundle = fwk.getBundleContext().installBundle(url);
+        Bundle bundle;
+        try {
+            bundle = framework.getBundleContext().installBundle(url, new URL(url).openStream());
+        } catch (Exception e) {
+            throw new Exception("Unable to install module " + url + ": " + e.toString(), e);
+        }
+        try {
+            framework.adapt(FrameworkWiring.class).resolveBundles(Collections.singletonList(bundle));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
         if (bundle.getState() != Bundle.RESOLVED) {
-            throw new IllegalStateException("Module installation failed");
+            throw new Exception("Module " + url + " is not resolved");
         }
         log.info("Starting module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
-        bundle.start();
-        while (bundle.getState() != Bundle.ACTIVE) {
-            Thread.sleep(100);
+        try {
+            bundle.start();
+        } catch (Exception e) {
+            throw new Exception("Unable to start module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
         }
-        log.info("Module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + " (" + bundle.getBundleId() + ") is ACTIVE");
     }
 
     // extension == feature
     public void addExtension(String url) throws Exception {
         log.info("Loading extension from " + url);
-        org.apache.karaf.core.extension.Loader.load(url, fwk.getBundleContext());
+        org.apache.karaf.core.extension.Loader.load(url, framework.getBundleContext());
+    }
+
+    public BundleContext getBundleContext() {
+        return framework.getBundleContext();
     }
 
 }

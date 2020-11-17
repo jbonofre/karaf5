@@ -21,10 +21,19 @@ public class Loader {
         Feature feature = org.apache.karaf.core.extension.model.Loader.read(jarFile.getInputStream(entry));
         log.info("Loading " + feature.getName() + "/" + feature.getVersion() + " extension");
         for (Bundle bundle : feature.getBundle()) {
-            org.osgi.framework.Bundle concreteBundle = bundleContext.installBundle(bundle.getLocation());
-            log.info("Installing " + concreteBundle.getSymbolicName() + "/" + concreteBundle.getVersion());
-            concreteBundle.start();
+            log.info("Installing " + bundle.getLocation());
+            org.osgi.framework.Bundle concreteBundle;
+            try {
+                concreteBundle = bundleContext.installBundle(bundle.getLocation(), null);
+            } catch (Exception e) {
+                throw new Exception("Unable to install module " + bundle.getLocation() + ": " + e.toString(), e);
+            }
             log.info("Starting " + concreteBundle.getSymbolicName() + "/" + concreteBundle.getVersion());
+            try {
+                concreteBundle.start();
+            } catch (Exception e) {
+                throw new Exception("Unable to start module " + concreteBundle.getSymbolicName() + "/" + concreteBundle.getVersion() + ": " + e.toString(), e);
+            }
         }
     }
 
