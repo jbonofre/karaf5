@@ -24,15 +24,12 @@ import org.junit.jupiter.api.*;
 @Log
 public class KarafApplicationTest {
 
-    private static final String fwkCacheDir = "/tmp/cache";
-
     @Test
     @Order(1)
     public void testKarafApplicationRunWithResolvedModule() throws Exception {
-        log.info("Using cache " + fwkCacheDir);
         KarafApplication application = KarafApplication.withConfig(
                 KarafConfig.build()
-                        .withCache(fwkCacheDir)
+                        .withCache("target/karaf/cache")
                         .withClearCache(true)
                         .withDefaultBundleStartLevel(50));
         application.run();
@@ -44,7 +41,7 @@ public class KarafApplicationTest {
     public void testKarafApplicationRunWithUnresolvedModule() throws Exception {
         KarafApplication application = KarafApplication.withConfig(
                 KarafConfig.build()
-                    .withCache(fwkCacheDir)
+                    .withCache("target/karaf/cache")
                     .withClearCache(true)
                     .withDefaultBundleStartLevel(50));
         application.run();
