@@ -29,11 +29,10 @@ public class LoaderTest {
         BundleContext bundleContext = EasyMock.mock(BundleContext.class);
         try {
             loader.load("src/test/resources/bad-extension.jar", bundleContext);
+            Assertions.fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException illegalArgumentException) {
-            // expected
-            return;
+            // no-op
         }
-        Assertions.fail("IllegalArgumentException expected");
     }
 
 }

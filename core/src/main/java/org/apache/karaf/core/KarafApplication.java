@@ -18,16 +18,18 @@
 package org.apache.karaf.core;
 
 import lombok.extern.java.Log;
-import org.apache.felix.framework.Felix;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.Logger;
+import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
+import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
+import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.framework.wiring.FrameworkWiring;
 
 import java.io.BufferedReader;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +47,7 @@ import java.util.logging.Level;
 public class KarafApplication {
 
     private KarafConfig config;
-    private Felix framework = null;
+    private Framework framework = null;
 
     public KarafApplication(KarafConfig config) {
         this.config = config;
@@ -56,8 +59,15 @@ public class KarafApplication {
 
     public void run() throws Exception {
         log.info("Starting Karaf Application...");
+
         Map<String, Object> config = new HashMap<>();
         config.put(Constants.FRAMEWORK_STORAGE, this.config.cache);
+        if (this.config.clearCache) {
+            config.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
+        }
+        config.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "100");
+        config.put(FelixConstants.LOG_LEVEL_PROP, "4");
+        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cache);
         config.put(Constants.FRAMEWORK_BOOTDELEGATION, "com.sun.*," +
                 "javax.transaction," +
                 "javax.transaction.*," +
@@ -72,15 +82,11 @@ public class KarafApplication {
             log.info("Using predefined system packages");
             config.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
         }
-        config.put(FelixConstants.LOG_LEVEL_PROP, "4");
-        Logger logger = new Logger();
-        logger.setLogger(log);
-        config.put(FelixConstants.LOG_LOGGER_PROP, logger);
-        if (this.config.clearCache) {
-            config.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
-        }
 
-        framework = new Felix(config);
+        // TODO add file store resolver
+
+        FrameworkFactory frameworkFactory = new FrameworkFactory();
+        framework = frameworkFactory.newFramework(config);
 
         try {
             framework.init();
@@ -99,6 +105,8 @@ public class KarafApplication {
             loadExtensions();
 
             loadApplication();
+
+            // loadArgs();
 
         }
 
@@ -127,7 +135,7 @@ public class KarafApplication {
         return null;
     }
 
-    // create an uber bundle from KARAF-INF/application
+    // create an uber bundles from KARAF-INF/applications/*
     public void loadApplication() throws Exception {
         // TODO
     }
@@ -179,22 +187,17 @@ public class KarafApplication {
         log.info("Installing module " + url);
         Bundle bundle;
         try {
-            bundle = framework.getBundleContext().installBundle(url, new URL(url).openStream());
+            bundle = framework.getBundleContext().installBundle(url);
+            bundle.adapt(BundleStartLevel.class).setStartLevel(this.config.defaultBundleStartLevel);
         } catch (Exception e) {
             throw new Exception("Unable to install module " + url + ": " + e.toString(), e);
         }
-        try {
-            framework.adapt(FrameworkWiring.class).resolveBundles(Collections.singletonList(bundle));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-        if (bundle.getState() != Bundle.RESOLVED) {
-            throw new Exception("Module " + url + " is not resolved");
-        }
         log.info("Starting module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
         try {
-            bundle.start();
+            framework.adapt(FrameworkWiring.class).resolveBundles(null);
+            if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
+                bundle.start();
+            }
         } catch (Exception e) {
             throw new Exception("Unable to start module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
         }
