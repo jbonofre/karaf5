@@ -18,8 +18,8 @@
 package org.apache.karaf.core.extension;
 
 import lombok.extern.java.Log;
-import org.apache.karaf.core.extension.model.Bundle;
-import org.apache.karaf.core.extension.model.Feature;
+import org.apache.karaf.core.extension.model.Module;
+import org.apache.karaf.core.extension.model.Extension;
 import org.osgi.framework.BundleContext;
 
 import java.io.File;
@@ -35,15 +35,15 @@ public class Loader {
         if (entry == null) {
             throw new IllegalArgumentException(url + " is not a Karaf extension");
         }
-        Feature feature = org.apache.karaf.core.extension.model.Loader.read(jarFile.getInputStream(entry));
-        log.info("Loading " + feature.getName() + "/" + feature.getVersion() + " extension");
-        for (Bundle bundle : feature.getBundle()) {
-            log.info("Installing " + bundle.getLocation());
+        Extension extension = org.apache.karaf.core.extension.model.Loader.read(jarFile.getInputStream(entry));
+        log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
+        for (Module module : extension.getModule()) {
+            log.info("Installing " + module.getLocation());
             org.osgi.framework.Bundle concreteBundle;
             try {
-                concreteBundle = bundleContext.installBundle(bundle.getLocation(), null);
+                concreteBundle = bundleContext.installBundle(module.getLocation());
             } catch (Exception e) {
-                throw new Exception("Unable to install module " + bundle.getLocation() + ": " + e.toString(), e);
+                throw new Exception("Unable to install module " + module.getLocation() + ": " + e.toString(), e);
             }
             log.info("Starting " + concreteBundle.getSymbolicName() + "/" + concreteBundle.getVersion());
             try {

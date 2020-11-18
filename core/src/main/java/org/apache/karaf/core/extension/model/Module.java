@@ -20,7 +20,7 @@ package org.apache.karaf.core.extension.model;
 import lombok.Data;
 
 @Data
-public class Bundle {
+public class Module {
 
     private String location;
 

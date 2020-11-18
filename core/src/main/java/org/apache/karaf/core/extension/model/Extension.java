@@ -22,12 +22,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Feature {
+public class Extension {
 
     private String name;
     private String version;
     private String description;
 
-    private List<Bundle> bundle;
+    private List<Module> module;
 
 }

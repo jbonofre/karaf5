@@ -29,8 +29,8 @@ public class Loader {
         objectMapper = new ObjectMapper();
     }
 
-    public final static Feature read(InputStream inputStream) throws Exception {
-        return objectMapper.readValue(inputStream, Feature.class);
+    public final static Extension read(InputStream inputStream) throws Exception {
+        return objectMapper.readValue(inputStream, Extension.class);
     }
 
 }

@@ -29,15 +29,15 @@ public class LoaderTest {
         String json = "{" +
                 "\"name\": \"test\"," +
                 "\"version\": \"1.0\"," +
-                "\"bundle\": [" +
+                "\"module\": [" +
                 "{ \"location\": \"url\" }" +
                 "]" +
                 "}";
-        Feature feature = Loader.read(new ByteArrayInputStream(json.getBytes()));
-        Assertions.assertEquals("test", feature.getName());
-        Assertions.assertEquals("1.0", feature.getVersion());
-        Assertions.assertEquals(1, feature.getBundle().size());
-        Assertions.assertEquals("url", feature.getBundle().get(0).getLocation());
+        Extension extension = Loader.read(new ByteArrayInputStream(json.getBytes()));
+        Assertions.assertEquals("test", extension.getName());
+        Assertions.assertEquals("1.0", extension.getVersion());
+        Assertions.assertEquals(1, extension.getModule().size());
+        Assertions.assertEquals("url", extension.getModule().get(0).getLocation());
     }
 
 }
