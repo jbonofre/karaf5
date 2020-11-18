@@ -38,6 +38,8 @@ public class Main {
 
         Karaf application = Karaf.withConfig(config);
         application.run();
+
+
     }
 
 }

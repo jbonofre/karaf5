@@ -210,7 +210,7 @@ public class Karaf {
         }
         log.info("Starting module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
         try {
-            framework.adapt(FrameworkWiring.class).resolveBundles(null);
+            // framework.adapt(FrameworkWiring.class).resolveBundles(null);
             if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
                 bundle.start();
             }

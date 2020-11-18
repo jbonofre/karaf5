@@ -19,6 +19,7 @@ package org.apache.karaf.core;
 
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.*;
+import org.osgi.framework.Bundle;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
@@ -34,6 +35,9 @@ public class KarafTest {
                         .withDefaultBundleStartLevel(50));
         application.run();
         application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+
+        Bundle bundle = application.getBundleContext().getBundle(1);
+        Assertions.assertEquals(Bundle.ACTIVE, bundle.getState());
     }
 
     @Test
