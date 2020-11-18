@@ -17,7 +17,7 @@
  */
 package org.apache.karaf.distribution.network;
 
-import org.apache.karaf.core.KarafApplication;
+import org.apache.karaf.core.Karaf;
 import org.apache.karaf.core.KarafConfig;
 
 public class Main {
@@ -36,7 +36,7 @@ public class Main {
     public void launch() throws Exception {
         KarafConfig config = KarafConfig.build();
 
-        KarafApplication application = KarafApplication.withConfig(config);
+        Karaf application = Karaf.withConfig(config);
         application.run();
         application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url");
     }

@@ -40,21 +40,21 @@ import java.util.Map;
 import java.util.logging.Level;
 
 @Log
-public class KarafApplication {
+public class Karaf {
 
     private KarafConfig config;
     private Framework framework = null;
 
-    public KarafApplication(KarafConfig config) {
+    public Karaf(KarafConfig config) {
         this.config = config;
     }
 
-    public static KarafApplication build() {
-        return new KarafApplication(KarafConfig.build());
+    public static Karaf build() {
+        return new Karaf(KarafConfig.build());
     }
 
-    public static KarafApplication withConfig(KarafConfig config) {
-        return new KarafApplication(config);
+    public static Karaf withConfig(KarafConfig config) {
+        return new Karaf(config);
     }
 
     public void run() throws Exception {
@@ -103,11 +103,6 @@ public class KarafApplication {
             loadModules();
 
             loadExtensions();
-
-            loadApplication();
-
-            // loadArgs();
-
         }
 
         log.info("Karaf Application started!");
@@ -133,11 +128,6 @@ public class KarafApplication {
             log.log(Level.WARNING, "Can't load system.packages", e);
         }
         return null;
-    }
-
-    // create an uber bundles from KARAF-INF/applications/*
-    public void loadApplication() throws Exception {
-        // TODO
     }
 
     // load inner bundles from KARAF-INF/modules

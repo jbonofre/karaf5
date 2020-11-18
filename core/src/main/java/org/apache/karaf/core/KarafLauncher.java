@@ -33,8 +33,8 @@ public class KarafLauncher {
         ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
         URLClassLoader urlClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), currentClassLoader);
 
-        final Class<?> karafApplicationClass = urlClassLoader.loadClass("org.apache.karaf.core.KarafApplication");
-        KarafApplication instance = KarafApplication.class.cast(
+        final Class<?> karafApplicationClass = urlClassLoader.loadClass("org.apache.karaf.core.Karaf");
+        Karaf instance = Karaf.class.cast(
                 karafApplicationClass
                         .getConstructor(KarafConfig.class)
                         .newInstance(

@@ -22,12 +22,12 @@ import org.junit.jupiter.api.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
-public class KarafApplicationTest {
+public class KarafTest {
 
     @Test
     @Order(1)
-    public void testKarafApplicationRunWithResolvedModule() throws Exception {
-        KarafApplication application = KarafApplication.withConfig(
+    public void testKarafRunWithResolvedModule() throws Exception {
+        Karaf application = Karaf.withConfig(
                 KarafConfig.build()
                         .withCache("target/karaf/cache")
                         .withClearCache(true)
@@ -38,8 +38,8 @@ public class KarafApplicationTest {
 
     @Test
     @Order(2)
-    public void testKarafApplicationRunWithUnresolvedModule() throws Exception {
-        KarafApplication application = KarafApplication.withConfig(
+    public void testKarafRunWithUnresolvedModule() throws Exception {
+        Karaf application = Karaf.withConfig(
                 KarafConfig.build()
                     .withCache("target/karaf/cache")
                     .withClearCache(true)

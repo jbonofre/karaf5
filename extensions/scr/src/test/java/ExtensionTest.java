@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.karaf.core.KarafApplication;
+import org.apache.karaf.core.Karaf;
 import org.junit.jupiter.api.Test;
 
 public class ExtensionTest {
 
     @Test
     public void test() throws Exception {
-        KarafApplication application = KarafApplication.build();
+        Karaf application = Karaf.build();
         application.run();
         application.addExtension("target/scr-5.0.0-SNAPSHOT.jar");
     }
