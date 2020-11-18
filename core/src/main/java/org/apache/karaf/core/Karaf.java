@@ -58,7 +58,17 @@ public class Karaf {
     }
 
     public void run() throws Exception {
-        log.info("Starting Karaf Application...");
+        System.setProperty("java.util.logging.SimpleFormatter.format",
+                "%1$tF %1$tT %4$s [ %2$s ] : %5$s%6$s%n");
+
+        log.info("\n" +
+                "        __ __                  ____      \n" +
+                "       / //_/____ __________ _/ __/      \n" +
+                "      / ,<  / __ `/ ___/ __ `/ /_        \n" +
+                "     / /| |/ /_/ / /  / /_/ / __/        \n" +
+                "    /_/ |_|\\__,_/_/   \\__,_/_/         \n" +
+                "\n" +
+                "  Apache Karaf (5.0.0-SNAPSHOT)\n");
 
         Map<String, Object> config = new HashMap<>();
         config.put(Constants.FRAMEWORK_STORAGE, this.config.cache);
@@ -68,15 +78,11 @@ public class Karaf {
         config.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "100");
         config.put(FelixConstants.LOG_LEVEL_PROP, "4");
         config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cache);
-        config.put(Constants.FRAMEWORK_BOOTDELEGATION, "com.sun.*," +
-                "javax.transaction," +
-                "javax.transaction.*," +
-                "javax.xml.crypto," +
-                "javax.xml.crypto.*," +
-                "jdk.nashorn," +
-                "sun.*," +
-                "jdk.internal.reflect," +
-                "jdk.internal.reflect.*");
+        String bootDelegation = loadBootDelegation();
+        if (bootDelegation != null) {
+            log.info("Using predefined boot delegation");
+            config.put(Constants.FRAMEWORK_BOOTDELEGATION, bootDelegation);
+        }
         String systemPackages = loadSystemPackages();
         if (systemPackages != null) {
             log.info("Using predefined system packages");
@@ -108,8 +114,28 @@ public class Karaf {
         log.info("Karaf Application started!");
     }
 
+    private String loadBootDelegation() {
+        try {
+            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("etc/boot.delegation")) {
+                if (inputStream == null) {
+                    throw new IllegalStateException("/etc/boot.delegation not found");
+                }
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    String line;
+                    StringBuilder builder = new StringBuilder();
+                    while ((line = reader.readLine()) != null) {
+                        builder.append(line);
+                    }
+                    return builder.toString();
+                }
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Can't load boot.delegation", e);
+        }
+        return null;
+    }
+
     private String loadSystemPackages() {
-        String systemPackages = null;
         try {
             try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("etc/system.packages")) {
                 if (inputStream == null) {

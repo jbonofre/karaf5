@@ -38,7 +38,6 @@ public class Main {
 
         Karaf application = Karaf.withConfig(config);
         application.run();
-        application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url");
     }
 
 }
