@@ -34,7 +34,6 @@
     <name>Apache Karaf :: Examples :: Generated target</name>
 
     <dependencies>
-        <!-- provided by karaf-core -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>

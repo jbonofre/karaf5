@@ -47,7 +47,7 @@
         <module>core</module>
         <module>extensions</module>
         <!-- <module>tool</module> -->
-        <!-- <module>distribution</module> -->
+        <module>distribution</module>
         <module>examples</module>
     </modules>
 

@@ -36,7 +36,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>karaf-core</artifactId>
+            <artifactId>core</artifactId>
             <version>5.0.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
