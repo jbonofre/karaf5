@@ -28,11 +28,10 @@ public class KarafTest {
     @Test
     @Order(1)
     public void testKarafRunWithResolvedModule() throws Exception {
-        Karaf application = Karaf.withConfig(
-                KarafConfig.build()
-                        .withBaseDirectory("target/karaf")
-                        .withClearCache(true)
-                        .withDefaultBundleStartLevel(50));
+        Karaf application = Karaf.build(new KarafConfig.Builder()
+                .baseDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/1")
+                .build());
         application.run();
         application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
 
@@ -43,11 +42,10 @@ public class KarafTest {
     @Test
     @Order(2)
     public void testKarafRunWithUnresolvedModule() throws Exception {
-        Karaf application = Karaf.withConfig(
-                KarafConfig.build()
-                    .withBaseDirectory("target/karaf")
-                    .withClearCache(true)
-                    .withDefaultBundleStartLevel(50));
+        Karaf application = Karaf.build(new KarafConfig.Builder()
+                .baseDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/2")
+                .build());
         application.run();
         try {
             application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url-aether-2.6.3.jar");

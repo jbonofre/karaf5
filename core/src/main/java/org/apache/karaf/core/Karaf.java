@@ -51,10 +51,10 @@ public class Karaf {
     }
 
     public static Karaf build() {
-        return new Karaf(KarafConfig.build());
+        return new Karaf(new KarafConfig.Builder().build());
     }
 
-    public static Karaf withConfig(KarafConfig config) {
+    public static Karaf build(KarafConfig config) {
         return new Karaf(config);
     }
 
@@ -78,6 +78,8 @@ public class Karaf {
                 "\n" +
                 "  Apache Karaf (5.0.0-SNAPSHOT)\n");
 
+        log.info("Base directory: " + this.config.baseDirectory);
+        log.info("Cache directory: " + this.config.cacheDirectory);
         Map<String, Object> config = new HashMap<>();
         config.put(Constants.FRAMEWORK_STORAGE, this.config.cacheDirectory);
         if (this.config.clearCache) {

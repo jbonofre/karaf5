@@ -38,10 +38,7 @@ public class KarafLauncher {
                 karafApplicationClass
                         .getConstructor(KarafConfig.class)
                         .newInstance(
-                            KarafConfig.build()
-                                    .withBaseDirectory("/tmp/cache")
-                                    .withClearCache(true)
-                                    .withDefaultBundleStartLevel(50)));
+                            new KarafConfig.Builder().build()));
         instance.run();
         logger.info("Karaf launcher succeed!");
     }

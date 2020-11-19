@@ -34,12 +34,9 @@ public class Main {
     }
 
     public void launch() throws Exception {
-        KarafConfig config = KarafConfig.build();
-
-        Karaf application = Karaf.withConfig(config);
+        KarafConfig config = new KarafConfig.Builder().build();
+        Karaf application = Karaf.build(config);
         application.run();
-
-
     }
 
 }

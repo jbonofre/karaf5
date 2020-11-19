@@ -17,47 +17,111 @@
  */
 package org.apache.karaf.core;
 
-import java.util.List;
-
 public class KarafConfig {
 
-    public String baseDirectory = System.getProperty("java.io.tmpdir") + "/karaf";
-    public String dataDirectory = baseDirectory + "/data";
-    public String etcDirectory = baseDirectory + "/etc";
-    public String cacheDirectory = baseDirectory + "/cache";
-    public boolean clearCache = false;
-    public int defaultBundleStartLevel = 50;
-    public List<String> applications;
+    public String baseDirectory;
+    public String dataDirectory;
+    public String etcDirectory;
+    public String cacheDirectory;
+    public String mavenRepositories;
+    public boolean clearCache;
+    public int defaultBundleStartLevel;
 
-    private KarafConfig() {
-    }
-
-    public KarafConfig withBaseDirectory(String baseDirectory) {
+    private KarafConfig(String baseDirectory,
+                        String dataDirectory,
+                        String etcDirectory,
+                        String cacheDirectory,
+                        String mavenRepositories,
+                        boolean clearCache,
+                        int defaultBundleStartLevel) {
         this.baseDirectory = baseDirectory;
-        this.cacheDirectory = baseDirectory + "/cache";
-        this.dataDirectory = baseDirectory + "/data";
-        System.setProperty("karaf.data", dataDirectory);
-        this.etcDirectory = baseDirectory + "/etc";
-        System.setProperty("karaf.etc", etcDirectory);
-        return this;
-    }
-
-    public KarafConfig withClearCache(boolean clearCache) {
+        this.dataDirectory = dataDirectory;
+        this.etcDirectory = etcDirectory;
+        this.cacheDirectory = cacheDirectory;
+        this.mavenRepositories = mavenRepositories;
         this.clearCache = clearCache;
-        return this;
+        this.defaultBundleStartLevel = defaultBundleStartLevel;
     }
 
-    public KarafConfig withDefaultBundleStartLevel(int level) {
-        this.defaultBundleStartLevel = level;
-        return this;
+    public static class Builder {
+
+        private String baseDirectory;
+        private String dataDirectory;
+        private String etcDirectory;
+        private String cacheDirectory;
+        private String mavenRepositories;
+        private boolean clearCache;
+        private int defaultBundleStartLevel;
+
+        public Builder() {
+            baseDirectory = System.getProperty("java.io.tmpdir") + "/karaf";
+            dataDirectory = baseDirectory + "/data";
+            cacheDirectory = dataDirectory + "/cache";
+            etcDirectory = baseDirectory + "/etc";
+            mavenRepositories = System.getProperty("user.home") + "/.m2/repository," +
+                    baseDirectory + "/system," +
+                    "https://repo1.maven.org/maven2";
+            clearCache = false;
+            defaultBundleStartLevel = 50;
+        }
+
+        public Builder baseDirectory(String baseDirectory) {
+            if (baseDirectory == null) {
+                throw new IllegalArgumentException("baseDirectory can't be empty");
+            }
+            this.baseDirectory = baseDirectory;
+            return this;
+        }
+
+        public Builder dataDirectory(String dataDirectory) {
+            if (dataDirectory == null) {
+                throw new IllegalArgumentException("dataDirectory can't be empty");
+            }
+            this.dataDirectory = dataDirectory;
+            return this;
+        }
+
+        public Builder etcDirectory(String etcDirectory) {
+            if (etcDirectory == null) {
+                throw new IllegalArgumentException("etcDirectory can't be empty");
+            }
+            this.etcDirectory = etcDirectory;
+            return this;
+        }
+
+        public Builder cacheDirectory(String cacheDirectory) {
+            if (cacheDirectory == null) {
+                throw new IllegalArgumentException("cacheDirectory can't be empty");
+            }
+            this.cacheDirectory = cacheDirectory;
+            return this;
+        }
+
+        public Builder mavenRepositories(String mavenRepositories) {
+            this.mavenRepositories = mavenRepositories;
+            return this;
+        }
+
+        public Builder clearCache(boolean clearCache) {
+            this.clearCache = clearCache;
+            return this;
+        }
+
+        public Builder defaultBundleStartLevel(int defaultBundleStartLevel) {
+            this.defaultBundleStartLevel = defaultBundleStartLevel;
+            return this;
+        }
+
+        public KarafConfig build() {
+            return new KarafConfig(baseDirectory,
+                    dataDirectory,
+                    etcDirectory,
+                    cacheDirectory,
+                    mavenRepositories,
+                    clearCache,
+                    defaultBundleStartLevel);
+        }
+
     }
 
-    public KarafConfig withApplication(String url) {
-        this.applications.add(url);
-        return this;
-    }
-
-    public static KarafConfig build() {
-        return new KarafConfig();
-    }
 }

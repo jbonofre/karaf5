@@ -23,19 +23,30 @@ import org.apache.karaf.core.extension.model.Extension;
 import org.osgi.framework.BundleContext;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 
 @Log
 public class Loader {
 
     public static void load(String url, BundleContext bundleContext) throws Exception {
-        JarFile jarFile = new JarFile(new File(url));
-        ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
-        if (entry == null) {
-            throw new IllegalArgumentException(url + " is not a Karaf extension");
+        InputStream inputStream;
+        try {
+            JarFile jarFile = new JarFile(new File(url));
+            ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
+            if (entry == null) {
+                throw new IllegalArgumentException(url + " is not a Karaf extension");
+            }
+            inputStream = jarFile.getInputStream(entry);
+        } catch (ZipException zipException) {
+            log.log(Level.FINE, url + " is not a jar file");
+            inputStream = new FileInputStream(new File(url));
         }
-        Extension extension = org.apache.karaf.core.extension.model.Loader.read(jarFile.getInputStream(entry));
+        Extension extension = org.apache.karaf.core.extension.model.Loader.read(inputStream);
         log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
         for (Module module : extension.getModule()) {
             log.info("Installing " + module.getLocation());
