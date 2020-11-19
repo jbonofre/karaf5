@@ -28,7 +28,6 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
-import org.osgi.framework.wiring.FrameworkWiring;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -71,13 +70,13 @@ public class Karaf {
                 "  Apache Karaf (5.0.0-SNAPSHOT)\n");
 
         Map<String, Object> config = new HashMap<>();
-        config.put(Constants.FRAMEWORK_STORAGE, this.config.cache);
+        config.put(Constants.FRAMEWORK_STORAGE, this.config.cacheDirectory);
         if (this.config.clearCache) {
             config.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
         config.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "100");
         config.put(FelixConstants.LOG_LEVEL_PROP, "4");
-        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cache);
+        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cacheDirectory);
         String bootDelegation = loadBootDelegation();
         if (bootDelegation != null) {
             log.info("Using predefined boot delegation");

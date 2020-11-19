@@ -30,7 +30,7 @@ public class KarafTest {
     public void testKarafRunWithResolvedModule() throws Exception {
         Karaf application = Karaf.withConfig(
                 KarafConfig.build()
-                        .withCache("target/karaf/cache")
+                        .withBaseDirectory("target/karaf")
                         .withClearCache(true)
                         .withDefaultBundleStartLevel(50));
         application.run();
@@ -45,7 +45,7 @@ public class KarafTest {
     public void testKarafRunWithUnresolvedModule() throws Exception {
         Karaf application = Karaf.withConfig(
                 KarafConfig.build()
-                    .withCache("target/karaf/cache")
+                    .withBaseDirectory("target/karaf")
                     .withClearCache(true)
                     .withDefaultBundleStartLevel(50));
         application.run();

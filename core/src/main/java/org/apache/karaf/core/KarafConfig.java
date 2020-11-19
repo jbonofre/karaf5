@@ -21,7 +21,10 @@ import java.util.List;
 
 public class KarafConfig {
 
-    public String cache = "/tmp/karaf/cache";
+    public String baseDirectory = System.getProperty("java.io.tmpdir") + "/karaf";
+    public String dataDirectory = baseDirectory + "/data";
+    public String etcDirectory = baseDirectory + "/etc";
+    public String cacheDirectory = baseDirectory + "/cache";
     public boolean clearCache = false;
     public int defaultBundleStartLevel = 50;
     public List<String> applications;
@@ -29,8 +32,13 @@ public class KarafConfig {
     private KarafConfig() {
     }
 
-    public KarafConfig withCache(String cache) {
-        this.cache = cache;
+    public KarafConfig withBaseDirectory(String baseDirectory) {
+        this.baseDirectory = baseDirectory;
+        this.cacheDirectory = baseDirectory + "/cache";
+        this.dataDirectory = baseDirectory + "/data";
+        System.setProperty("karaf.data", dataDirectory);
+        this.etcDirectory = baseDirectory + "/etc";
+        System.setProperty("karaf.etc", etcDirectory);
         return this;
     }
 

@@ -39,7 +39,7 @@ public class KarafLauncher {
                         .getConstructor(KarafConfig.class)
                         .newInstance(
                             KarafConfig.build()
-                                    .withCache("/tmp/cache")
+                                    .withBaseDirectory("/tmp/cache")
                                     .withClearCache(true)
                                     .withDefaultBundleStartLevel(50)));
         instance.run();
