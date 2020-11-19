@@ -61,8 +61,13 @@ public class Karaf {
     public void run() throws Exception {
         long start = System.currentTimeMillis();
 
-        System.setProperty("java.util.logging.SimpleFormatter.format",
-                "%1$tF %1$tT %4$s [ %2$s ] : %5$s%6$s%n");
+        if (System.getenv("KARAF_LOG_FORMAT") != null) {
+            System.setProperty("java.util.logging.SimpleFormatter.format", System.getenv("KARAF_LOG_FORMAT"));
+        }
+        if (System.getProperty("java.util.logging.SimpleFormatter.format") == null) {
+            System.setProperty("java.util.logging.SimpleFormatter.format",
+                    "%1$tF %1$tT.%1$tN %4$s [ %2$s ] : %5$s%6$s%n");
+        }
 
         log.info("\n" +
                 "        __ __                  ____      \n" +
