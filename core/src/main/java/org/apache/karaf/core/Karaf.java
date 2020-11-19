@@ -33,9 +33,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 @Log
@@ -57,6 +59,8 @@ public class Karaf {
     }
 
     public void run() throws Exception {
+        long start = System.currentTimeMillis();
+
         System.setProperty("java.util.logging.SimpleFormatter.format",
                 "%1$tF %1$tT %4$s [ %2$s ] : %5$s%6$s%n");
 
@@ -110,7 +114,24 @@ public class Karaf {
             loadExtensions();
         }
 
-        log.info("Karaf Application started!");
+
+        long now = System.currentTimeMillis();
+
+        log.info(getStartedMessage(start, now));
+    }
+
+    private String getStartedMessage(long start, long now) {
+        StringBuilder message = new StringBuilder();
+        message.append("Started in ");
+        message.append((now - start) / 1000.0);
+        message.append(" seconds");
+        try {
+            double uptime = ManagementFactory.getRuntimeMXBean().getUptime() / 1000.0;
+            message.append(" (JVM running for ").append(uptime).append(")");
+        } catch (Throwable e) {
+            // no-op
+        }
+        return message.toString();
     }
 
     private String loadBootDelegation() {
