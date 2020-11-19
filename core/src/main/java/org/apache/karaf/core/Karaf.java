@@ -97,8 +97,6 @@ public class Karaf {
             config.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
         }
 
-        // TODO add file store resolver
-
         FrameworkFactory frameworkFactory = new FrameworkFactory();
         framework = frameworkFactory.newFramework(config);
 
@@ -139,46 +137,35 @@ public class Karaf {
         return message.toString();
     }
 
-    private String loadBootDelegation() {
+    private String loadFile(String resource) {
         try {
-            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("etc/boot.delegation")) {
+            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(resource)) {
                 if (inputStream == null) {
-                    throw new IllegalStateException("/etc/boot.delegation not found");
+                    throw new IllegalStateException(resource + " not found");
                 }
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                     String line;
                     StringBuilder builder = new StringBuilder();
                     while ((line = reader.readLine()) != null) {
-                        builder.append(line);
+                        if (!line.startsWith("#") && !line.startsWith("//")) {
+                            builder.append(line);
+                        }
                     }
                     return builder.toString();
                 }
             }
         } catch (Exception e) {
-            log.log(Level.WARNING, "Can't load boot.delegation", e);
+            log.log(Level.WARNING, "Can't load " + resource, e);
         }
         return null;
     }
 
+    private String loadBootDelegation() {
+        return loadFile("etc/boot.delegation");
+    }
+
     private String loadSystemPackages() {
-        try {
-            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("etc/system.packages")) {
-                if (inputStream == null) {
-                    throw new IllegalStateException("/etc/system.packages not found");
-                }
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                    String line;
-                    StringBuilder builder = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        builder.append(line);
-                    }
-                    return builder.toString();
-                }
-            }
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Can't load system.packages", e);
-        }
-        return null;
+        return loadFile("etc/system.packages");
     }
 
     // load inner bundles from KARAF-INF/modules
