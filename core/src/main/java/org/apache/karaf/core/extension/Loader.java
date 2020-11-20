@@ -18,8 +18,10 @@
 package org.apache.karaf.core.extension;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.core.Karaf;
 import org.apache.karaf.core.extension.model.Module;
 import org.apache.karaf.core.extension.model.Extension;
+import org.apache.karaf.core.maven.Resolver;
 import org.osgi.framework.BundleContext;
 
 import java.io.File;
@@ -33,7 +35,8 @@ import java.util.zip.ZipException;
 @Log
 public class Loader {
 
-    public static void load(String url, BundleContext bundleContext) throws Exception {
+    public static void load(String url, Karaf karaf) throws Exception {
+        url = karaf.getResolver().resolve(url);
         InputStream inputStream;
         try {
             JarFile jarFile = new JarFile(new File(url));
@@ -48,20 +51,12 @@ public class Loader {
         }
         Extension extension = org.apache.karaf.core.extension.model.Loader.read(inputStream);
         log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
+        for (String innerExtension : extension.getExtension()) {
+            load(karaf.getResolver().resolve(innerExtension), karaf);
+        }
         for (Module module : extension.getModule()) {
             log.info("Installing " + module.getLocation());
-            org.osgi.framework.Bundle concreteBundle;
-            try {
-                concreteBundle = bundleContext.installBundle(module.getLocation());
-            } catch (Exception e) {
-                throw new Exception("Unable to install module " + module.getLocation() + ": " + e.toString(), e);
-            }
-            log.info("Starting " + concreteBundle.getSymbolicName() + "/" + concreteBundle.getVersion());
-            try {
-                concreteBundle.start();
-            } catch (Exception e) {
-                throw new Exception("Unable to start module " + concreteBundle.getSymbolicName() + "/" + concreteBundle.getVersion() + ": " + e.toString(), e);
-            }
+            karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
         }
     }
 

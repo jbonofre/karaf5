@@ -25,20 +25,16 @@ import org.apache.karaf.core.maven.Resolver;
 import org.apache.karaf.core.module.BundleModule;
 import org.apache.karaf.core.module.MicroprofileModule;
 import org.apache.karaf.core.module.SpringBootModule;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
-import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -221,11 +217,15 @@ public class Karaf {
 
     public void addExtension(String url) throws Exception {
         log.info("Loading extension from " + url);
-        org.apache.karaf.core.extension.Loader.load(resolver.resolve(url), framework.getBundleContext());
+        org.apache.karaf.core.extension.Loader.load(url, this);
     }
 
     public BundleContext getBundleContext() {
         return framework.getBundleContext();
+    }
+
+    public Resolver getResolver() {
+        return this.resolver;
     }
 
 }

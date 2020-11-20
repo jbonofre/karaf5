@@ -28,6 +28,7 @@ public class Extension {
     private String version;
     private String description;
 
+    private List<String> extension;
     private List<Module> module;
 
 }

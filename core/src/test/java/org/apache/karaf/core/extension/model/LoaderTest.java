@@ -29,6 +29,9 @@ public class LoaderTest {
         String json = "{" +
                 "\"name\": \"test\"," +
                 "\"version\": \"1.0\"," +
+                "\"extension\": [" +
+                " \"mvn:other/other/1.0\", \"http://host/remote\"" +
+                "]," +
                 "\"module\": [" +
                 "{ \"location\": \"url\" }" +
                 "]" +
@@ -36,6 +39,9 @@ public class LoaderTest {
         Extension extension = Loader.read(new ByteArrayInputStream(json.getBytes()));
         Assertions.assertEquals("test", extension.getName());
         Assertions.assertEquals("1.0", extension.getVersion());
+        Assertions.assertEquals(2, extension.getExtension().size());
+        Assertions.assertEquals("mvn:other/other/1.0", extension.getExtension().get(0));
+        Assertions.assertEquals("http://host/remote", extension.getExtension().get(1));
         Assertions.assertEquals(1, extension.getModule().size());
         Assertions.assertEquals("url", extension.getModule().get(0).getLocation());
     }
