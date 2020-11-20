@@ -51,12 +51,16 @@ public class Loader {
         }
         Extension extension = org.apache.karaf.core.extension.model.Loader.read(inputStream);
         log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
-        for (String innerExtension : extension.getExtension()) {
-            load(karaf.getResolver().resolve(innerExtension), karaf);
+        if (extension.getExtension() != null) {
+            for (String innerExtension : extension.getExtension()) {
+                load(karaf.getResolver().resolve(innerExtension), karaf);
+            }
         }
-        for (Module module : extension.getModule()) {
-            log.info("Installing " + module.getLocation());
-            karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+        if (extension.getModule() != null) {
+            for (Module module : extension.getModule()) {
+                log.info("Installing " + module.getLocation());
+                karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+            }
         }
     }
 

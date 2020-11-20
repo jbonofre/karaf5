@@ -33,7 +33,7 @@ public class KarafConfigTest {
         Assertions.assertEquals(javaTmpDir + "/karaf/data", config.dataDirectory());
         Assertions.assertEquals(javaTmpDir + "/karaf/data/cache", config.cacheDirectory());
         Assertions.assertEquals(javaTmpDir + "/karaf/etc", config.etcDirectory());
-        Assertions.assertEquals(userHomeDir + "/.m2/repository," + javaTmpDir + "/karaf/system,https://repo1.maven.org/maven2",
+        Assertions.assertEquals("file:" + userHomeDir + "/.m2/repository,file:" + javaTmpDir + "/karaf/system,https://repo1.maven.org/maven2",
                 config.mavenRepositories());
         Assertions.assertEquals(false, config.clearCache());
         Assertions.assertEquals(50, config.defaultBundleStartLevel());

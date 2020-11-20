@@ -41,8 +41,8 @@ public class KarafConfig {
     private int defaultBundleStartLevel = 50;
 
     @Builder.Default
-    private String mavenRepositories =  "${user.home}/.m2/repository," +
-                    "${java.io.tmpdir}/karaf/system," +
+    private String mavenRepositories =  "file:${user.home}/.m2/repository," +
+                    "file:${java.io.tmpdir}/karaf/system," +
                     "https://repo1.maven.org/maven2";
 
     public String homeDirectory() {

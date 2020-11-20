@@ -33,19 +33,6 @@ public class ResolverTest {
 
     @Test
     public void testResolve() throws Exception {
-        Resolver resolver = new Resolver(null);
-        String resolved = resolver.resolve("mvn:myGroupId/myArtifactId/1.0-SNAPSHOT");
-        Assertions.assertEquals("myGroupId/myArtifactId/1.0-SNAPSHOT/myArtifactId-1.0-SNAPSHOT.jar", resolved);
-        resolved = resolver.resolve("mvn:myGroupId/myArtifactId/1.0-SNAPSHOT/xml/myClassifier");
-        Assertions.assertEquals("myGroupId/myArtifactId/1.0-SNAPSHOT/myArtifactId-1.0-SNAPSHOT-myClassifier.xml", resolved);
-        resolved = resolver.resolve("mvn:http://myrepo/foo!myGroupId/myArtifactId/1.0-SNAPSHOT");
-        Assertions.assertEquals("http://myrepo/foo/myGroupId/myArtifactId/1.0-SNAPSHOT/myArtifactId-1.0-SNAPSHOT.jar", resolved);
-        resolved = resolver.resolve("mvn:file:/myrepo/foo!myGroupId/myArtifactId/1.0-SNAPSHOT");
-        Assertions.assertEquals("/myrepo/foo/myGroupId/myArtifactId/1.0-SNAPSHOT/myArtifactId-1.0-SNAPSHOT.jar", resolved);
-    }
-
-    @Test
-    public void testOpen() throws Exception {
         log.info("Creating local test Maven repository");
         File repository = new File("target/repository");
         repository.mkdirs();
@@ -59,17 +46,13 @@ public class ResolverTest {
 
         Resolver resolver = new Resolver("https://repo1.maven.org/maven2,file:target/repository");
 
-        InputStream inputStream = resolver.open("mvn:commons-lang/commons-lang/2.6", null);
-        Assertions.assertNotNull(inputStream);
+        Assertions.assertEquals("https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar",
+                resolver.resolve("mvn:commons-lang/commons-lang/2.6"));
 
-        inputStream = resolver.open("mvn:org.example/test/1.0-SNAPSHOT/txt", null);
-        Assertions.assertNotNull(inputStream);
+        Assertions.assertEquals("file:target/repository/org/example/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.txt",
+                resolver.resolve("mvn:org.example/test/1.0-SNAPSHOT/txt"));
 
-        inputStream = resolver.open("mvn:notfound/notfound/1.0-SNAPSHOT", null);
-        Assertions.assertNull(inputStream);
-
-        inputStream = resolver.open("mvn:foo/test-extension/2.0", "file:target/test-classes");
-        Assertions.assertNotNull(inputStream);
+        Assertions.assertNull(resolver.resolve("mvn:myGroupId/myArtifactId/1.0-SNAPSHOT"));
     }
 
 }

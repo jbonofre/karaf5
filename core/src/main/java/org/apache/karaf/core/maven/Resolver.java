@@ -51,34 +51,23 @@ public class Resolver {
     public String resolve(String artifactUri) throws Exception {
         String uri = Parser.pathFromMaven(artifactUri);
 
-        if (uri.startsWith("file:")) {
-            return uri.substring("file:".length());
-        }
-
-        if (uri.startsWith("http:")) {
+        if (uri.startsWith("file:") || uri.startsWith("http:") || uri.startsWith("https:")) {
             return uri;
         }
 
-        return uri;
-    }
-
-    public InputStream open(String artifactUri, String inner) throws Exception {
-        String uri = resolve(artifactUri);
-        if (uri.startsWith("file:") || uri.startsWith("http:")) {
-            return new URL(uri).openStream();
-        }
         if (mavenRepositories != null) {
             for (String mavenRepository : mavenRepositories) {
                 try {
                     String concat = mavenRepository + "/" + uri;
                     InputStream inputStream = new URL(concat).openStream();
                     log.info(concat + " found");
-                    return inputStream;
+                    return concat;
                 } catch (IOException ioException) {
                     log.log(Level.FINE, "Artifact " + artifactUri + " not found on " + mavenRepository, ioException);
                 }
             }
         }
+        /*
         if (inner != null) {
             try {
                 String fileName = inner + "/" + Parser.fileNameFromMaven(artifactUri, false);
@@ -97,6 +86,7 @@ public class Resolver {
                 log.log(Level.FINE, "Artifact " + artifactUri + " not found in " + inner, ioException);
             }
         }
+        */
         return null;
     }
 
