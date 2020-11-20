@@ -24,25 +24,25 @@ public class KarafConfigTest {
 
     @Test
     public void testDefaultBuild() throws Exception {
-        KarafConfig config = new KarafConfig.Builder().build();
+        KarafConfig config = KarafConfig.builder().build();
 
         String javaTmpDir = System.getProperty("java.io.tmpdir");
         String userHomeDir = System.getProperty("user.home");
 
-        Assertions.assertEquals(javaTmpDir + "/karaf", config.baseDirectory);
-        Assertions.assertEquals(javaTmpDir + "/karaf/data", config.dataDirectory);
-        Assertions.assertEquals(javaTmpDir + "/karaf/data/cache", config.cacheDirectory);
-        Assertions.assertEquals(javaTmpDir + "/karaf/etc", config.etcDirectory);
+        Assertions.assertEquals(javaTmpDir + "/karaf", config.homeDirectory());
+        Assertions.assertEquals(javaTmpDir + "/karaf/data", config.dataDirectory());
+        Assertions.assertEquals(javaTmpDir + "/karaf/data/cache", config.cacheDirectory());
+        Assertions.assertEquals(javaTmpDir + "/karaf/etc", config.etcDirectory());
         Assertions.assertEquals(userHomeDir + "/.m2/repository," + javaTmpDir + "/karaf/system,https://repo1.maven.org/maven2",
-                config.mavenRepositories);
-        Assertions.assertEquals(false, config.clearCache);
-        Assertions.assertEquals(50, config.defaultBundleStartLevel);
+                config.mavenRepositories());
+        Assertions.assertEquals(false, config.clearCache());
+        Assertions.assertEquals(50, config.defaultBundleStartLevel());
     }
 
     @Test
     public void testBuildWithOption() throws Exception {
-        KarafConfig config = new KarafConfig.Builder()
-                .baseDirectory("target/test")
+        KarafConfig config = KarafConfig.builder()
+                .homeDirectory("target/test")
                 .dataDirectory("target/test/data")
                 .cacheDirectory("target/test/data/cache")
                 .etcDirectory("target/test/etc")
@@ -51,13 +51,13 @@ public class KarafConfigTest {
                 .defaultBundleStartLevel(30)
                 .build();
 
-        Assertions.assertEquals("target/test", config.baseDirectory);
-        Assertions.assertEquals("target/test/data", config.dataDirectory);
-        Assertions.assertEquals("target/test/data/cache", config.cacheDirectory);
-        Assertions.assertEquals("target/test/etc", config.etcDirectory);
-        Assertions.assertNull(config.mavenRepositories);
-        Assertions.assertTrue(config.clearCache);
-        Assertions.assertEquals(30, config.defaultBundleStartLevel);
+        Assertions.assertEquals("target/test", config.homeDirectory());
+        Assertions.assertEquals("target/test/data", config.dataDirectory());
+        Assertions.assertEquals("target/test/data/cache", config.cacheDirectory());
+        Assertions.assertEquals("target/test/etc", config.etcDirectory());
+        Assertions.assertNull(config.mavenRepositories());
+        Assertions.assertTrue(config.clearCache());
+        Assertions.assertEquals(30, config.defaultBundleStartLevel());
     }
 
 }

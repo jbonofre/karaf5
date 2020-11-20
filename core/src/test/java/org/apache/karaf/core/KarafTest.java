@@ -28,28 +28,32 @@ public class KarafTest {
     @Test
     @Order(1)
     public void testKarafRunWithResolvedModule() throws Exception {
-        Karaf application = Karaf.build(new KarafConfig.Builder()
-                .baseDirectory("target/karaf")
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
                 .cacheDirectory("target/karaf/cache/1")
+                .clearCache(true)
                 .build());
-        application.run();
-        application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        karaf.init();
+        karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        karaf.start();
 
-        Bundle bundle = application.getBundleContext().getBundle(1);
+        Bundle bundle = karaf.getBundleContext().getBundle(1);
         Assertions.assertEquals(Bundle.ACTIVE, bundle.getState());
     }
 
     @Test
     @Order(2)
     public void testKarafRunWithUnresolvedModule() throws Exception {
-        Karaf application = Karaf.build(new KarafConfig.Builder()
-                .baseDirectory("target/karaf")
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
                 .cacheDirectory("target/karaf/cache/2")
+                .clearCache(true)
                 .build());
-        application.run();
+        karaf.init();
         try {
-            application.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url-aether-2.6.3.jar");
+            karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-aether/2.6.3/pax-url-aether-2.6.3.jar");
             Assertions.fail("Bundle exception expected");
+            karaf.start();
         } catch (Exception e) {
             // no-op
         }

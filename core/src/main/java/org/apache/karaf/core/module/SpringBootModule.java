@@ -15,17 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.karaf.core.Karaf;
-import org.junit.jupiter.api.Test;
+package org.apache.karaf.core.module;
 
-public class ExtensionTest {
+public class SpringBootModule implements Module {
 
-    @Test
-    public void test() throws Exception {
-        Karaf karaf = Karaf.build();
-        karaf.init();
-        karaf.addExtension("src/main/resources/KARAF-INF/extension.json");
-        karaf.start();
+    @Override
+    public boolean canHandle(String url) {
+        return false;
+    }
+
+    @Override
+    public void add(String url) throws Exception {
+        throw new IllegalArgumentException("Spring Boot Module is not yet supported");
     }
 
 }

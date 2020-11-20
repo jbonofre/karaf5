@@ -17,111 +17,72 @@
  */
 package org.apache.karaf.core;
 
+import lombok.Builder;
+
+@Builder
 public class KarafConfig {
 
-    public String baseDirectory;
-    public String dataDirectory;
-    public String etcDirectory;
-    public String cacheDirectory;
-    public String mavenRepositories;
-    public boolean clearCache;
-    public int defaultBundleStartLevel;
+    @Builder.Default
+    private String homeDirectory = "${java.io.tmpdir}/karaf";
 
-    private KarafConfig(String baseDirectory,
-                        String dataDirectory,
-                        String etcDirectory,
-                        String cacheDirectory,
-                        String mavenRepositories,
-                        boolean clearCache,
-                        int defaultBundleStartLevel) {
-        this.baseDirectory = baseDirectory;
-        this.dataDirectory = dataDirectory;
-        this.etcDirectory = etcDirectory;
-        this.cacheDirectory = cacheDirectory;
-        this.mavenRepositories = mavenRepositories;
-        this.clearCache = clearCache;
-        this.defaultBundleStartLevel = defaultBundleStartLevel;
+    @Builder.Default
+    private String dataDirectory = "${java.io.tmpdir}/karaf/data";
+
+    @Builder.Default
+    private String etcDirectory = "${java.io.tmpdir}/karaf/etc";
+
+    @Builder.Default
+    private String cacheDirectory = "${java.io.tmpdir}/karaf/data/cache";
+
+    @Builder.Default
+    private boolean clearCache = false;
+
+    @Builder.Default
+    private int defaultBundleStartLevel = 50;
+
+    @Builder.Default
+    private String mavenRepositories =  "${user.home}/.m2/repository," +
+                    "${java.io.tmpdir}/karaf/system," +
+                    "https://repo1.maven.org/maven2";
+
+    public String homeDirectory() {
+        return substitute(homeDirectory);
     }
 
-    public static class Builder {
+    public String dataDirectory() {
+        return substitute(dataDirectory);
+    }
 
-        private String baseDirectory;
-        private String dataDirectory;
-        private String etcDirectory;
-        private String cacheDirectory;
-        private String mavenRepositories;
-        private boolean clearCache;
-        private int defaultBundleStartLevel;
+    public String etcDirectory() {
+        return substitute(etcDirectory);
+    }
 
-        public Builder() {
-            baseDirectory = System.getProperty("java.io.tmpdir") + "/karaf";
-            dataDirectory = baseDirectory + "/data";
-            cacheDirectory = dataDirectory + "/cache";
-            etcDirectory = baseDirectory + "/etc";
-            mavenRepositories = System.getProperty("user.home") + "/.m2/repository," +
-                    baseDirectory + "/system," +
-                    "https://repo1.maven.org/maven2";
-            clearCache = false;
-            defaultBundleStartLevel = 50;
+    public String cacheDirectory() {
+        return substitute(cacheDirectory);
+    }
+
+    public String mavenRepositories() {
+        return substitute(mavenRepositories);
+    }
+
+    public boolean clearCache() {
+        return clearCache;
+    }
+
+    public int defaultBundleStartLevel() {
+        return defaultBundleStartLevel;
+    }
+
+    private String substitute(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String result = raw;
+        for (String property : System.getProperties().stringPropertyNames()) {
+            result = result.replaceAll("\\$\\{" + property + "}", System.getProperty(property));
         }
 
-        public Builder baseDirectory(String baseDirectory) {
-            if (baseDirectory == null) {
-                throw new IllegalArgumentException("baseDirectory can't be empty");
-            }
-            this.baseDirectory = baseDirectory;
-            return this;
-        }
-
-        public Builder dataDirectory(String dataDirectory) {
-            if (dataDirectory == null) {
-                throw new IllegalArgumentException("dataDirectory can't be empty");
-            }
-            this.dataDirectory = dataDirectory;
-            return this;
-        }
-
-        public Builder etcDirectory(String etcDirectory) {
-            if (etcDirectory == null) {
-                throw new IllegalArgumentException("etcDirectory can't be empty");
-            }
-            this.etcDirectory = etcDirectory;
-            return this;
-        }
-
-        public Builder cacheDirectory(String cacheDirectory) {
-            if (cacheDirectory == null) {
-                throw new IllegalArgumentException("cacheDirectory can't be empty");
-            }
-            this.cacheDirectory = cacheDirectory;
-            return this;
-        }
-
-        public Builder mavenRepositories(String mavenRepositories) {
-            this.mavenRepositories = mavenRepositories;
-            return this;
-        }
-
-        public Builder clearCache(boolean clearCache) {
-            this.clearCache = clearCache;
-            return this;
-        }
-
-        public Builder defaultBundleStartLevel(int defaultBundleStartLevel) {
-            this.defaultBundleStartLevel = defaultBundleStartLevel;
-            return this;
-        }
-
-        public KarafConfig build() {
-            return new KarafConfig(baseDirectory,
-                    dataDirectory,
-                    etcDirectory,
-                    cacheDirectory,
-                    mavenRepositories,
-                    clearCache,
-                    defaultBundleStartLevel);
-        }
-
+        return result;
     }
 
 }

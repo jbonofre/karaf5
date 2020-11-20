@@ -15,17 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.karaf.core.Karaf;
-import org.junit.jupiter.api.Test;
+package org.apache.karaf.core.module;
 
-public class ExtensionTest {
+public interface Module {
 
-    @Test
-    public void test() throws Exception {
-        Karaf karaf = Karaf.build();
-        karaf.init();
-        karaf.addExtension("src/main/resources/KARAF-INF/extension.json");
-        karaf.start();
-    }
+    boolean canHandle(String url);
+
+    void add(String url) throws Exception;
 
 }

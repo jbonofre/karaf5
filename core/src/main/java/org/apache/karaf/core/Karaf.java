@@ -21,6 +21,10 @@ import lombok.extern.java.Log;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
+import org.apache.karaf.core.maven.Resolver;
+import org.apache.karaf.core.module.BundleModule;
+import org.apache.karaf.core.module.MicroprofileModule;
+import org.apache.karaf.core.module.SpringBootModule;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -37,7 +41,6 @@ import java.lang.management.ManagementFactory;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 @Log
@@ -45,21 +48,25 @@ public class Karaf {
 
     private KarafConfig config;
     private Framework framework = null;
+    private Resolver resolver;
+    private long start;
 
-    public Karaf(KarafConfig config) {
+    private Karaf(KarafConfig config) {
         this.config = config;
     }
 
     public static Karaf build() {
-        return new Karaf(new KarafConfig.Builder().build());
+        return new Karaf(KarafConfig.builder().build());
     }
 
     public static Karaf build(KarafConfig config) {
         return new Karaf(config);
     }
 
-    public void run() throws Exception {
-        long start = System.currentTimeMillis();
+    public void init() throws Exception {
+        start = System.currentTimeMillis();
+
+        resolver = new Resolver(config.mavenRepositories());
 
         if (System.getenv("KARAF_LOG_FORMAT") != null) {
             System.setProperty("java.util.logging.SimpleFormatter.format", System.getenv("KARAF_LOG_FORMAT"));
@@ -78,16 +85,16 @@ public class Karaf {
                 "\n" +
                 "  Apache Karaf (5.0.0-SNAPSHOT)\n");
 
-        log.info("Base directory: " + this.config.baseDirectory);
-        log.info("Cache directory: " + this.config.cacheDirectory);
+        log.info("Base directory: " + this.config.homeDirectory());
+        log.info("Cache directory: " + this.config.cacheDirectory());
         Map<String, Object> config = new HashMap<>();
-        config.put(Constants.FRAMEWORK_STORAGE, this.config.cacheDirectory);
-        if (this.config.clearCache) {
+        config.put(Constants.FRAMEWORK_STORAGE, this.config.cacheDirectory());
+        if (this.config.clearCache()) {
             config.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
         config.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "100");
-        config.put(FelixConstants.LOG_LEVEL_PROP, "4");
-        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cacheDirectory);
+        config.put(FelixConstants.LOG_LEVEL_PROP, "3");
+        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cacheDirectory());
         String bootDelegation = loadBootDelegation();
         if (bootDelegation != null) {
             log.info("Using predefined boot delegation");
@@ -110,16 +117,15 @@ public class Karaf {
         }
 
         FrameworkStartLevel sl = framework.adapt(FrameworkStartLevel.class);
-        sl.setInitialBundleStartLevel(this.config.defaultBundleStartLevel);
+        sl.setInitialBundleStartLevel(this.config.defaultBundleStartLevel());
 
-        if (framework.getBundleContext().getBundles().length == 1) {
-
+        if (framework.getBundleContext().getBundles().length != 1) {
             loadModules();
-
             loadExtensions();
         }
+    }
 
-
+    public void start() {
         long now = System.currentTimeMillis();
 
         log.info(getStartedMessage(start, now));
@@ -170,17 +176,7 @@ public class Karaf {
         return loadFile("etc/system.packages");
     }
 
-    // load inner bundles from KARAF-INF/modules
     public void loadModules() throws Exception {
-        log.info("Loading KARAF-INF/modules");
-        URL modulesUrl = this.getClass().getClassLoader().getResource("KARAF-INF/modules");
-        if (modulesUrl != null) {
-            File modulesFile = new File(modulesUrl.getPath());
-            File[] modules = modulesFile.listFiles();
-            for (File module : modules) {
-                addModule(module.toURI().toURL().toString());
-            }
-        }
         log.info("Loading KARAF_MODULES env");
         String modulesEnv = System.getenv("KARAF_MODULES");
         if (modulesEnv != null) {
@@ -191,17 +187,7 @@ public class Karaf {
         }
     }
 
-    // load inner extensions from KARAF-INF/extensions
     public void loadExtensions() throws Exception {
-        log.info("Loading KARAF-INF/extensions");
-        URL extensionsUrl = this.getClass().getClassLoader().getResource("KARAF-INF/extensions");
-        if (extensionsUrl != null) {
-            File extensionsFile = new File(extensionsUrl.getPath());
-            File[] extensions = extensionsFile.listFiles();
-            for (File extension : extensions) {
-                addExtension(extension.toURI().toURL().toString());
-            }
-        }
         log.info("Loading KARAF_EXTENSIONS env");
         String extensionsEnv = System.getenv("KARAF_EXTENSIONS");
         if (extensionsEnv != null) {
@@ -212,31 +198,30 @@ public class Karaf {
         }
     }
 
-    // module == bundle
     public void addModule(String url) throws Exception {
         log.info("Installing module " + url);
-        Bundle bundle;
-        try {
-            bundle = framework.getBundleContext().installBundle(url);
-            bundle.adapt(BundleStartLevel.class).setStartLevel(this.config.defaultBundleStartLevel);
-        } catch (Exception e) {
-            throw new Exception("Unable to install module " + url + ": " + e.toString(), e);
+
+        url = resolver.resolve(url);
+
+        BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel());
+        if (bundleModule.canHandle(url)) {
+            bundleModule.add(url);
         }
-        log.info("Starting module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
-        try {
-            // framework.adapt(FrameworkWiring.class).resolveBundles(null);
-            if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
-                bundle.start();
-            }
-        } catch (Exception e) {
-            throw new Exception("Unable to start module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
+
+        SpringBootModule springBootModule = new SpringBootModule();
+        if (springBootModule.canHandle(url)) {
+            springBootModule.add(url);
+        }
+
+        MicroprofileModule microprofileModule = new MicroprofileModule();
+        if (microprofileModule.canHandle(url)) {
+            microprofileModule.add(url);
         }
     }
 
-    // extension == feature
     public void addExtension(String url) throws Exception {
         log.info("Loading extension from " + url);
-        org.apache.karaf.core.extension.Loader.load(url, framework.getBundleContext());
+        org.apache.karaf.core.extension.Loader.load(resolver.resolve(url), framework.getBundleContext());
     }
 
     public BundleContext getBundleContext() {
