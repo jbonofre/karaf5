@@ -16,16 +16,89 @@
 // limitations under the License.
 //
 
-= Karaf 5
+= Apache Karaf
 
-This is a repository heading to Karaf 5.
+Apache Karaf is a modulith runtime for your applications. You can package and run several
+kind of applications in Karaf.
 
-The purpose is to address the following points:
+Apache Karaf provides:
 
-* new clean project structure (core, extensions, ...)
-* core with a Main easy to embed/bootstrap and optimized startup
-* new tool to easily create applications on Karaf (including Karaf annotations)
-* new tool to simplify testing in Karaf
-* new tool to simplify assembly/packaging
-* new tool (plugins) to "convert" existing applications (spring boot, microprofiles) into an Karar compliant artifact (and eventually override some beans/services)
-* new resources manager allowing to partition/assign resources to applications in Karaf
+* a generic launcher (`Karaf`) bootstrapping a runtime for your applications
+* an API to interact with the launcher, allowing you to add your own applications
+* a provisioning layer to easily add a set of applications
+* optional features you can add in the runtime and leverage in your applications.
+
+== Module
+
+A Karaf module is a generic application module you can add to the Karaf launcher.
+
+The module can be packaged in the ready to run artifact or provisioned a runtime (locally or remotely).
+It could also be added on a running instance.
+
+Currently, Apache Karaf supports:
+
+* Spring Boot module
+* OSGi bundle module
+* Microprofile module
+
+=== Spring Boot
+
+Apache Karaf supports Spring Boot uber jar application module.
+
+=== OSGi Bundle
+
+Apache Karaf supports OSGi bundle application module.
+
+=== Microprofile
+
+Apache Karaf supports Microprofile application module.
+
+== Extension
+
+Apache Karaf Extension is a way to provision several modules in a row.
+
+An extension is defined by a JSON descriptor and it can reference other extensions and a set of modules.
+
+For instance:
+
+```
+{
+  "name": "myextension",
+  "version": "1.0",
+  "extension": [ "mvn:myextensions/other-extension/1.0" ],
+  "module": [
+    { "location": "mvn:mymodules/myfirstmodule/1.1" }
+    { "location": "mvn:mymodules/mysecondmodule/1.2" }
+  ]
+}
+```
+
+You can add an extension providing directly the location of the JSON descriptor or package the JSON descriptor
+in a JAR file.
+
+== Distribution
+
+As for Apache Karaf 4.x, you still have ready to use distributions.
+
+=== Network
+
+The Karaf Network distribution downloads all artifacts (from Maven Central) at first runtime.
+
+=== Standard
+
+The Karaf Standard distribution is distribution running offline (no need of Internet connection).
+
+=== Cloud
+
+The Karaf Cloud distribution is "light" standard distribution, ready to run on Kubernetes.
+
+== Bootstrap & Run
+
+You can use Apache Karaf in your code, simply bootstrapping it and running with:
+
+```
+Karaf karaf = Karaf.build();
+karaf.init();
+karaf.addExtension("mvn:myextensions/myextension/1.0");
+karaf.start();
+```
