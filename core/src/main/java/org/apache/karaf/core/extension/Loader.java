@@ -40,6 +40,9 @@ public class Loader {
         if (resolved == null) {
             throw new IllegalArgumentException(url + " not found");
         }
+        if (resolved.startsWith("file:")) {
+            resolved = resolved.substring("file:".length());
+        }
         InputStream inputStream;
         try {
             JarFile jarFile = new JarFile(new File(resolved));

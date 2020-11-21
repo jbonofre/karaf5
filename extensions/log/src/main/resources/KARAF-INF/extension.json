@@ -1,0 +1,7 @@
+{
+  "name": "log",
+  "version": "5.0.0-SNAPSHOT",
+  "module": [
+    { "location": "mvn:org.apache.felix/org.apache.felix.log/1.2.4" }
+  ]
+}
