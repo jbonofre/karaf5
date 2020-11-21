@@ -64,7 +64,12 @@ public class Loader {
         }
         if (extension.getModule() != null) {
             for (Module module : extension.getModule()) {
-                karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+                String moduleUrl = karaf.getResolver().resolve(module.getLocation());
+                if (moduleUrl == null) {
+                    throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
+                } else {
+                    karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+                }
             }
         }
     }

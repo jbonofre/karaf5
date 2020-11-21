@@ -199,21 +199,25 @@ public class Karaf {
     public void addModule(String url) throws Exception {
         log.info("Installing module " + url);
 
-        url = resolver.resolve(url);
+        String resolved = resolver.resolve(url);
+
+        if (resolved == null) {
+            throw new IllegalArgumentException("Module " + url + " not found");
+        }
 
         BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel());
-        if (bundleModule.canHandle(url)) {
-            bundleModule.add(url);
+        if (bundleModule.canHandle(resolved)) {
+            bundleModule.add(resolved);
         }
 
         SpringBootModule springBootModule = new SpringBootModule();
-        if (springBootModule.canHandle(url)) {
-            springBootModule.add(url);
+        if (springBootModule.canHandle(resolved)) {
+            springBootModule.add(resolved);
         }
 
         MicroprofileModule microprofileModule = new MicroprofileModule();
-        if (microprofileModule.canHandle(url)) {
-            microprofileModule.add(url);
+        if (microprofileModule.canHandle(resolved)) {
+            microprofileModule.add(resolved);
         }
     }
 

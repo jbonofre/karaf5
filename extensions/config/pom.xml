@@ -24,21 +24,22 @@
 
     <parent>
         <groupId>org.apache.karaf</groupId>
-        <artifactId>karaf</artifactId>
+        <artifactId>extensions</artifactId>
         <version>5.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>extensions</artifactId>
-    <name>Apache Karaf :: Extensions</name>
-    <packaging>pom</packaging>
+    <groupId>org.apache.karaf.extensions</groupId>
+    <artifactId>config</artifactId>
+    <name>Apache Karaf :: Extensions :: Config</name>
 
-    <modules>
-        <module>log</module>
-        <module>config</module>
-        <module>scr</module>
-        <module>jaas</module>
-        <module>shell</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>core</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

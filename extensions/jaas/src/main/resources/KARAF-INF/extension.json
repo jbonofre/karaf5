@@ -1,0 +1,13 @@
+{
+  "name": "jaas",
+  "version": "5.0.0-SNAPSHOT",
+  "extension": [
+    "mvn:org.apache.karaf.extensions/log/5.0.0-SNAPSHOT",
+    "mvn:org.apache.karaf.extensions/config/5.0.0-SNAPSHOT"
+  ],
+  "module": [
+    { "location": "mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.boot/4.3.0" },
+    { "location": "mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.config/4.3.0" },
+    { "location": "mvn:org.apache.karaf.jaas/org.apache.karaf.jaas.modules/4.3.0"}
+  ]
+}

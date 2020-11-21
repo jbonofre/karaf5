@@ -2,6 +2,9 @@
   "name": "log",
   "version": "5.0.0-SNAPSHOT",
   "module": [
+    { "location": "mvn:org.slf4j/slf4j-simple/1.7.30" },
+    { "location": "mvn:org.slf4j/slf4j-api/1.7.30" },
+    { "location": "mvn:commons-logging/commons-logging/1.2"},
     { "location": "mvn:org.apache.felix/org.apache.felix.log/1.2.4" }
   ]
 }
