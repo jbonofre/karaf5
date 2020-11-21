@@ -37,8 +37,8 @@ public class Main {
         KarafConfig config = KarafConfig.builder().build();
         Karaf karaf = Karaf.build(config);
         karaf.init();
-        karaf.addExtension("mvn:org.apache.karaf.extensions/log/5.0.0-SNAPSHOT");
-        karaf.addExtension("mvn:org.apache.karaf.extensions/scr/5.0.0-SNAPSHOT");
+        System.setProperty("karaf.startLocalConsole", "true");
+        karaf.addExtension("mvn:org.apache.karaf.extensions/shell/5.0.0-SNAPSHOT");
         karaf.start();
     }
 
