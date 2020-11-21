@@ -16,15 +16,21 @@
  * limitations under the License.
  */
 import org.apache.karaf.core.Karaf;
+import org.apache.karaf.core.KarafConfig;
 import org.junit.jupiter.api.Test;
 
 public class ExtensionTest {
 
     @Test
     public void test() throws Exception {
-        Karaf karaf = Karaf.build();
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .dataDirectory("target/karaf/data")
+                .cacheDirectory("target/karaf/data/cache")
+                .clearCache(true)
+                .build());
         karaf.init();
-        karaf.addExtension("src/main/resources/KARAF-INF/extension.json");
+        karaf.addExtension("file:src/main/resources/KARAF-INF/extension.json");
         karaf.start();
     }
 

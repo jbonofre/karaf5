@@ -36,10 +36,13 @@ import java.util.zip.ZipException;
 public class Loader {
 
     public static void load(String url, Karaf karaf) throws Exception {
-        url = karaf.getResolver().resolve(url);
+        String resolved = karaf.getResolver().resolve(url);
+        if (resolved == null) {
+            throw new IllegalArgumentException(url + " not found");
+        }
         InputStream inputStream;
         try {
-            JarFile jarFile = new JarFile(new File(url));
+            JarFile jarFile = new JarFile(new File(resolved));
             ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
             if (entry == null) {
                 throw new IllegalArgumentException(url + " is not a Karaf extension");
@@ -47,7 +50,7 @@ public class Loader {
             inputStream = jarFile.getInputStream(entry);
         } catch (ZipException zipException) {
             log.log(Level.FINE, url + " is not a jar file");
-            inputStream = new FileInputStream(new File(url));
+            inputStream = new FileInputStream(new File(resolved));
         }
         Extension extension = org.apache.karaf.core.extension.model.Loader.read(inputStream);
         log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
@@ -58,7 +61,6 @@ public class Loader {
         }
         if (extension.getModule() != null) {
             for (Module module : extension.getModule()) {
-                log.info("Installing " + module.getLocation());
                 karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
             }
         }

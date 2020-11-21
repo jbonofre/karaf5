@@ -4,6 +4,7 @@
   "module": [
     { "location": "mvn:org.osgi/org.osgi.util.function/1.0.0" },
     { "location": "mvn:org.osgi/org.osgi.util.promise/1.0.0" },
+    { "location": "mvn:org.apache.felix/org.apache.felix.log/1.2.4" },
     { "location": "mvn:org.apache.felix/org.apache.felix.metatype/1.2.2" },
     { "location": "mvn:org.apache.felix/org.apache.felix.scr/2.1.24" }
   ]

@@ -51,7 +51,11 @@ public class Resolver {
     public String resolve(String artifactUri) throws Exception {
         String uri = Parser.pathFromMaven(artifactUri);
 
-        if (uri.startsWith("file:") || uri.startsWith("http:") || uri.startsWith("https:")) {
+        if (uri.startsWith("file:")) {
+            return uri.substring("file:".length());
+        }
+
+        if (uri.startsWith("http:") || uri.startsWith("https:")) {
             return uri;
         }
 

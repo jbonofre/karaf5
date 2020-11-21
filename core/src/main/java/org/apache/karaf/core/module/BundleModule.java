@@ -45,6 +45,9 @@ public class BundleModule implements Module {
     @Override
     public void add(String url) throws Exception {
         log.info("Installing OSGi bundle module " + url);
+        if (!url.startsWith("file:") && !url.startsWith("http:") && !url.startsWith("https:")) {
+            url = "file:" + url;
+        }
         Bundle bundle;
         try {
             bundle = framework.getBundleContext().installBundle(url);
