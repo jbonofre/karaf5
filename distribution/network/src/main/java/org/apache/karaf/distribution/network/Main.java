@@ -23,6 +23,7 @@ import org.apache.karaf.core.KarafConfig;
 public class Main {
 
     private final String[] args;
+    private Karaf karaf;
 
     public static void main(String[] args) throws Exception {
         final Main main = new Main(args);
@@ -34,12 +35,20 @@ public class Main {
     }
 
     public void launch() throws Exception {
-        KarafConfig config = KarafConfig.builder().build();
-        Karaf karaf = Karaf.build(config);
+        KarafConfig config = KarafConfig.builder()
+                .homeDirectory("./karaf")
+                .dataDirectory("./karaf/data")
+                .cacheDirectory("./karaf/data/cache")
+                .build();
+        karaf = Karaf.build(config);
         karaf.init();
         System.setProperty("karaf.startLocalConsole", "true");
         karaf.addExtension("mvn:org.apache.karaf.extensions/shell/5.0.0-SNAPSHOT");
         karaf.start();
+    }
+
+    protected Karaf getKaraf() {
+        return this.karaf;
     }
 
 }

@@ -15,24 +15,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.karaf.core.Karaf;
-import org.apache.karaf.core.KarafConfig;
-import org.junit.jupiter.api.Test;
+package org.apache.karaf.core.specs;
 
-public class ExtensionTest {
+import java.util.concurrent.Callable;
 
-    @Test
-    public void test() throws Exception {
-        System.setProperty("karaf.startLocalConsole", "true");
-        Karaf karaf = Karaf.build(KarafConfig.builder()
-                .homeDirectory("target/karaf")
-                .dataDirectory("target/karaf/data")
-                .cacheDirectory("target/karaf/data/cache")
-                .clearCache(true)
-                .build());
-        karaf.init();
-        karaf.addExtension("file:src/main/resources/KARAF-INF/extension.json");
-        karaf.start();
+public class MockCallable implements Callable<Class> {
+
+    @Override
+    public Class call() throws Exception {
+        return this.getClass();
     }
 
 }

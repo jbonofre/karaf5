@@ -25,6 +25,8 @@ import org.apache.karaf.core.maven.Resolver;
 import org.apache.karaf.core.module.BundleModule;
 import org.apache.karaf.core.module.MicroprofileModule;
 import org.apache.karaf.core.module.SpringBootModule;
+import org.apache.karaf.core.specs.Listener;
+import org.apache.karaf.core.specs.Locator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -118,6 +120,11 @@ public class Karaf {
         sl.setInitialBundleStartLevel(this.config.defaultBundleStartLevel());
 
         if (framework.getBundleContext().getBundles().length != 1) {
+
+            log.info("Starting specs listener");
+            Listener listener = new Listener();
+            listener.start(getBundleContext());
+
             loadModules();
             loadExtensions();
         }
