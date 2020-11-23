@@ -82,6 +82,16 @@ public class SpringBootModule implements Module {
         }
     }
 
+    @Override
+    public boolean is(String id) {
+        return false;
+    }
+
+    @Override
+    public void remove(String bundleId) {
+        // TODO
+    }
+
     public String getManifestAttribute(String url, String attribute) {
         try {
             if (url.startsWith("http:") || url.startsWith("https:")) {

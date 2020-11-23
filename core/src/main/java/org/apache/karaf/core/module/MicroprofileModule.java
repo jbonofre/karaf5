@@ -29,4 +29,14 @@ public class MicroprofileModule implements Module {
         throw new IllegalStateException("Microprofile module is not yet supported");
     }
 
+    @Override
+    public boolean is(String id) {
+        return false;
+    }
+
+    @Override
+    public void remove(String id) {
+        // TODO
+    }
+
 }

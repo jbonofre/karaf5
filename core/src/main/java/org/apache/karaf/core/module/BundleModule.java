@@ -100,7 +100,32 @@ public class BundleModule implements Module {
                 moduleModel.getMetadata().put(header, bundle.getHeaders().get(header));
             }
             moduleModel.getMetadata().put("State", bundle.getState());
-            Karaf.modules.add(moduleModel);
+            Karaf.modules.put(String.valueOf(bundle.getBundleId()), moduleModel);
+        } finally {
+            Karaf.modulesLock.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public boolean is(String id) {
+        return (framework.getBundleContext().getBundle(Long.parseLong(id)) != null);
+    }
+
+    @Override
+    public void remove(String bundleId) throws Exception {
+        Karaf.modulesLock.writeLock().lock();
+        try {
+            Bundle bundle = framework.getBundleContext().getBundle(Long.parseLong(bundleId));
+            if (bundle == null) {
+                throw new IllegalArgumentException("Module " + bundleId + " not found or not an OSGi bundle");
+            }
+            try {
+                bundle.uninstall();
+            } catch (Exception e) {
+                throw new IllegalStateException("Can't remove OSGi module " + bundleId + ": " + e.getMessage(), e);
+            }
+            Karaf.modules.remove(bundleId);
+            log.info("OSGi module " + bundle.getSymbolicName() + " uninstalled");
         } finally {
             Karaf.modulesLock.writeLock().unlock();
         }

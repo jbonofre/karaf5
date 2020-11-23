@@ -57,7 +57,7 @@ public class Karaf {
     private Resolver resolver;
     private long start;
 
-    public final static List<org.apache.karaf.core.model.Module> modules = new LinkedList<>();
+    public final static Map<String, org.apache.karaf.core.model.Module> modules = new HashMap<>();
     public final static ReadWriteLock modulesLock = new ReentrantReadWriteLock();
 
     public final static List<Extension> extensions = new LinkedList<>();
@@ -246,12 +246,31 @@ public class Karaf {
         }
     }
 
+    public void removeModule(String id) throws Exception {
+        log.info("Uninstalling module " + id);
+
+        BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
+        if (bundleModule.is(id)) {
+            bundleModule.remove(id);
+        }
+
+        SpringBootModule springBootModule = new SpringBootModule();
+        if (springBootModule.is(id)) {
+            springBootModule.remove(id);
+        }
+
+        MicroprofileModule microprofileModule = new MicroprofileModule();
+        if (microprofileModule.is(id)) {
+            microprofileModule.remove(id);
+        }
+    }
+
     public void addExtension(String url) throws Exception {
         log.info("Loading extension from " + url);
         org.apache.karaf.core.extension.Loader.load(url, this);
     }
 
-    public List<Module> getModules() {
+    public Map<String, Module> getModules() {
         Karaf.modulesLock.readLock().lock();
         try {
             return modules;

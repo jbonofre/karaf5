@@ -21,6 +21,10 @@ public interface Module {
 
     boolean canHandle(String url);
 
+    boolean is(String id);
+
     void add(String url, String ... args) throws Exception;
+
+    void remove(String id) throws Exception;
 
 }

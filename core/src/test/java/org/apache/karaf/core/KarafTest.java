@@ -21,9 +21,8 @@ import lombok.extern.java.Log;
 import org.apache.karaf.core.model.Module;
 import org.junit.jupiter.api.*;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
 
-import java.util.List;
+import java.util.Map;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
@@ -41,9 +40,26 @@ public class KarafTest {
         karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
         karaf.start();
 
-        List<Module> modules = karaf.getModules();
-        Module module = modules.get(0);
+        Map<String, Module> modules = karaf.getModules();
+        Module module = modules.get("1");
         Assertions.assertEquals(Bundle.ACTIVE, module.getMetadata().get("State"));
+    }
+
+    @Test
+    public void testAddRemoveBundleModule() throws Exception {
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/addremove")
+                .clearCache(true)
+                .build());
+        karaf.init();
+        karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        Assertions.assertEquals(1, karaf.getModules().size());
+        Module module = karaf.getModules().get("1");
+        Assertions.assertEquals(Bundle.ACTIVE, module.getMetadata().get("State"));
+        karaf.removeModule("1");
+        Assertions.assertEquals(0, karaf.getModules().size());
+        karaf.start();
     }
 
     @Test
