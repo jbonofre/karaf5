@@ -19,10 +19,8 @@ package org.apache.karaf.core.extension;
 
 import lombok.extern.java.Log;
 import org.apache.karaf.core.Karaf;
-import org.apache.karaf.core.extension.model.Module;
-import org.apache.karaf.core.extension.model.Extension;
-import org.apache.karaf.core.maven.Resolver;
-import org.osgi.framework.BundleContext;
+import org.apache.karaf.core.model.Module;
+import org.apache.karaf.core.model.Extension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,41 +34,47 @@ import java.util.zip.ZipException;
 public class Loader {
 
     public static void load(String url, Karaf karaf) throws Exception {
-        String resolved = karaf.getResolver().resolve(url);
-        if (resolved == null) {
-            throw new IllegalArgumentException(url + " not found");
-        }
-        if (resolved.startsWith("file:")) {
-            resolved = resolved.substring("file:".length());
-        }
-        InputStream inputStream;
+        Karaf.extensionsLock.writeLock().lock();
         try {
-            JarFile jarFile = new JarFile(new File(resolved));
-            ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
-            if (entry == null) {
-                throw new IllegalArgumentException(url + " is not a Karaf extension");
+            String resolved = karaf.getResolver().resolve(url);
+            if (resolved == null) {
+                throw new IllegalArgumentException(url + " not found");
             }
-            inputStream = jarFile.getInputStream(entry);
-        } catch (ZipException zipException) {
-            log.log(Level.FINE, url + " is not a jar file");
-            inputStream = new FileInputStream(new File(resolved));
-        }
-        Extension extension = org.apache.karaf.core.extension.model.Loader.read(inputStream);
-        log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
-        if (extension.getExtension() != null) {
-            for (String innerExtension : extension.getExtension()) {
-                load(karaf.getResolver().resolve(innerExtension), karaf);
+            if (resolved.startsWith("file:")) {
+                resolved = resolved.substring("file:".length());
             }
-        }
-        if (extension.getModule() != null) {
-            for (Module module : extension.getModule()) {
-                String moduleUrl = karaf.getResolver().resolve(module.getLocation());
-                if (moduleUrl == null) {
-                    throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
-                } else {
-                    karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+            InputStream inputStream;
+            try {
+                JarFile jarFile = new JarFile(new File(resolved));
+                ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
+                if (entry == null) {
+                    throw new IllegalArgumentException(url + " is not a Karaf extension");
+                }
+                inputStream = jarFile.getInputStream(entry);
+            } catch (ZipException zipException) {
+                log.log(Level.FINE, url + " is not a jar file");
+                inputStream = new FileInputStream(new File(resolved));
+            }
+            Extension extension = org.apache.karaf.core.model.Loader.read(inputStream);
+            log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
+            if (extension.getExtension() != null) {
+                for (String innerExtension : extension.getExtension()) {
+                    load(karaf.getResolver().resolve(innerExtension), karaf);
                 }
             }
+            if (extension.getModule() != null) {
+                for (Module module : extension.getModule()) {
+                    String moduleUrl = karaf.getResolver().resolve(module.getLocation());
+                    if (moduleUrl == null) {
+                        throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
+                    } else {
+                        karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+                    }
+                }
+            }
+            Karaf.extensions.add(extension);
+        } finally {
+            Karaf.extensionsLock.writeLock().unlock();
         }
     }
 

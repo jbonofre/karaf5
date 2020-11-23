@@ -18,9 +18,12 @@
 package org.apache.karaf.core;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.core.model.Module;
 import org.junit.jupiter.api.*;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
+
+import java.util.List;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
@@ -38,8 +41,9 @@ public class KarafTest {
         karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
         karaf.start();
 
-        Bundle bundle = karaf.getBundleContext().getBundle(1);
-        Assertions.assertEquals(Bundle.ACTIVE, bundle.getState());
+        List<Module> modules = karaf.getModules();
+        Module module = modules.get(0);
+        Assertions.assertEquals(Bundle.ACTIVE, module.getMetadata().get("State"));
     }
 
     @Test
@@ -84,10 +88,7 @@ public class KarafTest {
         karaf.init();
         karaf.start();
 
-        ServiceReference<Karaf> reference = karaf.getBundleContext().getServiceReference(Karaf.class);
-        Assertions.assertNotNull(reference);
-        Karaf service = karaf.getBundleContext().getService(reference);
-        Assertions.assertNotNull(service);
+        Assertions.assertNotNull(karaf.getService(Karaf.class));
     }
 
 }

@@ -18,6 +18,7 @@
 package org.apache.karaf.core.module;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.core.Karaf;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
@@ -25,6 +26,7 @@ import org.osgi.framework.startlevel.BundleStartLevel;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
@@ -66,25 +68,41 @@ public class BundleModule implements Module {
 
     @Override
     public void add(String url) throws Exception {
-        log.info("Installing OSGi bundle module " + url);
-        if (!url.startsWith("file:") && !url.startsWith("http:") && !url.startsWith("https:")) {
-            url = "file:" + url;
-        }
-        Bundle bundle;
+        Karaf.modulesLock.writeLock().lock();
         try {
-            bundle = framework.getBundleContext().installBundle(url);
-            bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
-        } catch (Exception e) {
-            throw new Exception("Unable to install OSGi bundle module " + url + ": " + e.toString(), e);
-        }
-        log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
-        try {
-            // framework.adapt(FrameworkWiring.class).resolveBundles(null);
-            if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
-                bundle.start();
+            log.info("Installing OSGi bundle module " + url);
+            if (!url.startsWith("file:") && !url.startsWith("http:") && !url.startsWith("https:")) {
+                url = "file:" + url;
             }
-        } catch (Exception e) {
-            throw new Exception("Unable to start OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
+            Bundle bundle;
+            try {
+                bundle = framework.getBundleContext().installBundle(url);
+                bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
+            } catch (Exception e) {
+                throw new Exception("Unable to install OSGi bundle module " + url + ": " + e.toString(), e);
+            }
+            log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
+            try {
+                // framework.adapt(FrameworkWiring.class).resolveBundles(null);
+                if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
+                    bundle.start();
+                }
+            } catch (Exception e) {
+                throw new Exception("Unable to start OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
+            }
+            org.apache.karaf.core.model.Module moduleModel = new org.apache.karaf.core.model.Module();
+            moduleModel.setId(String.valueOf(bundle.getBundleId()));
+            moduleModel.setName(bundle.getSymbolicName());
+            moduleModel.setLocation(url);
+            Enumeration<String> headers = bundle.getHeaders().keys();
+            while (headers.hasMoreElements()) {
+                String header = headers.nextElement();
+                moduleModel.getMetadata().put(header, bundle.getHeaders().get(header));
+            }
+            moduleModel.getMetadata().put("State", bundle.getState());
+            Karaf.modules.add(moduleModel);
+        } finally {
+            Karaf.modulesLock.writeLock().unlock();
         }
     }
 

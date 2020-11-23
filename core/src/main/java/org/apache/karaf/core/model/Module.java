@@ -15,22 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.extension.model;
+package org.apache.karaf.core.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 
-import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Loader {
+@Data
+public class Module {
 
-    private final static ObjectMapper objectMapper;
+    private String id;
+    private String name;
+    private String location;
 
-    static {
-        objectMapper = new ObjectMapper();
-    }
-
-    public final static Extension read(InputStream inputStream) throws Exception {
-        return objectMapper.readValue(inputStream, Extension.class);
-    }
+    private Map<String, Object> metadata = new HashMap<>();
 
 }

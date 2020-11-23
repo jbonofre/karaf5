@@ -22,14 +22,16 @@ import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.karaf.core.maven.Resolver;
+import org.apache.karaf.core.model.Extension;
+import org.apache.karaf.core.model.Module;
 import org.apache.karaf.core.module.BundleModule;
 import org.apache.karaf.core.module.MicroprofileModule;
 import org.apache.karaf.core.module.SpringBootModule;
 import org.apache.karaf.core.specs.Listener;
-import org.apache.karaf.core.specs.Locator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 
@@ -38,7 +40,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 @Log
@@ -50,6 +56,12 @@ public class Karaf {
     private Framework framework = null;
     private Resolver resolver;
     private long start;
+
+    public final static List<org.apache.karaf.core.model.Module> modules = new LinkedList<>();
+    public final static ReadWriteLock modulesLock = new ReentrantReadWriteLock();
+
+    public final static List<Extension> extensions = new LinkedList<>();
+    public final static ReadWriteLock extensionsLock = new ReentrantReadWriteLock();
 
     private Karaf(KarafConfig config) {
         this.config = config;
@@ -126,10 +138,10 @@ public class Karaf {
 
             log.info("Starting specs listener");
             Listener listener = new Listener();
-            listener.start(getBundleContext());
+            listener.start(framework.getBundleContext());
 
             log.info("Registering Karaf service");
-            getBundleContext().registerService(Karaf.class, this, null);
+            framework.getBundleContext().registerService(Karaf.class, this, null);
 
             loadModules();
             loadExtensions();
@@ -239,8 +251,34 @@ public class Karaf {
         org.apache.karaf.core.extension.Loader.load(url, this);
     }
 
-    public BundleContext getBundleContext() {
-        return framework.getBundleContext();
+    public List<Module> getModules() {
+        Karaf.modulesLock.readLock().lock();
+        try {
+            return modules;
+        } finally {
+            Karaf.modulesLock.readLock().unlock();
+        }
+    }
+
+    public List<Extension> getExtensions() {
+        Karaf.extensionsLock.readLock().lock();
+        try {
+            return extensions;
+        } finally {
+            Karaf.extensionsLock.readLock().unlock();
+        }
+    }
+
+    public Object getService(Class clazz) {
+        ServiceReference reference = framework.getBundleContext().getServiceReference(clazz);
+        if (reference != null) {
+            return framework.getBundleContext().getService(reference);
+        }
+        return null;
+    }
+
+    public void addService(Class clazz, Object object) {
+        framework.getBundleContext().registerService(clazz, object, null);
     }
 
     public Resolver getResolver() {

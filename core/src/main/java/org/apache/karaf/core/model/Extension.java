@@ -15,13 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.extension.model;
+package org.apache.karaf.core.model;
 
 import lombok.Data;
 
-@Data
-public class Module {
+import java.util.List;
 
-    private String location;
+@Data
+public class Extension {
+
+    private String id;
+    private String name;
+    private String version;
+    private String description;
+
+    private List<String> extension;
+    private List<Module> module;
 
 }
