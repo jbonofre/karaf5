@@ -23,6 +23,11 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.BundleStartLevel;
 
+import java.io.File;
+import java.net.URL;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+
 /**
  * OSGi Bundle Module.
  */
@@ -39,7 +44,24 @@ public class BundleModule implements Module {
 
     @Override
     public boolean canHandle(String url) {
-        return true;
+        try {
+            if (url.startsWith("http") || url.startsWith("https")) {
+                try (JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream())) {
+                    if (jarInputStream.getManifest().getMainAttributes().getValue("Bundle-Version") != null) {
+                        return true;
+                    }
+                }
+            } else {
+                try (JarFile jarFile = new JarFile(new File(url))) {
+                    if (jarFile.getManifest().getMainAttributes().getValue("Bundle-Version") != null) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // no-op
+        }
+        return false;
     }
 
     @Override
