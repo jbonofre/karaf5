@@ -21,6 +21,6 @@ public interface Module {
 
     boolean canHandle(String url);
 
-    void add(String url) throws Exception;
+    void add(String url, String ... args) throws Exception;
 
 }

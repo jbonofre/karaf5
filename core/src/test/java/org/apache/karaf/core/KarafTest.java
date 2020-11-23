@@ -31,7 +31,7 @@ public class KarafTest {
 
     @Test
     @Order(1)
-    public void testKarafRunWithResolvedModule() throws Exception {
+    public void testKarafRunWithResolvedBundleModule() throws Exception {
         Karaf karaf = Karaf.build(KarafConfig.builder()
                 .homeDirectory("target/karaf")
                 .cacheDirectory("target/karaf/cache/1")
@@ -48,7 +48,7 @@ public class KarafTest {
 
     @Test
     @Order(2)
-    public void testKarafRunWithUnresolvedModule() throws Exception {
+    public void testKarafRunWithUnresolvedBundleModule() throws Exception {
         Karaf karaf = Karaf.build(KarafConfig.builder()
                 .homeDirectory("target/karaf")
                 .cacheDirectory("target/karaf/cache/2")
@@ -62,6 +62,20 @@ public class KarafTest {
         } catch (Exception e) {
             // no-op
         }
+    }
+
+    @Test
+    public void testKarafRunWithSpringBootModule() throws Exception {
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/spring")
+                .clearCache(true)
+                .build());
+        karaf.init();
+
+        karaf.addModule("file:src/test/resources/rest-service-0.0.1-SNAPSHOT.jar");
+
+        karaf.start();
     }
 
     @Test

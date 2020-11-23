@@ -67,7 +67,7 @@ public class BundleModule implements Module {
     }
 
     @Override
-    public void add(String url) throws Exception {
+    public void add(String url, String ... args) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
             log.info("Installing OSGi bundle module " + url);
