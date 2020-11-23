@@ -44,6 +44,8 @@ import java.util.logging.Level;
 @Log
 public class Karaf {
 
+    private static Karaf instance;
+
     private KarafConfig config;
     private Framework framework = null;
     private Resolver resolver;
@@ -51,6 +53,7 @@ public class Karaf {
 
     private Karaf(KarafConfig config) {
         this.config = config;
+        instance = this;
     }
 
     public static Karaf build() {
@@ -64,7 +67,7 @@ public class Karaf {
     public void init() throws Exception {
         start = System.currentTimeMillis();
 
-        resolver = new Resolver(config.mavenRepositories());
+        resolver = new Resolver(config.mavenRepositories);
 
         if (System.getProperty("java.util.logging.config.file") == null) {
             if (System.getenv("KARAF_LOG_FORMAT") != null) {
@@ -85,16 +88,16 @@ public class Karaf {
                 "\n" +
                 "  Apache Karaf (5.0.0-SNAPSHOT)\n");
 
-        log.info("Base directory: " + this.config.homeDirectory());
-        log.info("Cache directory: " + this.config.cacheDirectory());
+        log.info("Base directory: " + this.config.homeDirectory);
+        log.info("Cache directory: " + this.config.cacheDirectory);
         Map<String, Object> config = new HashMap<>();
-        config.put(Constants.FRAMEWORK_STORAGE, this.config.cacheDirectory());
-        if (this.config.clearCache()) {
+        config.put(Constants.FRAMEWORK_STORAGE, this.config.cacheDirectory);
+        if (this.config.clearCache) {
             config.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
         config.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "100");
         config.put(FelixConstants.LOG_LEVEL_PROP, "3");
-        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cacheDirectory());
+        config.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.cacheDirectory);
         String bootDelegation = loadBootDelegation();
         if (bootDelegation != null) {
             log.info("Using predefined boot delegation");
@@ -117,13 +120,16 @@ public class Karaf {
         }
 
         FrameworkStartLevel sl = framework.adapt(FrameworkStartLevel.class);
-        sl.setInitialBundleStartLevel(this.config.defaultBundleStartLevel());
+        sl.setInitialBundleStartLevel(this.config.defaultBundleStartLevel);
 
-        if (framework.getBundleContext().getBundles().length != 1) {
+        if (framework.getBundleContext().getBundles().length == 1) {
 
             log.info("Starting specs listener");
             Listener listener = new Listener();
             listener.start(getBundleContext());
+
+            log.info("Registering Karaf service");
+            getBundleContext().registerService(Karaf.class, this, null);
 
             loadModules();
             loadExtensions();
@@ -212,7 +218,7 @@ public class Karaf {
             throw new IllegalArgumentException("Module " + url + " not found");
         }
 
-        BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel());
+        BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
         if (bundleModule.canHandle(resolved)) {
             bundleModule.add(resolved);
         }
@@ -239,6 +245,10 @@ public class Karaf {
 
     public Resolver getResolver() {
         return this.resolver;
+    }
+
+    public static Karaf get() {
+        return instance;
     }
 
 }

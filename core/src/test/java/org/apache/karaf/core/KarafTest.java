@@ -20,6 +20,7 @@ package org.apache.karaf.core;
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.*;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceReference;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
@@ -58,4 +59,35 @@ public class KarafTest {
             // no-op
         }
     }
+
+    @Test
+    public void testKarafGet() throws Exception {
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/3")
+                .clearCache(true)
+                .build());
+        karaf.init();
+        karaf.start();
+
+        Karaf instance = Karaf.get();
+        Assertions.assertEquals(karaf, instance);
+    }
+
+    @Test
+    public void testKarafService() throws Exception {
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/4")
+                .clearCache(true)
+                .build());
+        karaf.init();
+        karaf.start();
+
+        ServiceReference<Karaf> reference = karaf.getBundleContext().getServiceReference(Karaf.class);
+        Assertions.assertNotNull(reference);
+        Karaf service = karaf.getBundleContext().getService(reference);
+        Assertions.assertNotNull(service);
+    }
+
 }
