@@ -64,7 +64,6 @@ public class Resolver {
                 try {
                     String concat = mavenRepository + "/" + uri;
                     InputStream inputStream = new URL(concat).openStream();
-                    log.info(concat + " found");
                     return concat;
                 } catch (IOException ioException) {
                     log.log(Level.FINE, "Artifact " + artifactUri + " not found on " + mavenRepository, ioException);
