@@ -29,8 +29,15 @@ public class MainTest {
 
         Karaf karaf = Karaf.get();
 
+        // check status
         for (String id : karaf.getModules().keySet()) {
-            System.out.println(id + ": " + karaf.getModules().get(id).getName());
+            System.out.println(id + ": ");
+            System.out.println("\tName: " + karaf.getModules().get(id).getName());
+            System.out.println("\tLocation: " + karaf.getModules().get(id).getLocation());
+            System.out.println("\tMetadata:");
+            for (String meta : karaf.getModules().get(id).getMetadata().keySet()) {
+                System.out.println("\t\t" + meta + ":" + karaf.getModules().get(id).getMetadata().get(meta));
+            }
         }
     }
 

@@ -43,6 +43,7 @@ public class Main {
         karaf = Karaf.build(config);
         karaf.init();
         System.setProperty("karaf.startLocalConsole", "true");
+        karaf.addExtension("mvn:org.apache.karaf.extensions/log/5.0.0-SNAPSHOT");
         karaf.addModule("mvn:org.ops4j.pax.url/pax-url-aether/2.6.2");
         karaf.addModule("mvn:org.apache.karaf.services/org.apache.karaf.services.eventadmin/4.3.0");
         karaf.addExtension("mvn:org.apache.karaf.extensions/shell/5.0.0-SNAPSHOT");
