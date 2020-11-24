@@ -17,6 +17,7 @@
  */
 package org.apache.karaf.distribution.network;
 
+import org.apache.karaf.core.Karaf;
 import org.junit.jupiter.api.Test;
 
 public class MainTest {
@@ -25,6 +26,12 @@ public class MainTest {
     public void test() throws Exception {
         Main main = new Main(new String[]{});
         main.launch();
+
+        Karaf karaf = Karaf.get();
+
+        for (String id : karaf.getModules().keySet()) {
+            System.out.println(id + ": " + karaf.getModules().get(id).getName());
+        }
     }
 
 }

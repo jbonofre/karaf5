@@ -54,6 +54,9 @@ public class BundleModule implements Module {
                     }
                 }
             } else {
+                if (url.startsWith("file:")) {
+                    url = url.substring("file:".length());
+                }
                 try (JarFile jarFile = new JarFile(new File(url))) {
                     if (jarFile.getManifest().getMainAttributes().getValue("Bundle-Version") != null) {
                         return true;
