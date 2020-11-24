@@ -35,6 +35,7 @@
 
     <modules>
         <module>log</module>
+        <module>pax-logging</module>
         <module>config</module>
         <module>scr</module>
         <module>jaas</module>
