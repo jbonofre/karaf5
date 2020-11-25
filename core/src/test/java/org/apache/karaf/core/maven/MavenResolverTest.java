@@ -24,12 +24,9 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 @Log
-public class ResolverTest {
+public class MavenResolverTest {
 
     @Test
     public void testResolve() throws Exception {
@@ -44,15 +41,15 @@ public class ResolverTest {
             writer.write("This a test");
         }
 
-        Resolver resolver = new Resolver("https://repo1.maven.org/maven2,file:target/repository");
+        MavenResolver mavenResolver = new MavenResolver("https://repo1.maven.org/maven2,file:target/repository");
 
         Assertions.assertEquals("https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar",
-                resolver.resolve("mvn:commons-lang/commons-lang/2.6"));
+                mavenResolver.resolve("mvn:commons-lang/commons-lang/2.6"));
 
         Assertions.assertEquals("file:target/repository/org/example/test/1.0-SNAPSHOT/test-1.0-SNAPSHOT.txt",
-                resolver.resolve("mvn:org.example/test/1.0-SNAPSHOT/txt"));
+                mavenResolver.resolve("mvn:org.example/test/1.0-SNAPSHOT/txt"));
 
-        Assertions.assertNull(resolver.resolve("mvn:myGroupId/myArtifactId/1.0-SNAPSHOT"));
+        Assertions.assertNull(mavenResolver.resolve("mvn:myGroupId/myArtifactId/1.0-SNAPSHOT"));
     }
 
 }

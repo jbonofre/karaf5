@@ -28,6 +28,7 @@ public class Module {
     private String id;
     private String name;
     private String location;
+    private Integer startLevel;
 
     private Map<String, Object> metadata = new HashMap<>();
 

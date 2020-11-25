@@ -2,9 +2,7 @@
   "name": "log",
   "version": "5.0.0-SNAPSHOT",
   "module": [
-    { "location": "mvn:org.slf4j/slf4j-simple/1.7.30" },
-    { "location": "mvn:org.slf4j/slf4j-api/1.7.30" },
-    { "location": "mvn:commons-logging/commons-logging/1.2"},
-    { "location": "mvn:org.apache.felix/org.apache.felix.log/1.2.4" }
+    { "location": "mvn:org.ops4j.pax.logging/pax-logging-api/2.0.6", "startLevel": 8 },
+    { "location": "mvn:org.ops4j.pax.logging/pax-logging-log4j2/2.0.6", "startLevel": 8 }
   ]
 }

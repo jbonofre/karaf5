@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * Parser for mvn: URL.
  */
-public class Parser {
+public class MavenUrlParser {
 
     private static final Pattern VERSION_FILE_PATTERN = Pattern.compile("^(.*)-([0-9]{8}\\.[0-9]{6})-([0-9]+)$");
 
@@ -135,7 +135,7 @@ public class Parser {
      * @param url the URL.
      * @throws java.net.MalformedURLException if provided URL is not valid.
      */
-    public Parser(final String url) throws MalformedURLException {
+    public MavenUrlParser(final String url) throws MalformedURLException {
         if (url == null) {
             throw new MalformedURLException("URL can not be null. Syntax " + SYNTAX);
         }
@@ -166,28 +166,28 @@ public class Parser {
         if (!uri.startsWith("mvn:")) {
             return uri;
         }
-        Parser parser = new Parser(uri.substring("mvn:".length()));
+        MavenUrlParser mavenUrlParser = new MavenUrlParser(uri.substring("mvn:".length()));
         if (resolved != null) {
             String grp = FILE_SEPARATOR
-                    + parser.getGroupId().replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR)
+                    + mavenUrlParser.getGroupId().replaceAll(GROUP_SEPARATOR, FILE_SEPARATOR)
                     + FILE_SEPARATOR
-                    + parser.getArtifactId()
+                    + mavenUrlParser.getArtifactId()
                     + FILE_SEPARATOR;
             int idx = resolved.indexOf(grp);
             if (idx >= 0) {
                 String version = resolved.substring(idx + grp.length(), resolved.indexOf('/', idx + grp.length()));
-                return parser.getArtifactPath(version);
+                return mavenUrlParser.getArtifactPath(version);
             }
         }
-        return parser.getArtifactPath();
+        return mavenUrlParser.getArtifactPath();
     }
 
     public static String fileNameFromMaven(String uri, boolean exclude) throws MalformedURLException {
         if (!uri.startsWith("mvn:")) {
             return uri;
         }
-        Parser parser = new Parser(uri.substring("mvn:".length()));
-        return parser.getArtifactFileName(parser.getVersion(), exclude);
+        MavenUrlParser mavenUrlParser = new MavenUrlParser(uri.substring("mvn:".length()));
+        return mavenUrlParser.getArtifactFileName(mavenUrlParser.getVersion(), exclude);
     }
 
     public static String pathToMaven(String location, Map parts) {

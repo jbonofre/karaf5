@@ -21,32 +21,32 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class LocatorTest {
+public class SpecsLocatorTest {
 
     @BeforeAll
     public static void setup() {
-        Locator.register("Factory", new MockCallable());
-        Locator.register("Factory", new MockCallable2());
+        SpecsLocator.register("Factory", new MockCallable());
+        SpecsLocator.register("Factory", new MockCallable2());
     }
 
     @Test
     public void testLocatorWithSystemProperty() {
-        System.setProperty(Locator.TIMEOUT, "0");
+        System.setProperty(SpecsLocator.TIMEOUT, "0");
         System.setProperty("Factory", "org.apache.karaf.core.specs.MockCallable");
-        Class clazz = Locator.locate(Object.class, "Factory");
+        Class clazz = SpecsLocator.locate(Object.class, "Factory");
         Assertions.assertNotNull(clazz);
         Assertions.assertEquals(MockCallable.class.getName(), clazz.getName());
 
         System.setProperty("Factory", "org.apache.karaf.core.specs.foo");
-        clazz = Locator.locate(Object.class, "Factory");
+        clazz = SpecsLocator.locate(Object.class, "Factory");
         Assertions.assertNull(clazz);
     }
 
     @Test
     public void testLocatorWithoutSystemProperty() {
-        System.setProperty(Locator.TIMEOUT, "0");
+        System.setProperty(SpecsLocator.TIMEOUT, "0");
         System.clearProperty("Factory");
-        Class clazz = Locator.locate(Object.class, "Factory");
+        Class clazz = SpecsLocator.locate(Object.class, "Factory");
         Assertions.assertNotNull(clazz);
         Assertions.assertEquals(MockCallable2.class.getName(), clazz.getName());
     }
@@ -54,15 +54,15 @@ public class LocatorTest {
     @Test
     public void testLocatorWithSystemPropertyAndTimeout() {
         long timeout = 1000;
-        System.setProperty(Locator.TIMEOUT, Long.toString(timeout));
+        System.setProperty(SpecsLocator.TIMEOUT, Long.toString(timeout));
         System.setProperty("Factory", "org.apache.karaf.core.specs.MockCallable");
-        Class clazz = Locator.locate(Object.class, "Factory");
+        Class clazz = SpecsLocator.locate(Object.class, "Factory");
         Assertions.assertNotNull(clazz);
         Assertions.assertEquals(MockCallable.class.getName(), clazz.getName());
 
         System.setProperty("Factory", "org.apache.karaf.specs.locator");
         long t0 = System.currentTimeMillis();
-        clazz = Locator.locate(Object.class, "Factory");
+        clazz = SpecsLocator.locate(Object.class, "Factory");
         long t1 = System.currentTimeMillis();
         Assertions.assertNull(clazz);
         Assertions.assertTrue((t1 - t0) > timeout / 2);
@@ -71,10 +71,10 @@ public class LocatorTest {
     @Test
     public void testLocatorWithoutSystemPropertyAndTimeout() {
         long timeout = 1000;
-        System.setProperty(Locator.TIMEOUT, Long.toString(timeout));
+        System.setProperty(SpecsLocator.TIMEOUT, Long.toString(timeout));
         System.clearProperty("Factory");
         long t0 = System.currentTimeMillis();
-        Class clazz = Locator.locate(Object.class, "Factory");
+        Class clazz = SpecsLocator.locate(Object.class, "Factory");
         long t1 = System.currentTimeMillis();
         Assertions.assertNotNull(clazz);
         Assertions.assertEquals(MockCallable2.class.getName(), clazz.getName());

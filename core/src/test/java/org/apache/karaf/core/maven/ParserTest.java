@@ -25,21 +25,21 @@ public class ParserTest {
     @Test
     public void testPath() throws Exception {
         String uri = "mvn:org.mygroup/myartifact/1.0-SNAPSHOT";
-        String parsed = Parser.pathFromMaven(uri);
+        String parsed = MavenUrlParser.pathFromMaven(uri);
         Assertions.assertEquals("org/mygroup/myartifact/1.0-SNAPSHOT/myartifact-1.0-SNAPSHOT.jar", parsed);
     }
 
     @Test
     public void testWithRepository() throws Exception {
         String uri = "mvn:https://repo1.maven.org/maven2!org.mygroup/myartifact/1.0-SNAPSHOT";
-        String parsed = Parser.pathFromMaven(uri);
+        String parsed = MavenUrlParser.pathFromMaven(uri);
         Assertions.assertEquals("https://repo1.maven.org/maven2/org/mygroup/myartifact/1.0-SNAPSHOT/myartifact-1.0-SNAPSHOT.jar", parsed);
     }
 
     @Test
     public void testFileName() throws Exception {
         String uri = "mvn:org.mygroup/myartifact/1.0-SNAPSHOT";
-        String parsed = Parser.fileNameFromMaven(uri, false);
+        String parsed = MavenUrlParser.fileNameFromMaven(uri, false);
         Assertions.assertEquals("myartifact-1.0-SNAPSHOT.jar", parsed);
     }
 

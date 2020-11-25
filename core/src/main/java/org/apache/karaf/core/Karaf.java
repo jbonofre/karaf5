@@ -21,14 +21,14 @@ import lombok.extern.java.Log;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
-import org.apache.karaf.core.maven.Resolver;
+import org.apache.karaf.core.extension.ExtensionLoader;
+import org.apache.karaf.core.maven.MavenResolver;
 import org.apache.karaf.core.model.Extension;
 import org.apache.karaf.core.model.Module;
 import org.apache.karaf.core.module.BundleModule;
 import org.apache.karaf.core.module.MicroprofileModule;
 import org.apache.karaf.core.module.SpringBootModule;
-import org.apache.karaf.core.specs.Listener;
-import org.osgi.framework.BundleContext;
+import org.apache.karaf.core.specs.SpecsListener;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -54,7 +54,7 @@ public class Karaf {
 
     private KarafConfig config;
     private Framework framework = null;
-    private Resolver resolver;
+    private MavenResolver mavenResolver;
     private long start;
 
     public final static Map<String, org.apache.karaf.core.model.Module> modules = new HashMap<>();
@@ -79,7 +79,7 @@ public class Karaf {
     public void init() throws Exception {
         start = System.currentTimeMillis();
 
-        resolver = new Resolver(config.mavenRepositories);
+        mavenResolver = new MavenResolver(config.mavenRepositories);
 
         if (System.getProperty("java.util.logging.config.file") == null) {
             if (System.getenv("KARAF_LOG_FORMAT") != null) {
@@ -137,8 +137,8 @@ public class Karaf {
         if (framework.getBundleContext().getBundles().length == 1) {
 
             log.info("Starting specs listener");
-            Listener listener = new Listener();
-            listener.start(framework.getBundleContext());
+            SpecsListener specsListener = new SpecsListener();
+            specsListener.start(framework.getBundleContext());
 
             log.info("Registering Karaf service");
             framework.getBundleContext().registerService(Karaf.class, this, null);
@@ -205,7 +205,7 @@ public class Karaf {
         if (modulesEnv != null) {
             String[] modulesSplit = modulesEnv.split(",");
             for (String module : modulesSplit) {
-                addModule(module);
+                addModule(module, config.defaultBundleStartLevel);
             }
         }
     }
@@ -222,9 +222,13 @@ public class Karaf {
     }
 
     public void addModule(String url) throws Exception {
+        addModule(url, null);
+    }
+
+    public void addModule(String url, Integer startLevel) throws Exception {
         log.info("Installing module " + url);
 
-        String resolved = resolver.resolve(url);
+        String resolved = mavenResolver.resolve(url);
 
         if (resolved == null) {
             throw new IllegalArgumentException("Module " + url + " not found");
@@ -232,17 +236,17 @@ public class Karaf {
 
         BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
         if (bundleModule.canHandle(resolved)) {
-            bundleModule.add(resolved);
+            bundleModule.add(resolved, startLevel);
         }
 
         SpringBootModule springBootModule = new SpringBootModule();
         if (springBootModule.canHandle(resolved)) {
-            springBootModule.add(resolved);
+            springBootModule.add(resolved, startLevel);
         }
 
         MicroprofileModule microprofileModule = new MicroprofileModule();
         if (microprofileModule.canHandle(resolved)) {
-            microprofileModule.add(resolved);
+            microprofileModule.add(resolved, startLevel);
         }
     }
 
@@ -267,7 +271,7 @@ public class Karaf {
 
     public void addExtension(String url) throws Exception {
         log.info("Loading extension from " + url);
-        org.apache.karaf.core.extension.Loader.load(url, this);
+        ExtensionLoader.load(url, this);
     }
 
     public Map<String, Module> getModules() {
@@ -300,8 +304,8 @@ public class Karaf {
         framework.getBundleContext().registerService(clazz, object, null);
     }
 
-    public Resolver getResolver() {
-        return this.resolver;
+    public MavenResolver getResolver() {
+        return this.mavenResolver;
     }
 
     public static Karaf get() {

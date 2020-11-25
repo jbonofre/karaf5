@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 
-public class LoaderTest {
+public class ModelLoaderTest {
 
     @Test
     public void testRead() throws Exception {
@@ -36,7 +36,7 @@ public class LoaderTest {
                 "{ \"location\": \"url\" }" +
                 "]" +
                 "}";
-        Extension extension = Loader.read(new ByteArrayInputStream(json.getBytes()));
+        Extension extension = ModelLoader.read(new ByteArrayInputStream(json.getBytes()));
         Assertions.assertEquals("test", extension.getName());
         Assertions.assertEquals("1.0", extension.getVersion());
         Assertions.assertEquals(2, extension.getExtension().size());

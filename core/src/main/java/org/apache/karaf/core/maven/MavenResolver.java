@@ -28,11 +28,11 @@ import java.util.logging.Level;
  * Resolves artifacts on Maven repostories.
  */
 @Log
-public class Resolver {
+public class MavenResolver {
 
     private final String[] mavenRepositories;
 
-    public Resolver(String mavenRepositories) {
+    public MavenResolver(String mavenRepositories) {
         if (mavenRepositories != null) {
             this.mavenRepositories = mavenRepositories.split(",");
         } else {
@@ -49,7 +49,7 @@ public class Resolver {
      * @return
      */
     public String resolve(String artifactUri) throws Exception {
-        String uri = Parser.pathFromMaven(artifactUri);
+        String uri = MavenUrlParser.pathFromMaven(artifactUri);
 
         if (uri.startsWith("file:")) {
             return uri.substring("file:".length());

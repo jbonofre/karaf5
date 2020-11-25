@@ -19,6 +19,7 @@ package org.apache.karaf.core.extension;
 
 import lombok.extern.java.Log;
 import org.apache.karaf.core.Karaf;
+import org.apache.karaf.core.model.ModelLoader;
 import org.apache.karaf.core.model.Module;
 import org.apache.karaf.core.model.Extension;
 
@@ -31,7 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 
 @Log
-public class Loader {
+public class ExtensionLoader {
 
     public static void load(String url, Karaf karaf) throws Exception {
         Karaf.extensionsLock.writeLock().lock();
@@ -55,7 +56,7 @@ public class Loader {
                 log.log(Level.FINE, url + " is not a jar file");
                 inputStream = new FileInputStream(new File(resolved));
             }
-            Extension extension = org.apache.karaf.core.model.Loader.read(inputStream);
+            Extension extension = ModelLoader.read(inputStream);
             log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
             if (extension.getExtension() != null) {
                 for (String innerExtension : extension.getExtension()) {
@@ -68,7 +69,7 @@ public class Loader {
                     if (moduleUrl == null) {
                         throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
                     } else {
-                        karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
+                        karaf.addModule(karaf.getResolver().resolve(module.getLocation()), module.getStartLevel());
                     }
                 }
             }

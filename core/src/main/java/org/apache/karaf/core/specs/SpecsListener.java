@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Log
-public class Listener implements SynchronousBundleListener {
+public class SpecsListener implements SynchronousBundleListener {
 
     private static boolean debug = false;
 
@@ -121,7 +121,7 @@ public class Listener implements SynchronousBundleListener {
         if (map != null) {
             for (Map.Entry<String, Callable<Class>> entry : map.entrySet()) {
                 debugLog("Registering service " + entry.getKey() + ": " + entry.getValue());
-                Locator.register(entry.getKey(), entry.getValue());
+                SpecsLocator.register(entry.getKey(), entry.getValue());
             }
         }
     }
@@ -131,7 +131,7 @@ public class Listener implements SynchronousBundleListener {
         if (map != null) {
             for (Map.Entry<String, Callable<Class>> entry : map.entrySet()) {
                 debugLog("Unregistering service " + entry.getKey() + ": " + entry.getValue());
-                Locator.unregister(entry.getKey(), entry.getValue());
+                SpecsLocator.unregister(entry.getKey(), entry.getValue());
             }
         }
     }

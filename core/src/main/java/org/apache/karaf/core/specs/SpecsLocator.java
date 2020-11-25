@@ -25,7 +25,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class Locator {
+public class SpecsLocator {
 
     public static final long DEFAULT_TIMEOUT = 0L;
     public static final String TIMEOUT = "org.apache.karaf.specs.timeout";
@@ -34,7 +34,7 @@ public class Locator {
 
     private static final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 
-    private Locator() {}
+    private SpecsLocator() {}
 
     public static void unregister(String id, Callable<Class> factory) {
         LOCK.writeLock().lock();

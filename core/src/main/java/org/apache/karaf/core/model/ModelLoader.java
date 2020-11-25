@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.InputStream;
 
-public class Loader {
+public class ModelLoader {
 
     private final static ObjectMapper objectMapper;
 

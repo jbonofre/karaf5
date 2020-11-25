@@ -23,6 +23,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.BundleStartLevel;
+import org.osgi.service.startlevel.StartLevel;
 
 import java.io.File;
 import java.net.URL;
@@ -70,7 +71,7 @@ public class BundleModule implements Module {
     }
 
     @Override
-    public void add(String url, String ... args) throws Exception {
+    public void add(String url, Integer startLevel, String ... args) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
             log.info("Installing OSGi bundle module " + url);
@@ -80,13 +81,14 @@ public class BundleModule implements Module {
             Bundle bundle;
             try {
                 bundle = framework.getBundleContext().installBundle(url);
-                bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
             } catch (Exception e) {
                 throw new Exception("Unable to install OSGi bundle module " + url + ": " + e.toString(), e);
             }
             log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
+            if (startLevel != null) {
+                bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
+            }
             try {
-                // framework.adapt(FrameworkWiring.class).resolveBundles(null);
                 if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
                     bundle.start();
                 }
