@@ -69,7 +69,7 @@ public class ExtensionLoader {
                     if (moduleUrl == null) {
                         throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
                     } else {
-                        karaf.addModule(karaf.getResolver().resolve(module.getLocation()), module.getStartLevel());
+                        karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
                     }
                 }
             }

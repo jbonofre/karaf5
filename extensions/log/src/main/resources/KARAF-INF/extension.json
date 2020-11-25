@@ -2,7 +2,7 @@
   "name": "log",
   "version": "5.0.0-SNAPSHOT",
   "module": [
-    { "location": "mvn:org.ops4j.pax.logging/pax-logging-api/2.0.6", "startLevel": 8 },
-    { "location": "mvn:org.ops4j.pax.logging/pax-logging-log4j2/2.0.6", "startLevel": 8 }
+    { "location": "mvn:org.ops4j.pax.logging/pax-logging-api/2.0.6" },
+    { "location": "mvn:org.ops4j.pax.logging/pax-logging-log4j2/2.0.6" }
   ]
 }

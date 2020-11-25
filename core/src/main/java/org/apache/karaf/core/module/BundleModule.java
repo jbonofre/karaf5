@@ -71,7 +71,7 @@ public class BundleModule implements Module {
     }
 
     @Override
-    public void add(String url, Integer startLevel, String ... args) throws Exception {
+    public void add(String url, String ... args) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
             log.info("Installing OSGi bundle module " + url);
@@ -85,9 +85,6 @@ public class BundleModule implements Module {
                 throw new Exception("Unable to install OSGi bundle module " + url + ": " + e.toString(), e);
             }
             log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
-            if (startLevel != null) {
-                bundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
-            }
             try {
                 if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
                     bundle.start();

@@ -23,7 +23,7 @@ public interface Module {
 
     boolean is(String id);
 
-    void add(String url, Integer startLevel, String ... args) throws Exception;
+    void add(String url, String ... args) throws Exception;
 
     void remove(String id) throws Exception;
 

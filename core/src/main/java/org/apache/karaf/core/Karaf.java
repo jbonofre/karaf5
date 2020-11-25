@@ -205,7 +205,7 @@ public class Karaf {
         if (modulesEnv != null) {
             String[] modulesSplit = modulesEnv.split(",");
             for (String module : modulesSplit) {
-                addModule(module, config.defaultBundleStartLevel);
+                addModule(module);
             }
         }
     }
@@ -222,10 +222,6 @@ public class Karaf {
     }
 
     public void addModule(String url) throws Exception {
-        addModule(url, null);
-    }
-
-    public void addModule(String url, Integer startLevel) throws Exception {
         log.info("Installing module " + url);
 
         String resolved = mavenResolver.resolve(url);
@@ -236,17 +232,17 @@ public class Karaf {
 
         BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
         if (bundleModule.canHandle(resolved)) {
-            bundleModule.add(resolved, startLevel);
+            bundleModule.add(resolved);
         }
 
         SpringBootModule springBootModule = new SpringBootModule();
         if (springBootModule.canHandle(resolved)) {
-            springBootModule.add(resolved, startLevel);
+            springBootModule.add(resolved);
         }
 
         MicroprofileModule microprofileModule = new MicroprofileModule();
         if (microprofileModule.canHandle(resolved)) {
-            microprofileModule.add(resolved, startLevel);
+            microprofileModule.add(resolved);
         }
     }
 

@@ -41,7 +41,7 @@ public class SpringBootModule implements Module {
     }
 
     @Override
-    public void add(String url, Integer startLevel, String ... args) throws Exception {
+    public void add(String url, String ... args) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
             if (!url.startsWith("file:") && !url.startsWith("http:") && !url.startsWith("https:")) {

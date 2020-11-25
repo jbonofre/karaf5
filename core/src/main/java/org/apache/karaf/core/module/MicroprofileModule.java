@@ -25,7 +25,7 @@ public class MicroprofileModule implements Module {
     }
 
     @Override
-    public void add(String url, Integer startLevel, String ... args) {
+    public void add(String url, String ... args) {
         throw new IllegalStateException("Microprofile module is not yet supported");
     }
 
