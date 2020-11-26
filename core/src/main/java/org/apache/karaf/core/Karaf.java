@@ -52,7 +52,7 @@ public class Karaf {
 
     private static Karaf instance;
 
-    private KarafConfig config;
+    public KarafConfig config;
     private Framework framework = null;
     private MavenResolver mavenResolver;
     private long start;
@@ -232,6 +232,8 @@ public class Karaf {
         if (bundleModule.canHandle(resolved)) {
             log.info("Installing OSGi module " + url);
             bundleModule.add(resolved);
+        } else {
+            log.info("Not bundle: " + resolved);
         }
 
         SpringBootModule springBootModule = new SpringBootModule();
