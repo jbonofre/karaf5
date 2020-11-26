@@ -130,7 +130,69 @@ public class KarafConfig {
             String cache = get("karaf.cache", "KARAF_CACHE", cacheDirectory);
             String maven = get("karaf.repositories", "KARAF_MAVEN_REPOSITORIES", mavenRepositories);
 
-            return new KarafConfig(home, data, etc, cache, clearCache, defaultBundleStartLevel, maven);
+            KarafConfig config = new KarafConfig(home, data, etc, cache, clearCache, defaultBundleStartLevel, maven);
+
+            setSysProperties(config);
+
+            return config;
+        }
+
+        private void setSysProperties(KarafConfig config) {
+            if (System.getProperty("karaf.home") == null) {
+                System.setProperty("karaf.home", config.homeDirectory);
+            }
+            if (System.getProperty("karaf.base") == null) {
+                System.setProperty("karaf.base", config.homeDirectory);
+            }
+            if (System.getProperty("karaf.data") == null) {
+                System.setProperty("karaf.data", config.dataDirectory);
+            }
+            if (System.getProperty("karaf.etc") == null) {
+                System.setProperty("karaf.etc", config.etcDirectory);
+            }
+            System.setProperty("karaf.version", "5.0.0-SNAPSHOT");
+            if (System.getProperty("karaf.name") == null) {
+                System.setProperty("karaf.name", "karaf");
+            }
+            if (System.getProperty("karaf.local.user") == null) {
+                System.setProperty("karaf.local.user", "karaf");
+            }
+            //if (System.getProperty("karaf.shell.init.script") == null) {
+            //    System.setProperty("karaf.shell.init.script", "shell.init.script,scripts/*.script");
+            //}
+            if (System.getProperty("org.ops4j.pax.logging.DefaultServiceLog.level") == null) {
+                System.setProperty("org.ops4j.pax.logging.DefaultServiceLog.level", "ERROR");
+            }
+            if (System.getProperty("org.apache.felix.configadmin.plugin.interpolation.secretsdir") == null) {
+                System.setProperty("org.apache.felix.configadmin.plugin.interpolation.secretsdir", config.etcDirectory);
+            }
+            if (System.getProperty("felix.fileinstall.enableConfigSave") == null) {
+                System.setProperty("felix.fileinstall.enableConfigSave", "true");
+            }
+            if (System.getProperty("felix.fileinstall.dir") == null) {
+                System.setProperty("felix.fileinstall.dir", config.etcDirectory);
+            }
+            if (System.getProperty("felix.fileinstall.filter") == null) {
+                System.setProperty("felix.fileinstall.filter", ".*\\.(cfg|config|json)");
+            }
+            if (System.getProperty("felix.fileinstall.poll") == null) {
+                System.setProperty("felix.fileinstall.pool", "1000");
+            }
+            if (System.getProperty("felix.fileinstall.noInitialDelay") == null) {
+                System.setProperty("felix.fileinstall.noInitialDelay", "true");
+            }
+            if (System.getProperty("felix.fileinstall.log.level") == null) {
+                System.setProperty("felix.fileinstall.log.level", "3");
+            }
+            if (System.getProperty("felix.fileinstall.log.default") == null) {
+                System.setProperty("felix.fileinstall.log.default", "jul");
+            }
+            if (System.getProperty("org.apache.aries.blueprint.synchronous") == null) {
+                System.setProperty("org.apache.aries.blueprint.synchronous", "true");
+            }
+            if (System.getProperty("org.apache.aries.proxy.weaving.enabled") == null) {
+                System.setProperty("org.apache.aries.proxy.weaving.enabled", "none");
+            }
         }
 
         private void loadSys(String location) {

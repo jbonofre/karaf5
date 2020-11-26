@@ -18,9 +18,19 @@
 package org.apache.karaf.core;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class KarafConfigTest {
+
+    @BeforeEach
+    public void cleanup() throws Exception {
+        System.clearProperty("karaf.home");
+        System.clearProperty("karaf.base");
+        System.clearProperty("karaf.data");
+        System.clearProperty("karaf.etc");
+        System.clearProperty("karaf.cache");
+    }
 
     @Test
     public void testDefaultBuild() throws Exception {

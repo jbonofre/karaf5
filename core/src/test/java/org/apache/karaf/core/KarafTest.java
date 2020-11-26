@@ -22,6 +22,10 @@ import org.apache.karaf.core.model.Module;
 import org.junit.jupiter.api.*;
 import org.osgi.framework.Bundle;
 
+import java.io.File;
+import java.net.URI;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.Map;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -120,6 +124,27 @@ public class KarafTest {
         karaf.start();
 
         Assertions.assertNotNull(karaf.getService(Karaf.class));
+    }
+
+    @Test
+    public void test() throws Exception {
+        ProtectionDomain protectionDomain = getClass().getProtectionDomain();
+        CodeSource codeSource = protectionDomain.getCodeSource();
+        URI location = (codeSource != null) ? codeSource.getLocation().toURI() : null;
+        String path = (location != null) ? location.getSchemeSpecificPart() : null;
+        if (path == null) {
+            throw new IllegalStateException("Unable to determine code source archive");
+        }
+        File root = new File(path);
+        if (!root.exists()) {
+            throw new IllegalStateException("Unable to determine code source archive from " + root);
+        }
+        System.out.println(root.getAbsolutePath());
+        if (root.isDirectory()) {
+            System.out.println(root.getAbsolutePath() + " is a directory");
+        } else {
+            System.out.println(root.getAbsolutePath() + " is a jar");
+        }
     }
 
 }
