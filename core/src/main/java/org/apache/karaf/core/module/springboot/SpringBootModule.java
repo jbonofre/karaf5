@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.module;
+package org.apache.karaf.core.module.springboot;
 
 import org.apache.karaf.core.Karaf;
+import org.apache.karaf.core.module.Module;
 
 import java.io.File;
 import java.lang.reflect.Method;

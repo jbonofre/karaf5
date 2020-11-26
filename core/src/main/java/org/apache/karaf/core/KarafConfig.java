@@ -17,8 +17,11 @@
  */
 package org.apache.karaf.core;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class KarafConfig {
 
@@ -27,7 +30,7 @@ public class KarafConfig {
     private final static String DEFAULT_ETC = "${karaf.home}/etc";
     private final static String DEFAULT_CACHE = "${karaf.data}/cache";
     private final static boolean DEFAULT_CLEAR_CACHE = false;
-    private final static int DEFAULT_BUNDLE_START_LEVEL = 50;
+    private final static int DEFAULT_BUNDLE_START_LEVEL = 80;
     private final static String DEFAULT_MAVEN_REPOSITORIES = "file:${user.home}/.m2/repository," +
             "file:${java.io.tmpdir}/karaf/system," +
             "https://repo1.maven.org/maven2";
@@ -115,13 +118,34 @@ public class KarafConfig {
         }
 
         public KarafConfig build() {
+            loadSys("system.properties");
+
             // populate
             String home = get("karaf.home", "KARAF_HOME", homeDirectory);
             String data = get("karaf.data", "KARAF_DATA", dataDirectory);
             String etc = get("karaf.etc", "KARAF_ETC", etcDirectory);
+
+            loadSys(etc + "/system.properties");
+
             String cache = get("karaf.cache", "KARAF_CACHE", cacheDirectory);
-            String maven = get("karaf.repositories", "KARAF_REPOSITORIES", mavenRepositories);
+            String maven = get("karaf.repositories", "KARAF_MAVEN_REPOSITORIES", mavenRepositories);
+
             return new KarafConfig(home, data, etc, cache, clearCache, defaultBundleStartLevel, maven);
+        }
+
+        private void loadSys(String location) {
+            File systemProperties = new File(location);
+            if (systemProperties.exists()) {
+                Properties properties = new Properties();
+                try {
+                    properties.load(new FileReader(systemProperties));
+                    for (String key : properties.stringPropertyNames()) {
+                        System.setProperty(key, (String) properties.get(key));
+                    }
+                } catch (Exception e) {
+                    // no-op
+                }
+            }
         }
 
         private String get(String sysProperty, String env, String value) {

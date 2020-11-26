@@ -35,6 +35,15 @@
             <unpack>true</unpack>
             <scope>runtime</scope>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>/KARAF-REPO</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <scope>provided</scope>
+            <includes>
+                <include>org.ops4j.pax.url:pax-url-aether</include>
+            </includes>
+        </dependencySet>
     </dependencySets>
 
 </assembly>

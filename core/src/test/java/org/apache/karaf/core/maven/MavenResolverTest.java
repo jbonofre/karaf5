@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.net.URL;
 
 @Log
 public class MavenResolverTest {
@@ -50,6 +52,9 @@ public class MavenResolverTest {
                 mavenResolver.resolve("mvn:org.example/test/1.0-SNAPSHOT/txt"));
 
         Assertions.assertNull(mavenResolver.resolve("mvn:myGroupId/myArtifactId/1.0-SNAPSHOT"));
+
+        Assertions.assertEquals("classpath:KARAF-REPO/foo-1.0-SNAPSHOT.txt",
+                mavenResolver.resolve("mvn:bar/foo/1.0-SNAPSHOT/txt"));
     }
 
 }

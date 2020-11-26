@@ -15,7 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.module;
+package org.apache.karaf.core.module.microprofile;
+
+import org.apache.karaf.core.module.Module;
 
 public class MicroprofileModule implements Module {
 

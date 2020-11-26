@@ -59,6 +59,17 @@ public class MavenResolver {
             return uri;
         }
 
+        String fileName = MavenUrlParser.fileNameFromMaven(artifactUri, false);
+        if (getClass().getResourceAsStream("KARAF-REPO/" + fileName) != null) {
+            log.info("Using classpath:KARAF-REPO/" + fileName);
+            return "classpath:KARAF-REPO/" + fileName;
+        } else {
+            if (getClass().getClassLoader().getResourceAsStream("KARAF-REPO/" + fileName) != null) {
+                log.info("Using classpath:KARAF-REPO/" + fileName);
+                return "classpath:KARAF-REPO/" + fileName;
+            }
+        }
+
         if (mavenRepositories != null) {
             for (String mavenRepository : mavenRepositories) {
                 try {

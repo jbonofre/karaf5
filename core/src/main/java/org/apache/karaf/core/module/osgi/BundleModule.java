@@ -15,10 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.module;
+package org.apache.karaf.core.module.osgi;
 
 import lombok.extern.java.Log;
 import org.apache.karaf.core.Karaf;
+import org.apache.karaf.core.module.Module;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
