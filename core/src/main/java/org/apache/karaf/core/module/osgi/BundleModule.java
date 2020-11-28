@@ -79,73 +79,62 @@ public class BundleModule implements Module {
 
     @Override
     public void add(String url, String ... args) throws Exception {
-        Karaf.modulesLock.writeLock().lock();
-        try {
-            String resolved = Karaf.get().getResolver().resolve(url);
-            log.info("Installing OSGi bundle module " + url);
-            if (!resolved.startsWith("file:") && !resolved.startsWith("http:") && !resolved.startsWith("https:")) {
-                resolved = "file:" + resolved;
-            }
-            Bundle bundle;
-            try {
-                bundle = framework.getBundleContext().installBundle(resolved);
-            } catch (Exception e) {
-                throw new Exception("Unable to install OSGi bundle module " + resolved + ": " + e.toString(), e);
-            }
-            log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
-            try {
-                if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
-                    bundle.start();
-                }
-            } catch (Exception e) {
-                throw new Exception("Unable to start OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
-            }
-            org.apache.karaf.core.model.Module moduleModel = new org.apache.karaf.core.model.Module();
-            moduleModel.setId(String.valueOf(bundle.getBundleId()));
-            moduleModel.setName(bundle.getSymbolicName());
-            moduleModel.setLocation(url);
-            Enumeration<String> headers = bundle.getHeaders().keys();
-            while (headers.hasMoreElements()) {
-                String header = headers.nextElement();
-                moduleModel.getMetadata().put(header, bundle.getHeaders().get(header));
-            }
-            moduleModel.getMetadata().put("State", bundle.getState());
-            Karaf.modules.put(url, moduleModel);
-        } finally {
-            Karaf.modulesLock.writeLock().unlock();
+        if (Karaf.modules.get(url) != null) {
+            log.info("OSGi module " + url + " already installed");
+            return;
         }
+        String resolved = Karaf.get().getResolver().resolve(url);
+        log.info("Installing OSGi bundle module " + url);
+        if (!resolved.startsWith("file:") && !resolved.startsWith("http:") && !resolved.startsWith("https:")) {
+            resolved = "file:" + resolved;
+        }
+        Bundle bundle;
+        try {
+            bundle = framework.getBundleContext().installBundle(resolved);
+        } catch (Exception e) {
+            throw new Exception("Unable to install OSGi bundle module " + resolved + ": " + e.toString(), e);
+        }
+        log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
+        try {
+            if (bundle.getHeaders().get(Constants.FRAGMENT_HOST) == null) {
+                bundle.start();
+            }
+        } catch (Exception e) {
+            throw new Exception("Unable to start OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion() + ": " + e.toString(), e);
+        }
+        org.apache.karaf.core.model.Module moduleModel = new org.apache.karaf.core.model.Module();
+        moduleModel.setId(String.valueOf(bundle.getBundleId()));
+        moduleModel.setName(bundle.getSymbolicName());
+        moduleModel.setLocation(url);
+        Enumeration<String> headers = bundle.getHeaders().keys();
+        while (headers.hasMoreElements()) {
+            String header = headers.nextElement();
+            moduleModel.getMetadata().put(header, bundle.getHeaders().get(header));
+        }
+        moduleModel.getMetadata().put("State", bundle.getState());
+        Karaf.modules.put(url, moduleModel);
     }
 
     @Override
     public boolean is(String id) {
-        Karaf.modulesLock.readLock().lock();
-        try {
-            Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
-            return (framework.getBundleContext().getBundle(bundleId) != null);
-        } finally {
-            Karaf.modulesLock.readLock().unlock();
-        }
+        Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
+        return (framework.getBundleContext().getBundle(bundleId) != null);
     }
 
     @Override
     public void remove(String id) throws Exception {
-        Karaf.modulesLock.writeLock().lock();
-        try {
-            Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
-            Bundle bundle = framework.getBundleContext().getBundle(bundleId);
-            if (bundle == null) {
-                throw new IllegalArgumentException("Module " + bundleId + " not found or not an OSGi bundle");
-            }
-            try {
-                bundle.uninstall();
-            } catch (Exception e) {
-                throw new IllegalStateException("Can't remove OSGi module " + bundleId + ": " + e.getMessage(), e);
-            }
-            Karaf.modules.remove(id);
-            log.info("OSGi module " + bundle.getSymbolicName() + " uninstalled");
-        } finally {
-            Karaf.modulesLock.writeLock().unlock();
+        Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
+        Bundle bundle = framework.getBundleContext().getBundle(bundleId);
+        if (bundle == null) {
+            throw new IllegalArgumentException("Module " + bundleId + " not found or not an OSGi bundle");
         }
+        try {
+            bundle.uninstall();
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't remove OSGi module " + bundleId + ": " + e.getMessage(), e);
+        }
+        Karaf.modules.remove(id);
+        log.info("OSGi module " + bundle.getSymbolicName() + " uninstalled");
     }
 
 }

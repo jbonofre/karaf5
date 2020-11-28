@@ -34,52 +34,75 @@ import java.util.zip.ZipException;
 @Log
 public class ExtensionLoader {
 
-    public static void load(String url, Karaf karaf) throws Exception {
-        Karaf.extensionsLock.writeLock().lock();
+    private static Extension read(String url) throws Exception {
+        String resolved = Karaf.get().getResolver().resolve(url);
+        if (resolved == null) {
+            throw new IllegalArgumentException(url + " not found");
+        }
+        if (resolved.startsWith("file:")) {
+            resolved = resolved.substring("file:".length());
+        }
+        InputStream inputStream;
         try {
-            String resolved = karaf.getResolver().resolve(url);
-            if (resolved == null) {
-                throw new IllegalArgumentException(url + " not found");
+            JarFile jarFile = new JarFile(new File(resolved));
+            ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
+            if (entry == null) {
+                throw new IllegalArgumentException(url + " is not a Karaf extension");
             }
-            if (resolved.startsWith("file:")) {
-                resolved = resolved.substring("file:".length());
+            inputStream = jarFile.getInputStream(entry);
+        } catch (ZipException zipException) {
+            log.log(Level.FINE, url + " is not a jar file");
+            inputStream = new FileInputStream(new File(resolved));
+        }
+        return ModelLoader.read(inputStream);
+    }
+
+    public static void load(String url) throws Exception {
+        if (Karaf.extensions.get(url) != null) {
+            log.info("Extension " + url + " already installed");
+            return;
+        }
+        Extension extension = read(url);
+        log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
+        if (extension.getExtension() != null) {
+            for (String innerExtension : extension.getExtension()) {
+                load(innerExtension);
             }
-            InputStream inputStream;
-            try {
-                JarFile jarFile = new JarFile(new File(resolved));
-                ZipEntry entry = jarFile.getEntry("KARAF-INF/extension.json");
-                if (entry == null) {
-                    throw new IllegalArgumentException(url + " is not a Karaf extension");
+        }
+        if (extension.getModule() != null) {
+            for (Module module : extension.getModule()) {
+                String moduleUrl = Karaf.get().getResolver().resolve(module.getLocation());
+                if (moduleUrl == null) {
+                    throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
+                } else {
+                    Karaf.get().addModule(module.getLocation());
                 }
-                inputStream = jarFile.getInputStream(entry);
-            } catch (ZipException zipException) {
-                log.log(Level.FINE, url + " is not a jar file");
-                inputStream = new FileInputStream(new File(resolved));
             }
-            Extension extension = ModelLoader.read(inputStream);
-            log.info("Loading " + extension.getName() + "/" + extension.getVersion() + " extension");
+        }
+        // extension can be a module itself
+        Karaf.get().addModule(url);
+        // update extensions store
+        Karaf.extensions.put(url, extension);
+    }
+
+    public static void remove(String url, boolean recursive) throws Exception {
+        if (Karaf.extensions.get(url) == null) {
+            return;
+        }
+        if (recursive) {
+            Extension extension = read(url);
             if (extension.getExtension() != null) {
                 for (String innerExtension : extension.getExtension()) {
-                    load(karaf.getResolver().resolve(innerExtension), karaf);
+                    remove(innerExtension, recursive);
                 }
             }
             if (extension.getModule() != null) {
                 for (Module module : extension.getModule()) {
-                    String moduleUrl = karaf.getResolver().resolve(module.getLocation());
-                    if (moduleUrl == null) {
-                        throw new IllegalArgumentException("Module " + module.getLocation() + " not found");
-                    } else {
-                        karaf.addModule(karaf.getResolver().resolve(module.getLocation()));
-                    }
+                    Karaf.get().removeModule(module.getLocation());
                 }
             }
-            // extension can be a module itself
-            karaf.addModule(url);
-            // update extensions store
-            Karaf.extensions.put(url, extension);
-        } finally {
-            Karaf.extensionsLock.writeLock().unlock();
         }
+        Karaf.extensions.remove(url);
     }
 
 }

@@ -129,7 +129,7 @@ public class KarafTest {
     public void testDualAddModule() throws Exception {
         Karaf karaf = Karaf.build(KarafConfig.builder()
                 .homeDirectory("target/karaf")
-                .cacheDirectory("target/karaf/cache/dual")
+                .cacheDirectory("target/karaf/cache/dualmodule")
                 .clearCache(true)
                 .build());
         karaf.init();
@@ -138,6 +138,35 @@ public class KarafTest {
         karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
 
         karaf.start();
+
+        Assertions.assertEquals(1, Karaf.modules.size());
+    }
+
+    @Test
+    public void testDualAddExtension() throws Exception {
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/dualextension")
+                .clearCache(true)
+                .build());
+        karaf.init();
+
+        karaf.addExtension("mvn:org.apache.karaf.extensions/log/5.0.0-SNAPSHOT");
+        karaf.addExtension("mvn:org.apache.karaf.extensions/log/5.0.0-SNAPSHOT");
+
+        karaf.start();
+
+        Assertions.assertEquals(1, Karaf.extensions.size());
+    }
+
+    @AfterEach
+    public void cleanup() throws Exception {
+        for (String extension : Karaf.extensions.keySet()) {
+            Karaf.get().removeExtension(extension, true);
+        }
+        for (String module : Karaf.modules.keySet()) {
+            Karaf.get().removeModule(module);
+        }
     }
 
 }

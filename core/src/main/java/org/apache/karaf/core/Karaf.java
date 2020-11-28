@@ -41,6 +41,7 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
@@ -55,11 +56,9 @@ public class Karaf {
     private MavenResolver mavenResolver;
     private long start;
 
-    public final static Map<String, org.apache.karaf.core.model.Module> modules = new HashMap<>();
-    public final static ReadWriteLock modulesLock = new ReentrantReadWriteLock();
+    public final static Map<String, org.apache.karaf.core.model.Module> modules = new ConcurrentHashMap<>();
 
-    public final static Map<String, Extension> extensions = new HashMap<>();
-    public final static ReadWriteLock extensionsLock = new ReentrantReadWriteLock();
+    public final static Map<String, Extension> extensions = new ConcurrentHashMap<>();
 
     private Karaf(KarafConfig config) {
         this.config = config;
@@ -262,25 +261,20 @@ public class Karaf {
 
     public void addExtension(String url) throws Exception {
         log.info("Loading extension from " + url);
-        ExtensionLoader.load(url, this);
+        ExtensionLoader.load(url);
+    }
+
+    public void removeExtension(String url, boolean recursive) throws Exception {
+        log.info("Removing extension " + url);
+        ExtensionLoader.remove(url, recursive);
     }
 
     public Map<String, Module> getModules() {
-        Karaf.modulesLock.readLock().lock();
-        try {
-            return modules;
-        } finally {
-            Karaf.modulesLock.readLock().unlock();
-        }
+        return modules;
     }
 
     public Map<String, Extension> getExtensions() {
-        Karaf.extensionsLock.readLock().lock();
-        try {
-            return extensions;
-        } finally {
-            Karaf.extensionsLock.readLock().unlock();
-        }
+        return extensions;
     }
 
     public Object getService(Class clazz) {

@@ -17,6 +17,7 @@
  */
 package org.apache.karaf.core.module.springboot;
 
+import lombok.extern.java.Log;
 import org.apache.karaf.core.Karaf;
 import org.apache.karaf.core.module.Module;
 
@@ -29,6 +30,7 @@ import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 
+@Log
 public class SpringBootModule implements Module {
 
     @Override
@@ -43,8 +45,10 @@ public class SpringBootModule implements Module {
 
     @Override
     public void add(String url, String ... args) throws Exception {
-        Karaf.modulesLock.writeLock().lock();
-        try {
+            if (Karaf.modules.get(url) != null) {
+                log.info("Spring Boot module " + url + " already installed");
+                return;
+            }
             String resolved = Karaf.get().getResolver().resolve(url);
             if (!resolved.startsWith("file:") && !resolved.startsWith("http:") && !resolved.startsWith("https:")) {
                 resolved = "file:" + resolved;
@@ -79,9 +83,7 @@ public class SpringBootModule implements Module {
             moduleModel.getMetadata().put("Spring-Boot-Version", getManifestAttribute(url, "Spring-Boot-Version"));
             moduleModel.getMetadata().put("Spring-Boot-Classes", getManifestAttribute(url, "Spring-Boot-Classes"));
             moduleModel.getMetadata().put("Spring-Boot-Lib", getManifestAttribute(url, "Spring-Boot-Lib"));
-        } finally {
-            Karaf.modulesLock.writeLock().unlock();
-        }
+            Karaf.modules.put(url, moduleModel);
     }
 
     @Override
