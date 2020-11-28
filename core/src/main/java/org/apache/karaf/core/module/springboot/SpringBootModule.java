@@ -45,10 +45,11 @@ public class SpringBootModule implements Module {
     public void add(String url, String ... args) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
-            if (!url.startsWith("file:") && !url.startsWith("http:") && !url.startsWith("https:")) {
-                url = "file:" + url;
+            String resolved = Karaf.get().getResolver().resolve(url);
+            if (!resolved.startsWith("file:") && !resolved.startsWith("http:") && !resolved.startsWith("https:")) {
+                resolved = "file:" + resolved;
             }
-            final URLClassLoader classLoader = new URLClassLoader(new URL[]{ new URL(url) }, this.getClass().getClassLoader());
+            final URLClassLoader classLoader = new URLClassLoader(new URL[]{ new URL(resolved) }, this.getClass().getClassLoader());
             ClassLoader original = Thread.currentThread().getContextClassLoader();
             try {
                 /*

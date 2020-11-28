@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
+import java.util.logging.Level;
 
 /**
  * OSGi Bundle Module.
@@ -48,6 +49,11 @@ public class BundleModule implements Module {
 
     @Override
     public boolean canHandle(String url) {
+        try {
+            url = Karaf.get().getResolver().resolve(url);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Resolution failed: " + e.getMessage(), e);
+        }
         try {
             if (url.startsWith("http") || url.startsWith("https")) {
                 try (JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream())) {
@@ -75,15 +81,16 @@ public class BundleModule implements Module {
     public void add(String url, String ... args) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
+            String resolved = Karaf.get().getResolver().resolve(url);
             log.info("Installing OSGi bundle module " + url);
-            if (!url.startsWith("file:") && !url.startsWith("http:") && !url.startsWith("https:")) {
-                url = "file:" + url;
+            if (!resolved.startsWith("file:") && !resolved.startsWith("http:") && !resolved.startsWith("https:")) {
+                resolved = "file:" + resolved;
             }
             Bundle bundle;
             try {
-                bundle = framework.getBundleContext().installBundle(url);
+                bundle = framework.getBundleContext().installBundle(resolved);
             } catch (Exception e) {
-                throw new Exception("Unable to install OSGi bundle module " + url + ": " + e.toString(), e);
+                throw new Exception("Unable to install OSGi bundle module " + resolved + ": " + e.toString(), e);
             }
             log.info("Starting OSGi bundle module " + bundle.getSymbolicName() + "/" + bundle.getVersion());
             try {
@@ -103,7 +110,7 @@ public class BundleModule implements Module {
                 moduleModel.getMetadata().put(header, bundle.getHeaders().get(header));
             }
             moduleModel.getMetadata().put("State", bundle.getState());
-            Karaf.modules.put(String.valueOf(bundle.getBundleId()), moduleModel);
+            Karaf.modules.put(url, moduleModel);
         } finally {
             Karaf.modulesLock.writeLock().unlock();
         }
@@ -111,14 +118,21 @@ public class BundleModule implements Module {
 
     @Override
     public boolean is(String id) {
-        return (framework.getBundleContext().getBundle(Long.parseLong(id)) != null);
+        Karaf.modulesLock.readLock().lock();
+        try {
+            Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
+            return (framework.getBundleContext().getBundle(bundleId) != null);
+        } finally {
+            Karaf.modulesLock.readLock().unlock();
+        }
     }
 
     @Override
-    public void remove(String bundleId) throws Exception {
+    public void remove(String id) throws Exception {
         Karaf.modulesLock.writeLock().lock();
         try {
-            Bundle bundle = framework.getBundleContext().getBundle(Long.parseLong(bundleId));
+            Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
+            Bundle bundle = framework.getBundleContext().getBundle(bundleId);
             if (bundle == null) {
                 throw new IllegalArgumentException("Module " + bundleId + " not found or not an OSGi bundle");
             }
@@ -127,7 +141,7 @@ public class BundleModule implements Module {
             } catch (Exception e) {
                 throw new IllegalStateException("Can't remove OSGi module " + bundleId + ": " + e.getMessage(), e);
             }
-            Karaf.modules.remove(bundleId);
+            Karaf.modules.remove(id);
             log.info("OSGi module " + bundle.getSymbolicName() + " uninstalled");
         } finally {
             Karaf.modulesLock.writeLock().unlock();

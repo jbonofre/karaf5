@@ -22,18 +22,12 @@ import org.apache.karaf.core.model.Module;
 import org.junit.jupiter.api.*;
 import org.osgi.framework.Bundle;
 
-import java.io.File;
-import java.net.URI;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.Map;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Log
 public class KarafTest {
 
     @Test
-    @Order(1)
     public void testKarafRunWithResolvedBundleModule() throws Exception {
         Karaf karaf = Karaf.build(KarafConfig.builder()
                 .homeDirectory("target/karaf")
@@ -42,10 +36,16 @@ public class KarafTest {
                 .build());
         karaf.init();
         karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        karaf.addModule("mvn:commons-lang/commons-lang/2.6");
         karaf.start();
 
         Map<String, Module> modules = karaf.getModules();
-        Module module = modules.get("1");
+        Module module = modules.get("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        Assertions.assertEquals("org.ops4j.pax.url.mvn", module.getName());
+        Assertions.assertEquals(Bundle.ACTIVE, module.getMetadata().get("State"));
+
+        module = modules.get("mvn:commons-lang/commons-lang/2.6");
+        Assertions.assertEquals("org.apache.commons.lang", module.getName());
         Assertions.assertEquals(Bundle.ACTIVE, module.getMetadata().get("State"));
     }
 
@@ -59,15 +59,14 @@ public class KarafTest {
         karaf.init();
         karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
         Assertions.assertEquals(1, karaf.getModules().size());
-        Module module = karaf.getModules().get("1");
+        Module module = karaf.getModules().get("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
         Assertions.assertEquals(Bundle.ACTIVE, module.getMetadata().get("State"));
-        karaf.removeModule("1");
+        karaf.removeModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
         Assertions.assertEquals(0, karaf.getModules().size());
         karaf.start();
     }
 
     @Test
-    @Order(2)
     public void testKarafRunWithUnresolvedBundleModule() throws Exception {
         Karaf karaf = Karaf.build(KarafConfig.builder()
                 .homeDirectory("target/karaf")
@@ -127,24 +126,18 @@ public class KarafTest {
     }
 
     @Test
-    public void test() throws Exception {
-        ProtectionDomain protectionDomain = getClass().getProtectionDomain();
-        CodeSource codeSource = protectionDomain.getCodeSource();
-        URI location = (codeSource != null) ? codeSource.getLocation().toURI() : null;
-        String path = (location != null) ? location.getSchemeSpecificPart() : null;
-        if (path == null) {
-            throw new IllegalStateException("Unable to determine code source archive");
-        }
-        File root = new File(path);
-        if (!root.exists()) {
-            throw new IllegalStateException("Unable to determine code source archive from " + root);
-        }
-        System.out.println(root.getAbsolutePath());
-        if (root.isDirectory()) {
-            System.out.println(root.getAbsolutePath() + " is a directory");
-        } else {
-            System.out.println(root.getAbsolutePath() + " is a jar");
-        }
+    public void testDualAddModule() throws Exception {
+        Karaf karaf = Karaf.build(KarafConfig.builder()
+                .homeDirectory("target/karaf")
+                .cacheDirectory("target/karaf/cache/dual")
+                .clearCache(true)
+                .build());
+        karaf.init();
+
+        karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+
+        karaf.start();
     }
 
 }

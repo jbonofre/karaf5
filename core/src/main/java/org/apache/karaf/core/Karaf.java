@@ -40,8 +40,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -60,7 +58,7 @@ public class Karaf {
     public final static Map<String, org.apache.karaf.core.model.Module> modules = new HashMap<>();
     public final static ReadWriteLock modulesLock = new ReentrantReadWriteLock();
 
-    public final static List<Extension> extensions = new LinkedList<>();
+    public final static Map<String, Extension> extensions = new HashMap<>();
     public final static ReadWriteLock extensionsLock = new ReentrantReadWriteLock();
 
     private Karaf(KarafConfig config) {
@@ -222,30 +220,24 @@ public class Karaf {
     }
 
     public void addModule(String url) throws Exception {
-        String resolved = mavenResolver.resolve(url);
-
-        if (resolved == null) {
-            throw new IllegalArgumentException("Module " + url + " not found");
-        }
-
         BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
-        if (bundleModule.canHandle(resolved)) {
+        if (bundleModule.canHandle(url)) {
             log.info("Installing OSGi module " + url);
-            bundleModule.add(resolved);
+            bundleModule.add(url);
         } else {
-            log.info("Not bundle: " + resolved);
+            log.info("Not bundle: " + url);
         }
 
         SpringBootModule springBootModule = new SpringBootModule();
-        if (springBootModule.canHandle(resolved)) {
+        if (springBootModule.canHandle(url)) {
             log.info("Installing Spring Boot module " + url);
-            springBootModule.add(resolved);
+            springBootModule.add(url);
         }
 
         MicroprofileModule microprofileModule = new MicroprofileModule();
-        if (microprofileModule.canHandle(resolved)) {
+        if (microprofileModule.canHandle(url)) {
             log.info("Installing Microprofile module " + url);
-            microprofileModule.add(resolved);
+            microprofileModule.add(url);
         }
     }
 
@@ -282,7 +274,7 @@ public class Karaf {
         }
     }
 
-    public List<Extension> getExtensions() {
+    public Map<String, Extension> getExtensions() {
         Karaf.extensionsLock.readLock().lock();
         try {
             return extensions;

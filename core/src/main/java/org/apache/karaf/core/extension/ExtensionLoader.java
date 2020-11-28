@@ -76,7 +76,7 @@ public class ExtensionLoader {
             // extension can be a module itself
             karaf.addModule(url);
             // update extensions store
-            Karaf.extensions.add(extension);
+            Karaf.extensions.put(url, extension);
         } finally {
             Karaf.extensionsLock.writeLock().unlock();
         }
