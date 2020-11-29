@@ -32,7 +32,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 
 @Log
-public class ExtensionLoader {
+public class ExtensionService {
 
     private static Extension read(String url) throws Exception {
         String resolved = Karaf.get().getResolver().resolve(url);
@@ -58,6 +58,7 @@ public class ExtensionLoader {
     }
 
     public static void load(String url) throws Exception {
+        log.info("Loading extension from " + url);
         if (Karaf.extensions.get(url) != null) {
             log.info("Extension " + url + " already installed");
             return;
@@ -86,6 +87,7 @@ public class ExtensionLoader {
     }
 
     public static void remove(String url, boolean recursive) throws Exception {
+        log.info("Removing extension " + url);
         if (Karaf.extensions.get(url) == null) {
             return;
         }

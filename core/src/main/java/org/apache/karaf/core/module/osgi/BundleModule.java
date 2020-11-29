@@ -39,14 +39,6 @@ import java.util.logging.Level;
 @Log
 public class BundleModule implements Module {
 
-    private final Framework framework;
-    private final int startLevel;
-
-    public BundleModule(Framework framework, int startLevel) {
-        this.framework = framework;
-        this.startLevel = startLevel;
-    }
-
     @Override
     public boolean canHandle(String url) {
         try {
@@ -90,7 +82,7 @@ public class BundleModule implements Module {
         }
         Bundle bundle;
         try {
-            bundle = framework.getBundleContext().installBundle(resolved);
+            bundle = Karaf.get().framework.getBundleContext().installBundle(resolved);
         } catch (Exception e) {
             throw new Exception("Unable to install OSGi bundle module " + resolved + ": " + e.toString(), e);
         }
@@ -118,13 +110,13 @@ public class BundleModule implements Module {
     @Override
     public boolean is(String id) {
         Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
-        return (framework.getBundleContext().getBundle(bundleId) != null);
+        return (Karaf.get().framework.getBundleContext().getBundle(bundleId) != null);
     }
 
     @Override
     public void remove(String id) throws Exception {
         Long bundleId = Long.parseLong(Karaf.modules.get(id).getId());
-        Bundle bundle = framework.getBundleContext().getBundle(bundleId);
+        Bundle bundle = Karaf.get().framework.getBundleContext().getBundle(bundleId);
         if (bundle == null) {
             throw new IllegalArgumentException("Module " + bundleId + " not found or not an OSGi bundle");
         }

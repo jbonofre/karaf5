@@ -21,10 +21,11 @@ import lombok.extern.java.Log;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
-import org.apache.karaf.core.extension.ExtensionLoader;
+import org.apache.karaf.core.extension.ExtensionService;
 import org.apache.karaf.core.maven.MavenResolver;
 import org.apache.karaf.core.model.Extension;
 import org.apache.karaf.core.model.Module;
+import org.apache.karaf.core.module.ModuleService;
 import org.apache.karaf.core.module.osgi.BundleModule;
 import org.apache.karaf.core.module.microprofile.MicroprofileModule;
 import org.apache.karaf.core.module.springboot.SpringBootModule;
@@ -42,8 +43,6 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 @Log
@@ -52,7 +51,7 @@ public class Karaf {
     private static Karaf instance;
 
     public KarafConfig config;
-    private Framework framework = null;
+    public Framework framework = null;
     private MavenResolver mavenResolver;
     private long start;
 
@@ -218,55 +217,20 @@ public class Karaf {
         }
     }
 
-    public void addModule(String url) throws Exception {
-        BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
-        if (bundleModule.canHandle(url)) {
-            log.info("Installing OSGi module " + url);
-            bundleModule.add(url);
-        } else {
-            log.info("Not bundle: " + url);
-        }
-
-        SpringBootModule springBootModule = new SpringBootModule();
-        if (springBootModule.canHandle(url)) {
-            log.info("Installing Spring Boot module " + url);
-            springBootModule.add(url);
-        }
-
-        MicroprofileModule microprofileModule = new MicroprofileModule();
-        if (microprofileModule.canHandle(url)) {
-            log.info("Installing Microprofile module " + url);
-            microprofileModule.add(url);
-        }
+    public void addModule(String url, String ... args) throws Exception {
+        ModuleService.add(url, args);
     }
 
     public void removeModule(String id) throws Exception {
-        log.info("Uninstalling module " + id);
-
-        BundleModule bundleModule = new BundleModule(framework, this.config.defaultBundleStartLevel);
-        if (bundleModule.is(id)) {
-            bundleModule.remove(id);
-        }
-
-        SpringBootModule springBootModule = new SpringBootModule();
-        if (springBootModule.is(id)) {
-            springBootModule.remove(id);
-        }
-
-        MicroprofileModule microprofileModule = new MicroprofileModule();
-        if (microprofileModule.is(id)) {
-            microprofileModule.remove(id);
-        }
+        ModuleService.remove(id);
     }
 
     public void addExtension(String url) throws Exception {
-        log.info("Loading extension from " + url);
-        ExtensionLoader.load(url);
+        ExtensionService.load(url);
     }
 
     public void removeExtension(String url, boolean recursive) throws Exception {
-        log.info("Removing extension " + url);
-        ExtensionLoader.remove(url, recursive);
+        ExtensionService.remove(url, recursive);
     }
 
     public Map<String, Module> getModules() {
