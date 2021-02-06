@@ -19,18 +19,11 @@ package org.apache.karaf.core.model;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class Extension {
+public class Config {
 
     private String id;
-    private String name;
-    private String version;
-    private String description;
-
-    private List<Config> config;
-    private List<String> extension;
-    private List<Module> module;
+    private String value;
+    private boolean overwrite;
 
 }

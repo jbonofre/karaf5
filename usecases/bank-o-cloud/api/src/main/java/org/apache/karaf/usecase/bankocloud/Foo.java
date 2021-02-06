@@ -15,22 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.core.model;
+package org.apache.karaf.usecase.bankocloud;
 
-import lombok.Data;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ServiceScope;
+import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
 
-import java.util.List;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
-@Data
-public class Extension {
+@Component(service = Foo.class, scope = ServiceScope.PROTOTYPE)
+@JaxrsResource
+public class Foo {
 
-    private String id;
-    private String name;
-    private String version;
-    private String description;
-
-    private List<Config> config;
-    private List<String> extension;
-    private List<Module> module;
+    @GET
+    @Path("{name}")
+    public String greeting(@PathParam("name") String name) {
+        return "hello " + name;
+    }
 
 }

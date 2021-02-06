@@ -50,6 +50,7 @@
         <!-- <module>tool</module> -->
         <module>distribution</module>
         <module>examples</module>
+        <module>usecases</module>
     </modules>
 
     <dependencies>

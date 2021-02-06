@@ -29,6 +29,8 @@ public class ModelLoaderTest {
         String json = "{" +
                 "\"name\": \"test\"," +
                 "\"version\": \"1.0\"," +
+                "\"config\": [ " +
+                "]," +
                 "\"extension\": [" +
                 " \"mvn:other/other/1.0\", \"http://host/remote\"" +
                 "]," +
