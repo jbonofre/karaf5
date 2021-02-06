@@ -36,6 +36,7 @@
 
     <modules>
         <module>bank-o-cloud</module>
+        <module>observability-o-cloud</module>
     </modules>
 
 </project>
