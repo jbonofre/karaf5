@@ -42,6 +42,13 @@ public class Main {
                 .build();
         karaf = Karaf.build(config);
         karaf.init();
+
+        System.setProperty("org.apache.cxf.osgi.http.transport.disabled", "true");
+        System.setProperty("org.apache.felix.http.host", "localhost");
+        System.setProperty("org.apache.service.http.port", "8181");
+        System.setProperty("org.apache.aries.spifly.auto.consumers", "jakarta.*");
+        System.setProperty("org.apache.aries.spifly.auto.providers", "com.sun.*");
+
         karaf.addExtension("mvn:org.apache.karaf.extensions/config/5.0.0-SNAPSHOT");
         karaf.addExtension("mvn:org.apache.karaf.extensions/scr/5.0.0-SNAPSHOT");
         karaf.addModule("mvn:jakarta.activation/jakarta.activation-api/1.2.2");
