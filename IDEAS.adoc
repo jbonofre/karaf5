@@ -16,5 +16,16 @@
 // limitations under the License.
 //
 
+* Main
+** Unique properties file (optional) configurable: java -jar foo.har -Dkaraf.file=karaf.json or classpath KARAF-INF/ or KARAF_FILE env variable
+** Karaf config service: set pid via env variable (MY_PID="foo=bar hello=world"), k8s client to listen ConfigMap event
+** Karaf log service (OSGI Log service, slf4j, ...): JUL raw and/or json
+** addExtension and addModule should take a list
+** karaf.addProperty() should be there instead of System.setProperty
+** karaf.addSpec
+** add karaf.addProperty, karaf.addModule, ... as json descriptor
+** create karaf.json via @annotation
+** add Karaf CDI extension (openwebbeans) which scan jar for beans.xml
+
 * Check NPM versioning syntax use
 * Extension tag handling
