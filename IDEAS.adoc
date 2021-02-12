@@ -23,6 +23,7 @@
 ** addExtension and addModule should take a list
 ** karaf.addProperty() should be there instead of System.setProperty
 ** karaf.addSpec
+** add listener on module/extension lifecyle
 ** add karaf.addProperty, karaf.addModule, ... as json descriptor
 ** create karaf.json via @annotation
 ** add Karaf CDI extension (openwebbeans) which scan jar for beans.xml
