@@ -27,6 +27,7 @@
 ** add karaf.addProperty, karaf.addModule, ... as json descriptor
 ** create karaf.json via @annotation
 ** add Karaf CDI extension (openwebbeans) which scan jar for beans.xml
+** add static quarkus support
 
 * Check NPM versioning syntax use
 * Extension tag handling
