@@ -21,11 +21,15 @@
 Apache Karaf is a modulith runtime for your applications. You can package and run several
 kind of applications in Karaf.
 
+Apache Karaf is a modulith runtime for your applications. You can package and run several
+kind of applications in Karaf.
+
 Apache Karaf provides:
 
-* a generic launcher (`Karaf`) bootstrapping a runtime for your applications
-* an API to interact with the launcher, allowing you to add your own applications
+* a generic launcher (`Karaf`) bootstrapping a runtime for your applications that you can configure easily
+* an API to interact with the launcher if you need
 * a provisioning layer to easily add a set of applications
+* core runtime services dealing with log, configuration, and much more for you
 * optional features you can add in the runtime and leverage in your applications.
 
 == Module
@@ -53,6 +57,12 @@ Apache Karaf supports OSGi bundle application module.
 
 Apache Karaf supports Microprofile application module.
 
+== Specs
+
+Karaf provides special kind of modules: specs. Specs add specifications to your launcher (JSON-B, ...) depending of your need.
+
+Most of the time, the specs are part of Karaf extensions.
+
 == Extension
 
 Apache Karaf Extension is a way to provision several modules in a row.
@@ -75,6 +85,33 @@ For instance:
 
 You can add an extension providing directly the location of the JSON descriptor or package the JSON descriptor
 in a JAR file.
+
+== Runtime
+
+You can easily create a runtime. You can configure the runtime by providing a `karaf.json` descriptor:
+
+```
+{
+    "home": "/path/to/home/directory",
+    "data": "${home}/data/directory",
+    "cache": "${cache}/cache/directory",
+    "properties": [ "foo=bar", "hello=world" ],
+    "launch": [
+        "spec:mvn:...",
+        "module:mvn:...",
+        "extension:file:...",
+        "module:http:..."
+    ]
+}
+```
+
+This `karaf.json` file is optional: Karaf uses a preset configuration by default.
+
+Karaf is looking for `karaf.json` file (aka Karaf Config):
+
+* as system property: `-Dkaraf.config=/path/to/karaf.json`
+* as environment variable: `export KARAF_CONFIG=/path/to/karaf.json`
+* in the classpath of your application
 
 == Distribution
 
