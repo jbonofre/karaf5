@@ -39,9 +39,14 @@
             <version>${felix.framework.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.10.5</version>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jsonb_1.0_spec</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.johnzon</groupId>
+            <artifactId>johnzon-core</artifactId>
+            <version>1.2.10</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -49,6 +54,7 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 </project>

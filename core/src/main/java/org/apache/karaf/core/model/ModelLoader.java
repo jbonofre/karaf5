@@ -17,20 +17,21 @@
  */
 package org.apache.karaf.core.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import java.io.InputStream;
 
 public class ModelLoader {
 
-    private final static ObjectMapper objectMapper;
+    private final static Jsonb jsonb;
 
     static {
-        objectMapper = new ObjectMapper();
+        jsonb = JsonbBuilder.create();
     }
 
     public final static Extension read(InputStream inputStream) throws Exception {
-        return objectMapper.readValue(inputStream, Extension.class);
+        Jsonb jsonb = JsonbBuilder.create();
+        return jsonb.fromJson(inputStream, Extension.class);
     }
 
 }
