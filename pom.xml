@@ -45,7 +45,7 @@
     <modules>
         <!-- <module>bom</module> -->
         <module>core</module>
-        <!-- <module>modules</module> -->
+        <module>modules</module>
         <module>extensions</module>
         <!-- <module>tool</module> -->
         <module>distribution</module>
