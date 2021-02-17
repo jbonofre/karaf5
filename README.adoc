@@ -32,6 +32,16 @@ Apache Karaf provides:
 * core runtime services dealing with log, configuration, and much more for you
 * optional features you can add in the runtime and leverage in your applications.
 
+== Spec
+
+Karaf provides a set of specifications ready to use and "main" level. You just have to specific your specifications you want to use in the `KarafConfig` bean (via `karaf.json` or programmatically).
+
+== Profile
+
+A profile allows you to define a depependency set that a module can use (overriding the dependency from the module itself). You can create a profile as a set of artifacts.
+
+The profiles are configured in `KarafConfig` (via `karaf.json` or programmatically).
+
 == Module
 
 A Karaf module is a generic application module you can add to the Karaf launcher.
@@ -45,6 +55,8 @@ Currently, Apache Karaf supports:
 * OSGi bundle module
 * Microprofile module
 
+A module can optionally use a profile.
+
 === Spring Boot
 
 Apache Karaf supports Spring Boot uber jar application module.
@@ -57,25 +69,19 @@ Apache Karaf supports OSGi bundle application module.
 
 Apache Karaf supports Microprofile application module.
 
-== Specs
+== Application
 
-Karaf provides special kind of modules: specs. Specs add specifications to your launcher (JSON-B, ...) depending of your need.
+Karaf Application is convenient way to "group" modules all together and set a profile to use.
 
-Most of the time, the specs are part of Karaf extensions.
-
-== Extension
-
-Apache Karaf Extension is a way to provision several modules in a row.
-
-An extension is defined by a JSON descriptor and it can reference other extensions and a set of modules.
+An application is defined by a JSON descriptor.
 
 For instance:
 
 ```
 {
-  "name": "myextension",
+  "name": "myapplication",
   "version": "1.0",
-  "extension": [ "mvn:myextensions/other-extension/1.0" ],
+  "profile": [ "myprofile" ],
   "module": [
     { "location": "mvn:mymodules/myfirstmodule/1.1" }
     { "location": "mvn:mymodules/mysecondmodule/1.2" }
@@ -96,12 +102,11 @@ You can easily create a runtime. You can configure the runtime by providing a `k
     "data": "${home}/data/directory",
     "cache": "${cache}/cache/directory",
     "properties": [ "foo=bar", "hello=world" ],
-    "launch": [
-        "spec:mvn:...",
-        "module:mvn:...",
-        "extension:file:...",
-        "module:http:..."
-    ]
+    "specs": [ "json-b" ],
+    "profiles": [
+      { "id": "myprofile", "artifacts": [ .... ] }
+    ],
+    "modules": [ ... ]
 }
 ```
 
@@ -138,4 +143,10 @@ Karaf karaf = Karaf.build();
 karaf.init();
 karaf.addExtension("mvn:myextensions/myextension/1.0");
 karaf.start();
+```
+
+or simply run with a `karaf.json`:
+
+```
+$ java -jar karaf.jar -Dkaraf.config=karaf.json
 ```
