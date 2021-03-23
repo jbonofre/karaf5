@@ -1,0 +1,6 @@
+{
+  "home": "target/karaf",
+  "data": "target/karaf/data",
+  "cache": "target/karaf/data/cache/2",
+  "clearCache": true
+}

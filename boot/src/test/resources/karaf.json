@@ -1,0 +1,60 @@
+{
+  "home": "/path/to/home/directory",
+  "data": "${home}/data/directory",
+  "cache": "${data}/cache/directory",
+  "bootDelegation": "com.sun.*, javax.transaction",
+  "systemPackages": "java.lang,java.util",
+  "properties": {
+    "foo": "bar",
+    "hello": "world"
+  },
+  "libraries": [
+    { "name": "json-b",
+      "system": true,
+      "resources": [
+        "mvn:org.apache.geronimo.specs/geronimo-jsonb_1.0_spec/1.0",
+        "mvn:org.apache.johnzon/johnzon-core/1.2.10"
+      ]
+    },
+    { "name": "my-lib", "resources": [ "embedded:/foo/bar/my.jar" ] }
+  ],
+  "configs": {
+    "envs": [ "configMap1", "configMap2" ],
+    "files": [
+      { "id": "org.my.pid.file", "location": "mvn:groupId/artifactId/1.0/cfg" }
+    ],
+    "inlines": [
+      { "id": "org.my.pid", "properties": {
+        "first": "firstvalue",
+        "second": "secondvalue"
+        }
+      }
+    ]
+  },
+  "profiles": [
+    {
+      "name": "myprofile",
+      "shared": true, "__comment__": "OSGi mode if false | JEE mode if true",
+      "properties": {
+        "other": "value",
+        "karaf.shell.console": "true"
+      },
+      "configs": {
+        "envs": [ "appConfigMap" ]
+      },
+      "libraries": [ "my-lib" ],
+      "resources": [
+        "mvn:org.apache.karaf.services/shell/5.0-SNAPSHOT",
+        "embedded:/path/relative/to/profile/my.jar"
+      ]
+    },
+    { "location": "mvn:org.apache.karaf.profiles/other/1.0/json" },
+    { "location": "mvn:org.apache.karaf.profiles/third/1.0" }
+  ],
+  "modules": [
+    { "location": "mvn:groupId/artifact/1.0" },
+    { "location": "http://...", "profile": "myprofile" },
+    { "location": "embedded:/inner/path/module.jar", "profile": "other" },
+    { "location": "file:...." }
+  ]
+}

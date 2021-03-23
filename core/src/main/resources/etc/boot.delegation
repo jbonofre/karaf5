@@ -1,9 +1,0 @@
-com.sun.*,
-javax.transaction,
-javax.transaction.*,
-javax.xml.crypto,
-javax.xml.crypto.*,
-jdk.nashorn,
-sun.*,
-jdk.internal.reflect,
-jdk.internal.reflect.*

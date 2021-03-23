@@ -1,7 +1,0 @@
-{
-  "name": "config",
-  "version": "5.0.0-SNAPSHOT",
-  "module": [
-    { "location": "mvn:org.apache.felix/org.apache.felix.configadmin/1.9.18" }
-  ]
-}
