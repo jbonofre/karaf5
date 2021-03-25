@@ -32,7 +32,7 @@ public class KarafTest {
         KarafConfig karafConfig = KarafConfig.build();
         karafConfig.setHome("target/karaf");
         karafConfig.setData("target/karaf/data");
-        karafConfig.setCache("target/karaf/cahce/1");
+        karafConfig.setCache("target/karaf/cache/1");
         karafConfig.setClearCache(true);
         Karaf karaf = Karaf.build(karafConfig);
 
@@ -68,6 +68,34 @@ public class KarafTest {
 
         Assertions.assertEquals(".", karaf.getConfig().getHome());
         Assertions.assertEquals("./data", karaf.getConfig().getData());
+    }
+
+    @Test
+    public void addOsgiModuleWithHttpUrl() throws Exception {
+        KarafConfig karafConfig = KarafConfig.build();
+        karafConfig.setHome("target/karaf");
+        karafConfig.setData("target/karaf/data");
+        karafConfig.setCache("target/karaf/cache/2");
+        Karaf karaf = Karaf.build(karafConfig);
+
+        karaf.init();
+        karaf.addModule("https://repo1.maven.org/maven2/org/ops4j/pax/url/pax-url-mvn/1.3.7/pax-url-mvn-1.3.7.jar");
+        karaf.start();
+    }
+
+    @Test
+    public void addOsgiModuleWithMvnUrl() throws Exception {
+        KarafConfig karafConfig = KarafConfig.build();
+        karafConfig.setHome("target/karaf");
+        karafConfig.setData("target/karaf/data");
+        karafConfig.setCache("target/karaf/cache/3");
+        Karaf karaf = Karaf.build(karafConfig);
+
+        karaf.init();
+        karaf.addModule("mvn:commons-lang/commons-lang/2.6");
+        karaf.start();
+
+        Assertions.assertNotNull(karaf.getModuleManager().getId("mvn:commons-lang/commons-lang/2.6"));
     }
 
 }

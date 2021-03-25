@@ -22,6 +22,7 @@ import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.module.ModuleManager;
 import org.apache.karaf.boot.specs.SpecsListener;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -40,6 +41,7 @@ public class Karaf {
 
     private KarafConfig config;
     private Framework framework = null;
+    private ModuleManager moduleManager;
 
     private long startTime;
 
@@ -161,6 +163,9 @@ public class Karaf {
         FrameworkStartLevel frameworkStartLevel = framework.adapt(FrameworkStartLevel.class);
         frameworkStartLevel.setInitialBundleStartLevel(Integer.parseInt(this.config.getBundleStartLevel()));
 
+        log.info("Starting module manager");
+        moduleManager = new ModuleManager(framework);
+
         if (framework.getBundleContext().getBundles().length == 1) {
             log.info("Starting specs listener");
             SpecsListener specsListener = new SpecsListener();
@@ -169,7 +174,8 @@ public class Karaf {
             log.info("Registering Karaf service");
             framework.getBundleContext().registerService(Karaf.class, this, null);
 
-            // TODO load profiles & modules
+            log.info("Registering module manager service");
+            framework.getBundleContext().registerService(ModuleManager.class, moduleManager, null);
         }
     }
 
@@ -202,6 +208,18 @@ public class Karaf {
 
     public KarafConfig getConfig() {
         return config;
+    }
+
+    public void addModule(String url, String ... args) throws Exception {
+        moduleManager.add(url, args);
+    }
+
+    public void removeModule(String id) throws Exception {
+        moduleManager.remove(id);
+    }
+
+    public ModuleManager getModuleManager() {
+        return this.moduleManager;
     }
 
 }
