@@ -24,13 +24,11 @@ import org.apache.karaf.boot.spi.ApplicationManagerService;
 
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Log
 public class ApplicationManager {
 
-    // TODO id:url:manager
-    private final static Map<String, String> applications = new ConcurrentHashMap<>();
+    private final ApplicationStore store = new ApplicationStore();
 
     private final KarafConfig karafConfig;
     private final ServiceLoader<ApplicationManagerService> managers;
@@ -66,7 +64,7 @@ public class ApplicationManager {
     }
 
     public void start(String url, String name, Map<String, Object> properties) throws Exception {
-        if (applications.containsValue(url)) {
+        if (store.urlExists(url)) {
             throw new IllegalStateException("Application " + url + " already exists");
         }
         managers.forEach(manager -> {
@@ -75,13 +73,13 @@ public class ApplicationManager {
                     if (manager.canHandle(url)) {
                         log.info("Starting application " + url + " via manager " + manager.getName());
                         String id = manager.start(url, properties);
-                        applications.put(id, manager.getName());
+                        store.add(id, url, manager.getName());
                     }
                 } else {
                     if (manager.getName().equals(name)) {
                         log.info("Starting application " + url + " via manager " + manager.getName());
                         String id = manager.start(url, properties);
-                        applications.put(id, manager.getName());
+                        store.add(id, url, manager.getName());
                     }
                 }
             } catch (Exception e) {
@@ -91,10 +89,10 @@ public class ApplicationManager {
     }
 
     public void stop(String id) throws Exception {
-        if (!applications.containsKey(id)) {
+        if (!store.idExists(id)) {
             throw new IllegalArgumentException("Application " + id + " doesn't exist");
         }
-        String managerName = applications.get(id);
+        String managerName = store.getManager(id);
         managers.forEach(manager -> {
             if (manager.getName().equals(managerName)) {
                 try {
@@ -104,7 +102,7 @@ public class ApplicationManager {
                 }
             }
         });
-        applications.remove(id);
+        store.remove(id);
     }
 
 }
