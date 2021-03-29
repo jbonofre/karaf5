@@ -15,29 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot;
+package org.apache.karaf.osgi;
 
+import org.apache.karaf.boot.Karaf;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.config.Launcher;
+import org.apache.karaf.boot.config.Service;
 import org.junit.jupiter.api.Test;
 
-public class KarafTest {
+public class OsgiModuleManagerTest {
 
     @Test
-    public void emptyRunProgrammaticallyTest() throws Exception {
-        KarafConfig karafConfig = KarafConfig.build();
+    public void simpleTest() throws Exception {
+        KarafConfig karafConfig = new KarafConfig();
+        Launcher launcher = new Launcher();
+        Service osgiConfig = new Service();
+        osgiConfig.setName("osgi");
+        osgiConfig.getProperties().put("storageDirectory", "target/karaf");
+        osgiConfig.getProperties().put("cache", "target/karaf/cache");
+        karafConfig.setLauncher(launcher);
+
         Karaf karaf = Karaf.build(karafConfig);
-
         karaf.init();
         karaf.start();
-    }
 
-    @Test
-    public void emptyPropertyJsonTest() throws Exception {
-        System.setProperty("karaf.config", "target/test-classes/emptyrun.json");
-        Karaf karaf = Karaf.build();
-
-        karaf.init();
-        karaf.start();
+        karaf.addModule("https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar", "osgi", null);
     }
 
 }

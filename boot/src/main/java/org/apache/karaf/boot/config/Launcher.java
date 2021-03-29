@@ -19,10 +19,16 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
-@Data
-public class Module {
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-    private String location;
-    private String profile;
+@Data
+public class Launcher {
+
+    private Map<String, Object> properties = new HashMap<>();
+    private List<Service> managers = new LinkedList<>();
+    private List<Service> services = new LinkedList<>();
 
 }

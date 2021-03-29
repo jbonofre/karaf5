@@ -19,14 +19,14 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @Data
-public class Library {
+public class Classloader {
 
-    private String name;
-    private boolean system;
-    private List<String> resources = new ArrayList<>();
+    private String order;
+    private List<Priority> priorities = new LinkedList<>();
+    private List<String> urls = new LinkedList<>();
 
 }

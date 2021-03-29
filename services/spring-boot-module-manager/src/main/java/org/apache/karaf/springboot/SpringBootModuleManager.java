@@ -15,18 +15,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.module;
+package org.apache.karaf.springboot;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.boot.spi.ModuleManagerService;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Map;
 import java.util.UUID;
 import java.util.jar.JarInputStream;
 
 @Log
-public class SpringBootModuleService implements ModuleService {
+public class SpringBootModuleManager implements ModuleManagerService {
+
+    @Override
+    public String getName() {
+        return "spring-boot";
+    }
+
+    @Override
+    public void init(Map<String, Object> properties) throws Exception {
+        log.info("Starting Spring Boot module manager");
+        // no-op
+    }
 
     @Override
     public boolean canHandle(String url) {
@@ -43,7 +56,8 @@ public class SpringBootModuleService implements ModuleService {
     }
 
     @Override
-    public String add(String url, String ... args) throws Exception {
+    public String add(String url, Map<String, Object> properties) throws Exception {
+        log.info("Adding Spring Boot module " + url);
         final URLClassLoader classLoader = new URLClassLoader(new URL[]{ new URL(url) }, this.getClass().getClassLoader());
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
@@ -57,7 +71,11 @@ public class SpringBootModuleService implements ModuleService {
             // invoke spring boot main
             final Method main = classLoader.loadClass("org.springframework.boot.loader.JarLauncher").getMethod("main", String[].class);
             main.setAccessible(true);
-            main.invoke(null, new Object[]{ args });
+            if (properties.get("args") != null) {
+                main.invoke(null, new Object[]{ properties.get("args") });
+            } else {
+                main.invoke(null);
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }

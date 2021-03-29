@@ -15,17 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.config;
+package org.apache.karaf.springboot;
 
-import lombok.Data;
+import org.apache.karaf.boot.Karaf;
+import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+public class SpringBootModuleManagerTest {
 
-@Data
-public class ConfigInline {
-
-    private String id;
-    private Map<String, Object> properties = new HashMap<>();
+    @Test
+    public void simpleTest() throws Exception {
+        Karaf karaf = Karaf.build();
+        karaf.init();
+        karaf.start();
+    }
 
 }

@@ -19,31 +19,15 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
 @Data
-public class KarafConfig {
+public class Application {
 
-    private Launcher launcher = new Launcher();
-    private List<Profile> profiles = new LinkedList<>();
-    private List<Application> applications = new LinkedList<>();
-
-    private final static Jsonb jsonb;
-
-    static {
-        jsonb = JsonbBuilder.create();
-    }
-
-    public final static KarafConfig build() throws Exception {
-        return new KarafConfig();
-    }
-
-    public final static KarafConfig read(InputStream inputStream) throws Exception {
-        return jsonb.fromJson(inputStream, KarafConfig.class);
-    }
+    private String url;
+    private String type;
+    private List<String> profiles = new LinkedList<>();
+    // TODO add application services properties
 
 }

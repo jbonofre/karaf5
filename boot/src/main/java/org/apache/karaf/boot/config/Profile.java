@@ -19,20 +19,14 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Data
 public class Profile {
 
     private String name;
-    private boolean shared;
-    private String location;
-    private Map<String, String> properties = new HashMap<>();
-    private Configs configs;
-    private List<String> libraries = new ArrayList<>();
-    private List<String> resources = new ArrayList<>();
+    private Map<String, Object> properties = new HashMap<>();
+    private Classloader classloader;
 
 }

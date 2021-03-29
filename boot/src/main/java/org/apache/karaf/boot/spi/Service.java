@@ -15,14 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.module;
+package org.apache.karaf.boot.spi;
 
-public interface ModuleService {
+import java.util.Map;
 
-    boolean canHandle(String url);
+/**
+ * Generic Karaf service loaded by Karaf runtime at startup.
+ */
+public interface Service {
 
-    String add(String url, String ... args) throws Exception;
+    String getName();
 
-    void remove(String id) throws Exception;
+    void init(Map<String, Object> properties) throws Exception;
 
 }

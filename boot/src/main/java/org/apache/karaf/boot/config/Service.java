@@ -19,10 +19,14 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
-@Data
-public class ConfigFile {
+import java.util.HashMap;
+import java.util.Map;
 
-    private String id;
+@Data
+public class Service {
+
+    private String name;
     private String location;
+    private Map<String, Object> properties = new HashMap<>();
 
 }

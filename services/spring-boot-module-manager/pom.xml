@@ -24,34 +24,24 @@
 
     <parent>
         <groupId>org.apache.karaf</groupId>
-        <artifactId>karaf</artifactId>
+        <artifactId>services</artifactId>
         <version>5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>boot</artifactId>
-    <name>Apache Karaf :: Boot</name>
+    <artifactId>spring-boot-module-manager</artifactId>
+    <name>Apache Karaf :: Services :: Spring Boot Module Manager</name>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jsonb_1.0_spec</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-json_1.1_spec</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-jsonb</artifactId>
-            <version>1.2.10</version>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>boot</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

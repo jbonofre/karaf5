@@ -18,29 +18,20 @@
 package org.apache.karaf.boot;
 
 import lombok.extern.java.Log;
-import org.apache.felix.framework.FrameworkFactory;
-import org.apache.felix.framework.cache.BundleCache;
-import org.apache.felix.framework.util.FelixConstants;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.module.ModuleManager;
-import org.apache.karaf.boot.specs.SpecsListener;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.launch.Framework;
-import org.osgi.framework.startlevel.FrameworkStartLevel;
+import org.apache.karaf.boot.service.ServiceManager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.management.ManagementFactory;
-import java.util.HashMap;
 import java.util.Map;
 
 @Log
 public class Karaf {
 
+    private String base;
     private KarafConfig config;
-    private Framework framework = null;
     private ModuleManager moduleManager;
 
     private long startTime;
@@ -77,7 +68,13 @@ public class Karaf {
                 log.warning(System.getProperty("karaf.config") + " doesn't exist");
             }
         }
-        // TODO load from classpath
+        // trying to load KarafConfig from classpath
+        if (Karaf.class.getResourceAsStream("META-INF/karaf.json") != null) {
+            config = KarafConfig.read(Karaf.class.getResourceAsStream("META-INF/karaf.json"));
+        }
+        if (Karaf.class.getResourceAsStream("karaf.json") != null) {
+            config = KarafConfig.read(Karaf.class.getResourceAsStream("karaf.json"));
+        }
         // loading default configuration
         if (config == null) {
             config = new KarafConfig();
@@ -128,55 +125,21 @@ public class Karaf {
                     "  Apache Karaf (5.0.0-SNAPSHOT)\n");
         }
 
-        log.info("Home directory: " + this.config.getHome());
-        log.info("Cache directory: " + this.config.getCache());
-
-        // TODO create libraries
-        log.fine("Creating libraries");
-
-        log.fine("Creating framework configuration");
-        Map<String, Object> frameworkConfig = new HashMap<>();
-        // cache
-        frameworkConfig.put(Constants.FRAMEWORK_STORAGE, this.config.getCache());
-        // clear cache
-        if (this.config.isClearCache()) {
-            frameworkConfig.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
-        }
-        // start level
-        frameworkConfig.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, this.config.getStartLevel());
-        // framework log level
-        frameworkConfig.put(FelixConstants.LOG_LEVEL_PROP, this.config.getFrameworkLogLevel());
-        // bundle cache dir
-        frameworkConfig.put(BundleCache.CACHE_ROOTDIR_PROP, this.config.getCache() + "/bundles");
-        // TODO set boot delegation and system packages ?
-
-        FrameworkFactory frameworkFactory = new FrameworkFactory();
-        framework = frameworkFactory.newFramework(frameworkConfig);
-
-        try {
-            framework.init();
-            framework.start();
-        } catch (BundleException e) {
-            throw new RuntimeException(e);
+        if (System.getenv("KARAF_BASE") != null) {
+            base = System.getenv("KARAF_BASE");
+        } else if (System.getProperty("karaf.base") != null) {
+            base = System.getProperty("karaf.base");
+        } else {
+            base = ".";
         }
 
-        FrameworkStartLevel frameworkStartLevel = framework.adapt(FrameworkStartLevel.class);
-        frameworkStartLevel.setInitialBundleStartLevel(Integer.parseInt(this.config.getBundleStartLevel()));
+        log.info("Base directory: " + this.base);
 
         log.info("Starting module manager");
-        moduleManager = new ModuleManager(framework);
+        moduleManager = new ModuleManager(config.getLauncher().getManagers());
 
-        if (framework.getBundleContext().getBundles().length == 1) {
-            log.info("Starting specs listener");
-            SpecsListener specsListener = new SpecsListener();
-            specsListener.start(framework.getBundleContext());
-
-            log.info("Registering Karaf service");
-            framework.getBundleContext().registerService(Karaf.class, this, null);
-
-            log.info("Registering module manager service");
-            framework.getBundleContext().registerService(ModuleManager.class, moduleManager, null);
-        }
+        log.info("Starting Karaf services");
+        ServiceManager serviceManager = new ServiceManager(config.getLauncher().getServices());
     }
 
     public void start() {
@@ -198,20 +161,12 @@ public class Karaf {
         return message.toString();
     }
 
-    public BundleContext getContext() {
-        return framework.getBundleContext();
-    }
-
-    public Framework getFramework() {
-        return framework;
-    }
-
     public KarafConfig getConfig() {
         return config;
     }
 
-    public void addModule(String url, String ... args) throws Exception {
-        moduleManager.add(url, args);
+    public void addModule(String url, String type, Map<String, Object> properties) throws Exception {
+        moduleManager.add(url, type, properties);
     }
 
     public void removeModule(String id) throws Exception {

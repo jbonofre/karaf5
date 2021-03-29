@@ -3,22 +3,30 @@
     "properties": {
       "foo": "bar"
     },
-    "services": [
+    "managers": [
       {
-        "name": "osgiModuleService",
+        "name": "osgi",
         "properties": {
-          "cacheDirectory": "${env:KARAF_DATA}/osgi/cache",
-          "bootDelegation": "com.sun.*,javax.transaction",
-          "systemPackages": "java.lang,java.util"
+          "storageDirectory": "./osgi/cache",
+          "startLevel": "80"
         }
       },
       {
-        "name": "springBootModuleService"
+        "name": "spring-boot"
       },
       {
-        "name": "microprofileModuleService",
+        "name": "microprofile",
         "properties": {
           "enabled": false
+        }
+      }
+    ],
+    "services": [
+      {
+        "name": "log",
+        "location": "/path/to/log-service.jar",
+        "properties": {
+          "patternLayout": "%m %n"
         }
       }
     ]
@@ -31,7 +39,7 @@
       },
       "classloader": {
         "order": "PARENT_FIRST",
-        "priorities": [ { "type": "RESOURCE", "pattern": "org/slf4j/LoggerFactory" }, {"type": "CLASS", "name": "com.foo.[*]"} ]
+        "priorities": [ { "type": "RESOURCE", "pattern": "org/slf4j/LoggerFactory" }, {"type": "CLASS", "name": "com.foo.[*]"} ],
         "urls": [ "/path/to/jar/file.jar", "/path/to/folder" ]
       }
     }

@@ -19,14 +19,11 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
-public class Configs {
+public class Priority {
 
-     private List<String> envs = new ArrayList<>();
-     private List<ConfigFile> files = new ArrayList<>();
-     private List<ConfigInline> inlines = new ArrayList<>();
+    private String type;
+    private String pattern;
+    private String name;
 
 }

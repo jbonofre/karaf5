@@ -29,31 +29,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>boot</artifactId>
-    <name>Apache Karaf :: Boot</name>
+    <artifactId>services</artifactId>
+    <packaging>pom</packaging>
+    <name>Apache Karaf :: Services</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jsonb_1.0_spec</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-json_1.1_spec</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-jsonb</artifactId>
-            <version>1.2.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>osgi-module-manager</module>
+        <module>spring-boot-module-manager</module>
+    </modules>
 
 </project>
