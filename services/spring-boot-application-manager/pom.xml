@@ -24,18 +24,26 @@
 
     <parent>
         <groupId>org.apache.karaf</groupId>
-        <artifactId>karaf</artifactId>
+        <artifactId>services</artifactId>
         <version>5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>services</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache Karaf :: Services</name>
+    <artifactId>spring-boot-application-manager</artifactId>
+    <name>Apache Karaf :: Services :: Spring Boot Application Manager</name>
 
-    <modules>
-        <module>osgi-application-manager</module>
-        <module>spring-boot-application-manager</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>boot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>

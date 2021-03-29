@@ -19,7 +19,7 @@ package org.apache.karaf.boot;
 
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.KarafConfig;
-import org.apache.karaf.boot.module.ModuleManager;
+import org.apache.karaf.boot.application.ApplicationManager;
 import org.apache.karaf.boot.service.ServiceManager;
 
 import java.io.File;
@@ -32,7 +32,7 @@ public class Karaf {
 
     private String base;
     private KarafConfig config;
-    private ModuleManager moduleManager;
+    private ApplicationManager applicationManager;
 
     private long startTime;
 
@@ -135,11 +135,16 @@ public class Karaf {
 
         log.info("Base directory: " + this.base);
 
-        log.info("Starting module manager");
-        moduleManager = new ModuleManager(config);
+        log.info("Starting applications manager");
+        applicationManager = new ApplicationManager(config);
 
         log.info("Starting Karaf services");
         ServiceManager serviceManager = new ServiceManager(config);
+
+        log.info("Loading profiles");
+        // TODO
+
+        log.info("Starting applications");
     }
 
     public void start() {
@@ -165,16 +170,16 @@ public class Karaf {
         return config;
     }
 
-    public void addModule(String url, String type, Map<String, Object> properties) throws Exception {
-        moduleManager.add(url, type, properties);
+    public void startApplication(String url, String type, Map<String, Object> properties) throws Exception {
+        applicationManager.start(url, type, properties);
     }
 
-    public void removeModule(String id) throws Exception {
-        moduleManager.remove(id);
+    public void stopApplication(String id) throws Exception {
+        applicationManager.stop(id);
     }
 
-    public ModuleManager getModuleManager() {
-        return this.moduleManager;
+    public ApplicationManager getApplicationManager() {
+        return this.applicationManager;
     }
 
 }
