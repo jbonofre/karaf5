@@ -136,10 +136,10 @@ public class Karaf {
         log.info("Base directory: " + this.base);
 
         log.info("Starting module manager");
-        moduleManager = new ModuleManager(config.getLauncher().getManagers());
+        moduleManager = new ModuleManager(config);
 
         log.info("Starting Karaf services");
-        ServiceManager serviceManager = new ServiceManager(config.getLauncher().getServices());
+        ServiceManager serviceManager = new ServiceManager(config);
     }
 
     public void start() {

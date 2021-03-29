@@ -18,6 +18,7 @@
 package org.apache.karaf.boot.module;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.config.Service;
 import org.apache.karaf.boot.spi.ModuleManagerService;
 
@@ -32,11 +33,11 @@ public class ModuleManager {
     // id:manager
     private final static Map<String, String> modules = new ConcurrentHashMap<>();
 
-    private final List<Service> config;
+    private final KarafConfig karafConfig;
     private final ServiceLoader<ModuleManagerService> managers;
 
-    public ModuleManager(List<Service> config) {
-        this.config = config;
+    public ModuleManager(KarafConfig karafConfig) {
+        this.karafConfig = karafConfig;
         this.managers = ServiceLoader.load(ModuleManagerService.class);
 
         managers.forEach(manager -> {
@@ -51,9 +52,11 @@ public class ModuleManager {
     }
 
     private Map<String, Object> getConfig(String manager) {
-        for (Service service : this.config) {
-            if (service.getName().equals(manager)) {
-                return service.getProperties();
+        if (this.karafConfig != null && this.karafConfig.getLauncher() != null && this.karafConfig.getLauncher().getManagers() != null) {
+            for (Service service : this.karafConfig.getLauncher().getManagers()) {
+                if (service.getName().equals(manager)) {
+                    return service.getProperties();
+                }
             }
         }
         return null;

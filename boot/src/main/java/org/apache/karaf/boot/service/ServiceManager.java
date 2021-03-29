@@ -18,22 +18,24 @@
 package org.apache.karaf.boot.service;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.boot.config.KarafConfig;
 
-import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
 @Log
 public class ServiceManager {
 
-    public ServiceManager(final List<org.apache.karaf.boot.config.Service> config) {
+    public ServiceManager(KarafConfig config) {
         ServiceLoader<org.apache.karaf.boot.spi.Service> services = ServiceLoader.load(org.apache.karaf.boot.spi.Service.class);
         services.forEach(service -> {
             log.info("Starting " + service.getName() + " service");
             Map<String, Object> properties = null;
-            for (org.apache.karaf.boot.config.Service serviceConfig : config) {
-                if (serviceConfig.getName().equals(service.getName())) {
-                    properties = serviceConfig.getProperties();
+            if (config != null && config.getLauncher() != null && config.getLauncher().getServices() != null) {
+                for (org.apache.karaf.boot.config.Service serviceConfig : config.getLauncher().getServices()) {
+                    if (serviceConfig.getName().equals(service.getName())) {
+                        properties = serviceConfig.getProperties();
+                    }
                 }
             }
             try {

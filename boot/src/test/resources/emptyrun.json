@@ -1,2 +1,7 @@
 {
+  "launcher": {
+    "properties": {
+      "foo": "bar"
+    }
+  }
 }

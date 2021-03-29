@@ -28,7 +28,7 @@ import java.util.List;
 @Data
 public class KarafConfig {
 
-    private Launcher launcher = new Launcher();
+    private Launcher launcher;
     private List<Profile> profiles = new LinkedList<>();
     private List<Application> applications = new LinkedList<>();
 

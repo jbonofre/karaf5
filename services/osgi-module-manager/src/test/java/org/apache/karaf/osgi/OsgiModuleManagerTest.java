@@ -33,6 +33,7 @@ public class OsgiModuleManagerTest {
         osgiConfig.setName("osgi");
         osgiConfig.getProperties().put("storageDirectory", "target/karaf");
         osgiConfig.getProperties().put("cache", "target/karaf/cache");
+        launcher.getManagers().add(osgiConfig);
         karafConfig.setLauncher(launcher);
 
         Karaf karaf = Karaf.build(karafConfig);
