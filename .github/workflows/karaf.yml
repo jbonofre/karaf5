@@ -31,4 +31,4 @@ jobs:
         with:
           java-version: 11
       - name: Build
-        run: mvn --batch-mode --update-snapshots verify
+        run: mvn --batch-mode --update-snapshots --no-transfer-progress verify
