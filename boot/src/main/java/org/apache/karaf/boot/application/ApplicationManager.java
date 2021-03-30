@@ -25,6 +25,7 @@ import org.apache.karaf.boot.spi.ApplicationManagerService;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Log
 public class ApplicationManager {
@@ -67,6 +68,17 @@ public class ApplicationManager {
     public void start(String url, String name, Map<String, Object> properties) throws Exception {
         if (store.urlExists(url)) {
             throw new IllegalStateException("Application " + url + " already exists");
+        }
+        if (name != null) {
+            final AtomicBoolean found = new AtomicBoolean(false);
+            managers.forEach(manager -> {
+                if (manager.getName().equals(name)) {
+                    found.set(true);
+                }
+            });
+            if (!found.get()) {
+                throw new IllegalArgumentException(name + " application manager not found");
+            }
         }
         managers.forEach(manager -> {
             try {

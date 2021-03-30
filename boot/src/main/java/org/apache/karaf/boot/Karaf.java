@@ -146,6 +146,13 @@ public class Karaf {
         // TODO
 
         log.info("Starting applications");
+        config.getApplications().forEach(application -> {
+            try {
+                this.startApplication(application.getUrl(), application.getType(), application.getProperties());
+            } catch (Exception e) {
+                log.warning("Can't start application " + application.getUrl() + ": " + e);
+            }
+        });
     }
 
     public void start() {

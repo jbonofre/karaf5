@@ -19,8 +19,10 @@ package org.apache.karaf.boot.config;
 
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class Application {
@@ -28,6 +30,6 @@ public class Application {
     private String url;
     private String type;
     private List<String> profiles = new LinkedList<>();
-    // TODO add application services properties
+    private Map<String, Object> properties = new HashMap<>();
 
 }

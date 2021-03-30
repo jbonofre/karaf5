@@ -66,6 +66,11 @@ public class KarafConfigTest {
 
         // applications
         Assertions.assertEquals(2, karafConfig.getApplications().size());
+        Application springBootApp = karafConfig.getApplications().get(0);
+        Assertions.assertEquals("/path/to/app/spring-boot.jar", springBootApp.getUrl());
+        Assertions.assertEquals("spring-boot", springBootApp.getType());
+        Assertions.assertTrue((boolean) springBootApp.getProperties().get("enableHttp"));
+        Assertions.assertTrue((boolean) springBootApp.getProperties().get("enablePrometheus"));
     }
 
 }

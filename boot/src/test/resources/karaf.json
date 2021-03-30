@@ -48,15 +48,11 @@
     {
       "url": "/path/to/app/spring-boot.jar",
       "profiles": [ "myprofile" ],
-      "services": [
-        {
-          "name": "spring-boot",
-          "properties": {
-            "enableHttp": true,
-            "enablePrometheus": true
-          }
-        }
-      ]
+      "type": "spring-boot",
+      "properties": {
+        "enableHttp": true,
+        "enablePrometheus": true
+      }
     },
     {
       "url": "/path/to/osgi/bundle.jar",
