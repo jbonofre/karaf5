@@ -21,6 +21,7 @@ import org.apache.karaf.boot.Karaf;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.config.Launcher;
 import org.apache.karaf.boot.config.Service;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class OsgiApplicationManagerTest {
@@ -41,6 +42,12 @@ public class OsgiApplicationManagerTest {
         karaf.start();
 
         karaf.startApplication("https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar", "osgi", null);
+
+        Assertions.assertEquals(1, karaf.getApplicationIds().size());
+
+        Assertions.assertEquals("1", karaf.getApplicationIds().get(0));
+        Assertions.assertEquals("osgi", karaf.getApplicationManager("1"));
+        Assertions.assertEquals("https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar", karaf.getApplicationUrl("1"));
     }
 
 }

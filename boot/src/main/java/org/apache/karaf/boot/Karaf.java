@@ -25,6 +25,7 @@ import org.apache.karaf.boot.service.ServiceManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.management.ManagementFactory;
+import java.util.List;
 import java.util.Map;
 
 @Log
@@ -176,6 +177,18 @@ public class Karaf {
 
     public void stopApplication(String id) throws Exception {
         applicationManager.stop(id);
+    }
+
+    public List<String> getApplicationIds() {
+        return this.applicationManager.getIds();
+    }
+
+    public String getApplicationManager(String applicationId) {
+        return this.applicationManager.getManager(applicationId);
+    }
+
+    public String getApplicationUrl(String applicationId) {
+        return this.applicationManager.getUrl(applicationId);
     }
 
     public ApplicationManager getApplicationManager() {

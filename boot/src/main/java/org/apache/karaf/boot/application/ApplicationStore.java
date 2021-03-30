@@ -68,6 +68,15 @@ public class ApplicationStore {
         return null;
     }
 
+    public String getUrl(String id) {
+        for (Holder holder : store) {
+            if (holder.getId().equals(id)) {
+                return holder.getUrl();
+            }
+        }
+        return null;
+    }
+
     private Holder searchHolderById(String id) {
         for (Holder holder : store) {
             if (holder.getId().equals(id)) {
@@ -75,6 +84,14 @@ public class ApplicationStore {
             }
         }
         return null;
+    }
+
+    public List<String> getIds() {
+        List<String> ids = new ArrayList<>();
+        store.forEach(holder -> {
+            ids.add(holder.getId());
+        });
+        return ids;
     }
 
     @Data

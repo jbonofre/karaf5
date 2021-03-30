@@ -18,117 +18,152 @@
 
 = Apache Karaf
 
-Apache Karaf is a runtime supporting different kind of applications, and providing
-out of the box features you can leverage and benefit.
+Apache Karaf is a multi-runtime launcher.
 
-Apache Karaf provides:
+It provides extensible launchers per application kind and out of the box services that any application 
+running on Karaf can leverage without cost.
 
-* a generic "boot" (`Karaf`) bootstrapping a runtime for your applications that you can configure easily
-* an API to interact with the launcher if you need
-* a provisioning layer to easily add a set of applications
-* core runtime services dealing with log, configuration, and much more for you
-* optional features you can add in the runtime and leverage in your applications.
+Apache Karaf is composed by:
 
-== Library
+* Karaf boot (`Karaf`) bootstraps the runtimes for your applications, the runtimes are discovered and extensible
+* an API to interact with the boot if you need
+* profiles to easily add cross runtimes dependencies
+* services to easily add cross runtimes features (log, configurations, URL handlers, ...)
+* boot applications
 
-A library allows you to define a dependency set that modules deployed in Karaf can use (overriding the module dependencies).
+Karaf boot can be describe/configure programmatically or by a provided JSON file.
 
-The libaries are configured in `KarafConfig` (via `karaf.json` or programmatically), at main level.
+== Karaf Boot
 
-== Module
+Karaf boot is the main runtimes orchestrator. Each runtime is loaded via Karaf SPI, and can be configured in main
+Karaf configuration.
 
-A Karaf module is a generic application module you can add to the Karaf boot.
+KarafConfig can be provided programmatically:
 
-The module can be packaged in the ready to run artifact or provisioned a runtime (locally or remotely).
-It could also be added on a running instance (on the fly).
+```
+KarafConfig config = new KarafConfig();
+...
+Karaf karaf = Karaf.build(config);
+karaf.init();
+karaf.start();
+```
 
-Currently, Apache Karaf supports:
-
-* OSGi bundle module
-* Spring Boot module
-* Microprofile module
-
-=== Spring Boot
-
-Apache Karaf supports Spring Boot uber jar application module.
-
-=== OSGi Bundle
-
-Apache Karaf supports OSGi bundle application module.
-
-=== Microprofile
-
-Apache Karaf supports Microprofile application module.
-
-== Profile
-
-A Karaf profile is a convenient way to "group" modules all together, with eventually additional resources.
-
-A profile is defined by a JSON descriptor (inline in the main Karaf config, or added by profile jar).
-
-For instance:
+or using `karaf.json`:
 
 ```
 {
-  "name": "myprofile",
-  "version": "1.0",
-  "config": [ "k8s:configMapId", "configfile:/path/to/config.cfg", "config:pid:foo=bar,hello=world" ],
-  "properties": [ "foo=bar", "hello=world" ],
-  "module": [
-    { "location": "mvn:mymodules/myfirstmodule/1.1" }
-    { "location": "mvn:mymodules/mysecondmodule/1.2" }
-  ]
+ "launcher": {
+    "properties": {
+        "foo": "bar"
+    }
+ },
+ "applications": [
+    {
+        "url": "/path/to/my/jar"
+    }
+ ]
 }
 ```
 
-You can add an extension providing directly the location of the JSON descriptor or package the JSON descriptor
-in a JAR file.
-
-== Boot
-
-You can easily boot a runtime. You can configure the runtime by providing a `karaf.json` descriptor:
-
-```
-{
-    "home": "/path/to/home/directory",
-    "data": "${home}/data/directory",
-    "cache": "${cache}/cache/directory",
-    "properties": [ "foo=bar", "hello=world" ],
-    "library": [ 
-        { "id": "json-b", "system": true, "artifacts": [ "file:/path/to/jar", ... ] },
-        { "id": "my-lib", "artifacts": [ "mvn:...", "http:...", "file:...", "embedded:..." ] }
-    ],
-    "profiles": [
-      { "name": "myprofile", "library": "my-lib", "artifacts": [ .... ] },
-      { "name": "otherprofile", "module": [ ... ] }
-    ],
-    "modules": [ "mvn:....", "http:....", "file:....", "embedded:..." ]
-}
-```
-
-This `karaf.json` file is optional: Karaf uses a preset configuration by default.
-
-Karaf is looking for `karaf.json` file (aka Karaf Config):
+Karaf Boot is looking for `karaf.json` file (aka Karaf Config):
 
 * as system property: `-Dkaraf.config=/path/to/karaf.json`
 * as environment variable: `export KARAF_CONFIG=/path/to/karaf.json`
-* in the classpath of your application
+* in the current classpath
 
-== Distribution
+=== Launcher
 
-As for Apache Karaf 4.x, you still have ready to use distributions.
+Karaf Boot Launcher is the applications runtimes orchestrator. The runtimes are known as "Karaf Applications Manager",
+and automatically discovered and loaded via Karaf Boot SPI.
+That's the Karaf Boot Launcher Managers.
 
-=== Network
+You can also load services provided by the launcher using Karaf Boot Launcher Services.
 
-The Karaf Network distribution downloads all artifacts (from Maven Central) at first runtime.
+You can configure launcher in `karaf.json`:
 
-=== Standard
+```
+"launcher": {
+    "properties": {
+        "foo": "bar",
+        "hello": "world"
+    },
+    "managers": [
+      {
+        "name": "osgi",
+        "properties": {
+          "storageDirectory": "./osgi/cache",
+          "startLevel": "80"
+        }
+      },
+      {
+        "name": "spring-boot"
+      },
+      {
+        "name": "microprofile",
+        "properties": {
+          "enabled": false
+        }
+      }
+    ]
+```
 
-The Karaf Standard distribution is distribution running offline (no need of Internet connection).
+=== Profiles
 
-=== Cloud
+Karaf Profiles allows you to define a dependencies set that applications can use.
+It allows you to override application dependencies at runtime.
 
-The Karaf Cloud distribution is "light" standard distribution, ready to run on Kubernetes.
+The profiles are configured in `karaf.json` (`KarafConfig`) and loaded by Karaf Boot:
+
+```
+"profiles": [
+    {
+      "name": "myprofile",
+      "properties": {
+        "foo": "bar"
+      },
+      "classloader": {
+        "order": "PARENT_FIRST",
+        "priorities": [ { "type": "RESOURCE", "pattern": "org/slf4j/LoggerFactory" }, {"type": "CLASS", "name": "com.foo.[*]"} ],
+        "urls": [ "/path/to/jar/file.jar", "/path/to/folder" ]
+      }
+    }
+  ],
+```
+
+=== Applications
+
+The applications in `karaf.json` (`KarafConfig`) are automatically started by Karaf Boot at runtime.
+
+By default, Karaf tries to find the applications manager to use for the application. However, you can "force" the manager
+(runtime) to use by providing manager name.
+It's also possible to override application dependencies by providing profiles.
+You can also pass some properties for Karaf service specifically to the application.
+
+```
+"applications": [
+    {
+      "url": "/path/to/app/spring-boot.jar",
+      "profiles": [ "myprofile" ],
+      "services": [
+        {
+          "name": "spring-boot",
+          "properties": {
+            "enableHttp": true,
+            "enablePrometheus": true
+          }
+        }
+      ]
+    },
+    {
+      "url": "/path/to/osgi/bundle.jar",
+      "type": "osgi"
+    }
+  ]
+```
+
+== Distributions
+
+As for Apache Karaf 4.x, you can find some ready to use distribution.
 
 == Bootstrap & Run
 
@@ -145,3 +180,5 @@ or simply run with a `karaf.json`:
 ```
 $ java -jar karaf.jar -Dkaraf.config=karaf.json
 ```
+
+Karaf is launching all you describe in the `karaf.json`.

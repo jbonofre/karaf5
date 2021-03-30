@@ -22,6 +22,7 @@ import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.config.Service;
 import org.apache.karaf.boot.spi.ApplicationManagerService;
 
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -103,6 +104,18 @@ public class ApplicationManager {
             }
         });
         store.remove(id);
+    }
+
+    public List<String> getIds() {
+        return store.getIds();
+    }
+
+    public String getUrl(String id) {
+        return store.getUrl(id);
+    }
+
+    public String getManager(String id) {
+        return store.getManager(id);
     }
 
 }

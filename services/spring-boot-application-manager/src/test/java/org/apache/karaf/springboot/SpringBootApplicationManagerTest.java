@@ -27,6 +27,9 @@ public class SpringBootApplicationManagerTest {
         Karaf karaf = Karaf.build();
         karaf.init();
         karaf.start();
+
+        // TODO add spring boot sample app
+        // karaf.startApplication("", null, null);
     }
 
 }
