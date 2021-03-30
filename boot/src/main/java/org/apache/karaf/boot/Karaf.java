@@ -123,7 +123,7 @@ public class Karaf {
                     "     / /| |/ /_/ / /  / /_/ / __/        \n" +
                     "    /_/ |_|\\__,_/_/   \\__,_/_/         \n" +
                     "\n" +
-                    "  Apache Karaf (5.0.0-SNAPSHOT)\n");
+                    "  Apache Karaf (5.0-SNAPSHOT)\n");
         }
 
         if (System.getenv("KARAF_BASE") != null) {
