@@ -1,22 +1,23 @@
-//
-// Licensed to the Apache Software Foundation (ASF) under one
-// or more contributor license agreements.  See the NOTICE file
-// distributed with this work for additional information
-// regarding copyright ownership.  The ASF licenses this file
-// to you under the Apache License, Version 2.0 (the
-// "License"); you may not use this file except in compliance
-// with the License.  You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-= Apache Karaf
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+
+# Apache Karaf
 
 Apache Karaf is a multi-runtime launcher.
 
@@ -31,14 +32,14 @@ Apache Karaf is composed by:
 * services to easily add cross runtimes features (log, configurations, URL handlers, ...)
 * boot applications
 
-Karaf boot can be describe/configure programmatically or by a provided JSON file.
+Karaf boot can be described/configure programmatically or by a provided JSON file.
 
-== Karaf Boot
+## Karaf Boot
 
 Karaf boot is the main runtimes orchestrator. Each runtime is loaded via Karaf SPI, and can be configured in main
 Karaf configuration.
 
-KarafConfig can be provided programmatically:
+`KarafConfig` can be provided programmatically:
 
 ```
 KarafConfig config = new KarafConfig();
@@ -71,9 +72,9 @@ Karaf Boot is looking for `karaf.json` file (aka Karaf Config):
 * as environment variable: `export KARAF_CONFIG=/path/to/karaf.json`
 * in the current classpath
 
-=== Launcher
+### Launcher
 
-Karaf Boot Launcher is the applications runtimes orchestrator. The runtimes are known as "Karaf Applications Manager",
+Karaf Boot Launcher is the applications runtimes orchestrator. The runtimes are known as *Karaf Applications Manager*,
 and automatically discovered and loaded via Karaf Boot SPI.
 That's the Karaf Boot Launcher Managers.
 
@@ -107,7 +108,7 @@ You can configure launcher in `karaf.json`:
     ]
 ```
 
-=== Profiles
+### Profiles
 
 Karaf Profiles allows you to define a dependencies set that applications can use.
 It allows you to override application dependencies at runtime.
@@ -130,7 +131,7 @@ The profiles are configured in `karaf.json` (`KarafConfig`) and loaded by Karaf 
   ],
 ```
 
-=== Applications
+### Applications
 
 The applications in `karaf.json` (`KarafConfig`) are automatically started by Karaf Boot at runtime.
 
@@ -161,11 +162,11 @@ You can also pass some properties for Karaf service specifically to the applicat
   ]
 ```
 
-== Distributions
+## Distributions
 
 As for Apache Karaf 4.x, you can find some ready to use distribution.
 
-== Bootstrap & Run
+## Run
 
 You can use Apache Karaf in your code, simply bootstrapping it and running with:
 
