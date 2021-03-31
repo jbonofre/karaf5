@@ -165,6 +165,7 @@ public class Karaf {
             throw new RuntimeException("Karaf lifecycle service is not registered");
         }
         karafLifeCycleService.start();
+
     }
 
     public void start() {

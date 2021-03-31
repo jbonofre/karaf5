@@ -36,8 +36,8 @@ Karaf boot can be described/configure programmatically or by a provided JSON fil
 
 ## Karaf Boot
 
-Karaf boot is the main runtimes orchestrator. Each runtime is loaded via Karaf SPI, and can be configured in main
-Karaf configuration.
+Karaf boot is the main runtimes orchestrator. It basically loads Karaf Services via SPI, and it's configured via
+`KarafConfig`.
 
 `KarafConfig` can be provided programmatically:
 
@@ -49,14 +49,12 @@ karaf.init();
 karaf.start();
 ```
 
-or using `karaf.json`:
+or loaded from an external resource like `karaf.json`:
 
 ```
 {
- "launcher": {
-    "properties": {
-        "foo": "bar"
-    }
+ "properties": {
+    "foo": "bar"
  },
  "applications": [
     {
@@ -72,40 +70,25 @@ Karaf Boot is looking for `karaf.json` file (aka Karaf Config):
 * as environment variable: `export KARAF_CONFIG=/path/to/karaf.json`
 * in the current classpath
 
-### Launcher
+### Runtime
 
-Karaf Boot Launcher is the applications runtimes orchestrator. The runtimes are known as *Karaf Applications Manager*,
+Karaf Boot provides:
+* a generic services launcher
+* a service registry
+* core Karaf services, as the Lifecycle service.
+
+The runtimes are known as *Karaf Services*,
 and automatically discovered and loaded via Karaf Boot SPI.
-That's the Karaf Boot Launcher Managers.
 
-You can also load services provided by the launcher using Karaf Boot Launcher Services.
+The Karaf Services can be configured via the properties, using the service name as prefix.
 
 You can configure launcher in `karaf.json`:
 
 ```
-"launcher": {
     "properties": {
-        "foo": "bar",
-        "hello": "world"
+        "osgi.storageDirectory": "/path/to/storage",
+        "spring-boot.cache": "/path/to/cache
     },
-    "managers": [
-      {
-        "name": "osgi",
-        "properties": {
-          "storageDirectory": "./osgi/cache",
-          "startLevel": "80"
-        }
-      },
-      {
-        "name": "spring-boot"
-      },
-      {
-        "name": "microprofile",
-        "properties": {
-          "enabled": false
-        }
-      }
-    ]
 ```
 
 ### Profiles
