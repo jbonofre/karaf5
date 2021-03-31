@@ -15,20 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.config;
+package org.apache.karaf.springboot;
 
-import lombok.Data;
+import org.apache.karaf.boot.Karaf;
+import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+public class SpringBootApplicationManagerServiceTest {
 
-@Data
-public class Launcher {
+    @Test
+    public void simpleTest() throws Exception {
+        Karaf karaf = Karaf.build();
+        karaf.init();
+        karaf.start();
 
-    private Map<String, Object> properties = new HashMap<>();
-    private List<Service> managers = new LinkedList<>();
-    private List<Service> services = new LinkedList<>();
+        // TODO add spring boot sample app
+        // karaf.startApplication("", null, null);
+    }
 
 }

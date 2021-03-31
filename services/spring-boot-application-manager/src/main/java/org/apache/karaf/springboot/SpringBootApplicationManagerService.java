@@ -18,31 +18,66 @@
 package org.apache.karaf.springboot;
 
 import lombok.extern.java.Log;
-import org.apache.karaf.boot.spi.ApplicationManagerService;
+import org.apache.karaf.boot.config.Application;
+import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafLifeCycleService;
+import org.apache.karaf.boot.service.ServiceRegistry;
+import org.apache.karaf.boot.spi.Service;
 
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.jar.JarInputStream;
 
 @Log
-public class SpringBootApplicationManager implements ApplicationManagerService {
+public class SpringBootApplicationManagerService implements Service {
 
     @Override
-    public String getName() {
+    public String name() {
         return "spring-boot";
     }
 
     @Override
-    public void init(Map<String, Object> properties) throws Exception {
-        log.info("Starting Spring Boot application manager");
-        // no-op
+    public Long defaultPriority() {
+        return 1L;
     }
 
     @Override
-    public boolean canHandle(String url) {
+    public void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) throws Exception {
+        log.info("Starting Spring Boot application manager service");
+        log.info("Registering Spring Boot application manager service");
+        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
+        karafLifeCycleService.onStart(() -> {
+            getApplications(karafConfig).forEach(application -> {
+                try {
+                    start(application.getUrl(), application.getProperties());
+                } catch (Exception e) {
+                    throw new RuntimeException("Can't start Spring Boot application " + application.getUrl(), e);
+                }
+            });
+        });
+        // TODO add shutdown hook
+    }
+
+    private List<Application> getApplications(KarafConfig karafConfig) {
+        List<Application> applications = new LinkedList<>();
+        karafConfig.getApplications().forEach(application -> {
+            if (application.getType() == null) {
+                if (canHandle(application.getUrl())) {
+                    applications.add(application);
+                }
+            } else if (application.getType().equals(this.getClass().getName())) {
+                applications.add(application);
+            }
+        });
+        return applications;
+    }
+
+    private boolean canHandle(String url) {
         try {
             try (JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream())) {
                 if (jarInputStream.getManifest().getMainAttributes().getValue("Spring-Boot-Version") != null) {
@@ -55,8 +90,7 @@ public class SpringBootApplicationManager implements ApplicationManagerService {
         return false;
     }
 
-    @Override
-    public String start(String url, Map<String, Object> properties) throws Exception {
+    private String start(String url, Map<String, Object> properties) throws Exception {
         log.info("Starting Spring Boot application " + url);
         final URLClassLoader classLoader = new URLClassLoader(new URL[]{ new URL(url) }, this.getClass().getClassLoader());
         ClassLoader original = Thread.currentThread().getContextClassLoader();
@@ -89,8 +123,7 @@ public class SpringBootApplicationManager implements ApplicationManagerService {
         return id;
     }
 
-    @Override
-    public void stop(String id) throws Exception {
+    private void stop(String id) throws Exception {
         // TODO
     }
 

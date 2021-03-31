@@ -15,21 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.springboot;
+package org.apache.karaf.osgi;
 
 import org.apache.karaf.boot.Karaf;
+import org.apache.karaf.boot.config.Application;
+import org.apache.karaf.boot.config.KarafConfig;
 import org.junit.jupiter.api.Test;
 
-public class SpringBootApplicationManagerTest {
+public class OsgiApplicationManagerServiceTest {
 
     @Test
     public void simpleTest() throws Exception {
-        Karaf karaf = Karaf.build();
+        KarafConfig karafConfig = new KarafConfig();
+        karafConfig.getProperties().put("osgi.storageDirectory", "target/osgi");
+        karafConfig.getProperties().put("osgi.cache", "target/osgi/cache");
+        Application application = new Application();
+        application.setUrl("https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar");
+        application.setType("org.apache.karaf.osgi.OsgiApplicationManagerService");
+        karafConfig.getApplications().add(application);
+
+        Karaf karaf = Karaf.build(karafConfig);
         karaf.init();
         karaf.start();
-
-        // TODO add spring boot sample app
-        // karaf.startApplication("", null, null);
     }
 
 }

@@ -17,15 +17,15 @@
  */
 package org.apache.karaf.boot.spi;
 
-import java.util.Map;
+import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.ServiceRegistry;
 
-/**
- * Generic Karaf service loaded by Karaf runtime at startup.
- */
 public interface Service {
 
-    String getName();
+    void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) throws Exception;
 
-    void init(Map<String, Object> properties) throws Exception;
+    Long defaultPriority();
+
+    String name();
 
 }

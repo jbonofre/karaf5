@@ -22,13 +22,15 @@ import lombok.Data;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class KarafConfig {
 
-    private Launcher launcher;
+    private Map<String, Object> properties = new HashMap<>();
     private List<Profile> profiles = new LinkedList<>();
     private List<Application> applications = new LinkedList<>();
 

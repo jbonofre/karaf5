@@ -19,21 +19,24 @@ package org.apache.karaf.boot;
 
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.KarafConfig;
-import org.apache.karaf.boot.application.ApplicationManager;
-import org.apache.karaf.boot.service.ServiceManager;
+import org.apache.karaf.boot.service.KarafLifeCycleService;
+import org.apache.karaf.boot.service.ServiceRegistry;
+import org.apache.karaf.boot.spi.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.management.ManagementFactory;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.SortedMap;
 
 @Log
 public class Karaf {
 
     private String base;
     private KarafConfig config;
-    private ApplicationManager applicationManager;
+    private ServiceRegistry serviceRegistry;
 
     private long startTime;
 
@@ -100,8 +103,6 @@ public class Karaf {
     public void init() throws Exception {
         startTime = System.currentTimeMillis();
 
-        // TODO URLs resolver registration
-
         // log format
         if (System.getProperty("java.util.logging.config.file") == null) {
             if (System.getenv("KARAF_LOG_FORMAT") != null) {
@@ -136,23 +137,34 @@ public class Karaf {
 
         log.info("Base directory: " + this.base);
 
-        log.info("Starting applications manager");
-        applicationManager = new ApplicationManager(config);
+        log.info("Starting service registry");
+        serviceRegistry = new ServiceRegistry();
 
-        log.info("Starting Karaf services");
-        ServiceManager serviceManager = new ServiceManager(config);
-
-        log.info("Loading profiles");
-        // TODO
-
-        log.info("Starting applications");
-        config.getApplications().forEach(application -> {
-            try {
-                this.startApplication(application.getUrl(), application.getType(), application.getProperties());
-            } catch (Exception e) {
-                log.warning("Can't start application " + application.getUrl() + ": " + e);
+        log.info("Loading services ...");
+        ServiceLoader<Service> serviceLoader = ServiceLoader.load(Service.class);
+        Map<Service, Long> servicePriority = new HashMap<>();
+        serviceLoader.forEach(service -> {
+            if ((service.name() != null) && (config.getProperties().get(service.name() + ".priority") != null)) {
+                servicePriority.put(service, (Long) config.getProperties().get(service.name() + ".priority"));
+            } else {
+                servicePriority.put(service, service.defaultPriority());
             }
         });
+        servicePriority.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(entry -> {
+           try {
+               log.info("Registering " + entry.getKey().name());
+               entry.getKey().onRegister(config, serviceRegistry);
+           } catch (Exception e) {
+               log.warning("Can't load service " + entry.getKey().name() + ": " + e);
+           }
+        });
+
+        log.info("Starting services ...");
+        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
+        if (karafLifeCycleService == null) {
+            throw new RuntimeException("Karaf lifecycle service is not registered");
+        }
+        karafLifeCycleService.start();
     }
 
     public void start() {
@@ -176,30 +188,6 @@ public class Karaf {
 
     public KarafConfig getConfig() {
         return config;
-    }
-
-    public void startApplication(String url, String type, Map<String, Object> properties) throws Exception {
-        applicationManager.start(url, type, properties);
-    }
-
-    public void stopApplication(String id) throws Exception {
-        applicationManager.stop(id);
-    }
-
-    public List<String> getApplicationIds() {
-        return this.applicationManager.getIds();
-    }
-
-    public String getApplicationManager(String applicationId) {
-        return this.applicationManager.getManager(applicationId);
-    }
-
-    public String getApplicationUrl(String applicationId) {
-        return this.applicationManager.getUrl(applicationId);
-    }
-
-    public ApplicationManager getApplicationManager() {
-        return this.applicationManager;
     }
 
 }

@@ -21,19 +21,27 @@ import lombok.extern.java.Log;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
-import org.apache.karaf.boot.spi.ApplicationManagerService;
+import org.apache.karaf.boot.config.Application;
+import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafLifeCycleService;
+import org.apache.karaf.boot.service.ServiceRegistry;
+import org.apache.karaf.boot.spi.Service;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarInputStream;
 
 @Log
-public class OsgiApplicationManager implements ApplicationManagerService {
+public class OsgiApplicationManagerService implements Service {
+
+    private final static String PREFIX = "osgi.";
 
     private final static String STORAGE_PROPERTY = "storageDirectory";
     private final static String CLEAR_CACHE_PROPERTY = "clearCache";
@@ -44,16 +52,31 @@ public class OsgiApplicationManager implements ApplicationManagerService {
 
     private Framework framework = null;
 
+    private Map<String, String> store = new HashMap<>();
+
     @Override
-    public String getName() {
+    public String name() {
         return "osgi";
     }
 
     @Override
-    public void init(Map<String, Object> properties) throws Exception {
-        log.info("Starting OSGi application manager");
+    public Long defaultPriority() {
+        return 1L;
+    }
+
+    @Override
+    public void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) throws Exception {
+        log.info("Starting OSGi application manager service");
         log.info("Creating OSGi framework runtime");
         Map<String, Object> frameworkConfig = new HashMap<>();
+
+        // looking for service properties
+        final Map<String, Object> properties = new HashMap<>();
+        karafConfig.getProperties().keySet().forEach(key -> {
+            if (key.startsWith(PREFIX)) {
+                properties.put(key.substring(PREFIX.length()), karafConfig.getProperties().get(key));
+            }
+        });
 
         // cache
         String cache;
@@ -99,10 +122,44 @@ public class OsgiApplicationManager implements ApplicationManagerService {
 
         FrameworkStartLevel frameworkStartLevel = framework.adapt(FrameworkStartLevel.class);
         frameworkStartLevel.setInitialBundleStartLevel(bundleStartLevel);
+
+        log.info("Registering service into Karaf lifecycle");
+        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
+        karafLifeCycleService.onStart(() -> {
+            getApplications(karafConfig).forEach(application -> {
+                try {
+                    store.put(start(application.getUrl(), application.getProperties()), application.getUrl());
+                } catch (Exception e) {
+                    throw new RuntimeException("Can't start OSGi application " + application.getUrl(), e);
+                }
+            });
+        });
+        karafLifeCycleService.onShutdown(() -> {
+            store.keySet().forEach(id -> {
+                try {
+                    stop(id);
+                } catch (Exception e) {
+                    throw new RuntimeException("Can't stop OSGi application " + id, e);
+                }
+            });
+        });
     }
 
-    @Override
-    public boolean canHandle(String url) {
+    private List<Application> getApplications(KarafConfig karafConfig) {
+        List<Application> applications = new ArrayList<>();
+        karafConfig.getApplications().forEach(application -> {
+            if (application.getType() == null) {
+                if (canHandle(application.getUrl())) {
+                    applications.add(application);
+                }
+            } else if (application.getType().equals(this.getClass().getName())) {
+                applications.add(application);
+            }
+        });
+        return applications;
+    }
+
+    private boolean canHandle(String url) {
         try {
             try (JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream())) {
                 if (jarInputStream.getManifest().getMainAttributes().getValue("Bundle-Version") != null) {
@@ -115,7 +172,6 @@ public class OsgiApplicationManager implements ApplicationManagerService {
         return false;
     }
 
-    @Override
     public String start(String url, Map<String, Object> properties) throws Exception {
         log.info("Starting OSGi application " + url);
         Bundle bundle;
@@ -137,7 +193,6 @@ public class OsgiApplicationManager implements ApplicationManagerService {
         return Long.toString(bundle.getBundleId());
     }
 
-    @Override
     public void stop(String id) throws Exception {
         log.info("Stopping OSGi application " + id);
         Bundle bundle = framework.getBundleContext().getBundle(id);

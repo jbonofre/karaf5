@@ -21,15 +21,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 public class KarafConfigTest {
-
-    @Test
-    public void defaultTest() throws Exception {
-        KarafConfig karafConfig = KarafConfig.build();
-
-        Assertions.assertNull(karafConfig.getLauncher());
-    }
 
     @Test
     public void readTest() throws Exception {
@@ -37,29 +31,11 @@ public class KarafConfigTest {
         KarafConfig karafConfig = KarafConfig.read(inputStream);
 
         // properties
-        Assertions.assertEquals("bar", karafConfig.getLauncher().getProperties().get("foo"));
-
-        // managers
-        Assertions.assertEquals(3, karafConfig.getLauncher().getManagers().size());
-        // osgi
-        Service osgi = karafConfig.getLauncher().getManagers().get(0);
-        Assertions.assertEquals("osgi", osgi.getName());
-        Assertions.assertEquals("./osgi/cache", osgi.getProperties().get("storageDirectory"));
-        Assertions.assertEquals("80", osgi.getProperties().get("startLevel"));
-        // spring boot
-        Service springBoot = karafConfig.getLauncher().getManagers().get(1);
-        Assertions.assertEquals("spring-boot", springBoot.getName());
-        // microprofile
-        Service microprofile = karafConfig.getLauncher().getManagers().get(2);
-        Assertions.assertEquals("microprofile", microprofile.getName());
-        Assertions.assertFalse(((boolean) microprofile.getProperties().get("enabled")));
-
-        Assertions.assertEquals(1, karafConfig.getLauncher().getServices().size());
-        // log service
-        Service log = karafConfig.getLauncher().getServices().get(0);
-        Assertions.assertEquals("log", log.getName());
-        Assertions.assertEquals("/path/to/log-service.jar", log.getLocation());
-        Assertions.assertEquals("%m %n", log.getProperties().get("patternLayout"));
+        Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
+        Assertions.assertTrue((Boolean) karafConfig.getProperties().get("lifecycle.enabled"));
+        Assertions.assertEquals("%m %n", karafConfig.getProperties().get("log.patternLayout"));
+        Assertions.assertEquals("./osgi/cache", karafConfig.getProperties().get("osgi.storageDirectory"));
+        Assertions.assertEquals(1, ((BigDecimal) karafConfig.getProperties().get("osgi.priority")).longValue());
 
         // profiles
         Assertions.assertEquals(1, karafConfig.getProfiles().size());

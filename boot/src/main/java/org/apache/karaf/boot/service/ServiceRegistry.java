@@ -15,18 +15,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.config;
+package org.apache.karaf.boot.service;
 
-import lombok.Data;
+import org.apache.karaf.boot.spi.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-@Data
-public class Service {
+public class ServiceRegistry {
 
-    private String name;
-    private String location;
-    private Map<String, Object> properties = new HashMap<>();
+    private Map<Class, Service> registry = new ConcurrentHashMap<>();
+
+    public <T> T get(Class<T> serviceClass) {
+        return (T) registry.get(serviceClass);
+    }
+
+    public void add(Service service) {
+        registry.put(service.getClass(), service);
+    }
+
+    public void remove(Service service) {
+        registry.remove(service.getClass());
+    }
 
 }

@@ -1,35 +1,10 @@
 {
-  "launcher": {
-    "properties": {
-      "foo": "bar"
-    },
-    "managers": [
-      {
-        "name": "osgi",
-        "properties": {
-          "storageDirectory": "./osgi/cache",
-          "startLevel": "80"
-        }
-      },
-      {
-        "name": "spring-boot"
-      },
-      {
-        "name": "microprofile",
-        "properties": {
-          "enabled": false
-        }
-      }
-    ],
-    "services": [
-      {
-        "name": "log",
-        "location": "/path/to/log-service.jar",
-        "properties": {
-          "patternLayout": "%m %n"
-        }
-      }
-    ]
+  "properties": {
+    "foo": "bar",
+    "lifecycle.enabled": true,
+    "log.patternLayout": "%m %n",
+    "osgi.storageDirectory": "./osgi/cache",
+    "osgi.priority": 1
   },
   "profiles": [
     {
