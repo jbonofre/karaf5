@@ -60,7 +60,7 @@ public class OsgiApplicationManagerService implements Service {
     }
 
     @Override
-    public Long defaultPriority() {
+    public Long priority() {
         return 1L;
     }
 

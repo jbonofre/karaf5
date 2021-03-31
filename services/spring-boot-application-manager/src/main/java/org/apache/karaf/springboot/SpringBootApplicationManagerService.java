@@ -42,7 +42,7 @@ public class SpringBootApplicationManagerService implements Service {
     }
 
     @Override
-    public Long defaultPriority() {
+    public Long priority() {
         return 1L;
     }
 

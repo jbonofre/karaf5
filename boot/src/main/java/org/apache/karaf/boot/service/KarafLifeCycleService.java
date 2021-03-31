@@ -43,7 +43,7 @@ public class KarafLifeCycleService implements Service {
         return "lifecycle";
     }
 
-    public Long defaultPriority() {
+    public Long priority() {
         return -10L;
     }
 

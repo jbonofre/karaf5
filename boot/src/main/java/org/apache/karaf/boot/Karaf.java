@@ -29,7 +29,6 @@ import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.SortedMap;
 
 @Log
 public class Karaf {
@@ -144,10 +143,10 @@ public class Karaf {
         ServiceLoader<Service> serviceLoader = ServiceLoader.load(Service.class);
         Map<Service, Long> servicePriority = new HashMap<>();
         serviceLoader.forEach(service -> {
-            if ((service.name() != null) && (config.getProperties().get(service.name() + ".priority") != null)) {
-                servicePriority.put(service, (Long) config.getProperties().get(service.name() + ".priority"));
+            if (System.getProperty(service.name() + ".priority") != null) {
+                servicePriority.put(service, Long.parseLong(System.getProperty(service.name() + ".priority")));
             } else {
-                servicePriority.put(service, service.defaultPriority());
+                servicePriority.put(service, service.priority());
             }
         });
         servicePriority.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(entry -> {
@@ -158,7 +157,9 @@ public class Karaf {
                log.warning("Can't load service " + entry.getKey().name() + ": " + e);
            }
         });
+    }
 
+    public void start() {
         log.info("Starting services ...");
         KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         if (karafLifeCycleService == null) {
@@ -166,9 +167,6 @@ public class Karaf {
         }
         karafLifeCycleService.start();
 
-    }
-
-    public void start() {
         long now = System.currentTimeMillis();
         log.info(getStartedMessage(startTime, now));
     }

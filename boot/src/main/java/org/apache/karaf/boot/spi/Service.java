@@ -24,7 +24,7 @@ public interface Service {
 
     void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) throws Exception;
 
-    Long defaultPriority();
+    Long priority();
 
     String name();
 
