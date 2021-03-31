@@ -17,25 +17,65 @@
  */
 package org.apache.karaf.boot.service;
 
+import lombok.extern.java.Log;
+import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.spi.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ServiceRegistry {
+@Log
+public class ServiceRegistry implements AutoCloseable {
 
-    private Map<Class, Service> registry = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
 
-    public <T> T get(Class<T> serviceClass) {
+    public <T> T get(final Class<T> serviceClass) {
         return (T) registry.get(serviceClass);
     }
 
-    public void add(Service service) {
-        registry.put(service.getClass(), service);
+    public boolean add(final Service service) {
+        return registry.putIfAbsent(service.getClass(), service) == null;
     }
 
-    public void remove(Service service) {
-        registry.remove(service.getClass());
+    public void remove(final Service service) {
+        registry.remove(service.getClass(), service);
+    }
+
+    @Override
+    public void close() {
+        log.info("Closing service registry");
+        final IllegalStateException ise = new IllegalStateException("Can't stop service registry");
+        registry.values().stream() // we should filter only for lifecycle service as others must use it
+                .filter(AutoCloseable.class::isInstance)
+                .map(AutoCloseable.class::cast)
+                .forEach(service -> {
+                    try {
+                        service.close();
+                    } catch (final Exception e) {
+                        ise.addSuppressed(e);
+                    }
+                });
+        if (ise.getSuppressed().length > 0) {
+            throw ise;
+        }
+    }
+
+    public void start(final KarafConfig config) {
+        log.info("Starting service registry");
+        final IllegalStateException ise = new IllegalStateException("Can't register service");
+        registry.values().forEach(service -> {
+            try {
+                log.info("Registering " + service.name() + " service");
+                service.onRegister(new Service.Registration(config, this));
+            } catch (final Exception e) {
+                ise.addSuppressed(e);
+            }
+        });
+        if (ise.getSuppressed().length > 0) {
+            throw ise;
+        }
+        log.info("Starting services");
+        get(KarafLifeCycleService.class).start();
     }
 
 }

@@ -24,12 +24,10 @@ public class SpringBootApplicationManagerServiceTest {
 
     @Test
     public void simpleTest() throws Exception {
-        Karaf karaf = Karaf.build();
-        karaf.init();
-        karaf.start();
-
         // TODO add spring boot sample app
-        // karaf.startApplication("", null, null);
+        try (final var karaf = Karaf.builder().build().start()) {
+
+        }
     }
 
 }

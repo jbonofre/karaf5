@@ -17,32 +17,10 @@
  */
 package org.apache.karaf.boot.spi;
 
-import lombok.Data;
-import org.apache.karaf.boot.config.KarafConfig;
-import org.apache.karaf.boot.service.ServiceRegistry;
+import java.util.stream.Stream;
 
-import java.util.Locale;
+public interface ServiceLoader {
 
-public interface Service {
-
-    int DEFAULT_PRIORITY = 1000;
-
-    default void onRegister(final Registration registration) throws Exception {
-        // no-op, service
-    }
-
-    default int priority() {
-        return DEFAULT_PRIORITY;
-    }
-
-    default String name() {
-        return getClass().getSimpleName().toLowerCase(Locale.ROOT).replaceAll("Service", "");
-    }
-
-    @Data
-    class Registration {
-        private final KarafConfig config;
-        private final ServiceRegistry registry;
-    }
+    Stream<Service> load();
 
 }

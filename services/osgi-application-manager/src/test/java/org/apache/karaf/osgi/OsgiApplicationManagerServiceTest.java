@@ -34,9 +34,9 @@ public class OsgiApplicationManagerServiceTest {
         application.setType("org.apache.karaf.osgi.OsgiApplicationManagerService");
         karafConfig.getApplications().add(application);
 
-        Karaf karaf = Karaf.build(karafConfig);
-        karaf.init();
-        karaf.start();
+        try (final var karaf = Karaf.builder().config(karafConfig).build().start()) {
+
+        }
     }
 
 }

@@ -24,7 +24,6 @@ import org.apache.felix.framework.util.FelixConstants;
 import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
-import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -32,11 +31,11 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarInputStream;
+
+import static java.util.stream.Collectors.toMap;
 
 @Log
 public class OsgiApplicationManagerService implements Service {
@@ -52,7 +51,7 @@ public class OsgiApplicationManagerService implements Service {
 
     private Framework framework = null;
 
-    private Map<String, String> store = new HashMap<>();
+    private Map<String, String> store = new ConcurrentHashMap<>();
 
     @Override
     public String name() {
@@ -60,55 +59,52 @@ public class OsgiApplicationManagerService implements Service {
     }
 
     @Override
-    public Long priority() {
-        return 1L;
+    public int priority() {
+        return DEFAULT_PRIORITY + 99;
     }
 
     @Override
-    public void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) throws Exception {
+    public void onRegister(final Registration registration) throws Exception {
         log.info("Starting OSGi application manager service");
         log.info("Creating OSGi framework runtime");
         Map<String, Object> frameworkConfig = new HashMap<>();
 
         // looking for service properties
-        final Map<String, Object> properties = new HashMap<>();
-        karafConfig.getProperties().keySet().forEach(key -> {
-            if (key.startsWith(PREFIX)) {
-                properties.put(key.substring(PREFIX.length()), karafConfig.getProperties().get(key));
-            }
-        });
+        final Map<String, Object> properties = registration.getConfig().getProperties().entrySet()
+                .stream().filter(entry -> entry.getKey().startsWith(PREFIX))
+                .collect(toMap(entry -> entry.getKey().substring(PREFIX.length()), Map.Entry::getValue));
 
         // cache
         String cache;
-        if (properties != null && properties.get(STORAGE_PROPERTY) != null) {
+        if (properties.get(STORAGE_PROPERTY) != null) {
             cache = properties.get(STORAGE_PROPERTY).toString();
         } else {
             cache = "./osgi";
         }
         frameworkConfig.put(Constants.FRAMEWORK_STORAGE, cache);
         // clear cache
-        if (properties != null && properties.get(CLEAR_CACHE_PROPERTY) != null) {
+        if (properties.get(CLEAR_CACHE_PROPERTY) != null) {
             frameworkConfig.put(Constants.FRAMEWORK_STORAGE_CLEAN, Constants.FRAMEWORK_STORAGE_CLEAN_ONFIRSTINIT);
         }
         // start level
-        if (properties != null && properties.get(START_LEVEL_PROPERTY) != null) {
+        if (properties.get(START_LEVEL_PROPERTY) != null) {
             frameworkConfig.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, properties.get(START_LEVEL_PROPERTY));
         } else {
             frameworkConfig.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "100");
         }
         // bundle start level
         int bundleStartLevel = 80;
-        if (properties != null && properties.get(BUNDLE_START_LEVEL_PROPERTY) != null) {
+        if (properties.get(BUNDLE_START_LEVEL_PROPERTY) != null) {
             bundleStartLevel = (int) properties.get(BUNDLE_START_LEVEL_PROPERTY);
         }
         // log level
-        if (properties != null && properties.get(LOG_LEVEL_PROPERTY) != null) {
+        if (properties.get(LOG_LEVEL_PROPERTY) != null) {
             frameworkConfig.put(FelixConstants.LOG_LEVEL_PROP, properties.get(LOG_LEVEL_PROPERTY));
         } else {
             frameworkConfig.put(FelixConstants.LOG_LEVEL_PROP, "3");
         }
         // cache
-        if (properties != null && properties.get(CACHE_PROPERTY) != null) {
+        if (properties.get(CACHE_PROPERTY) != null) {
             frameworkConfig.put(BundleCache.CACHE_ROOTDIR_PROP, properties.get(CACHE_PROPERTY));
         } else {
             frameworkConfig.put(BundleCache.CACHE_ROOTDIR_PROP, "./osgi/bundles");
@@ -124,11 +120,11 @@ public class OsgiApplicationManagerService implements Service {
         frameworkStartLevel.setInitialBundleStartLevel(bundleStartLevel);
 
         log.info("Registering service into Karaf lifecycle");
-        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
+        KarafLifeCycleService karafLifeCycleService = registration.getRegistry().get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(karafConfig).forEach(application -> {
+            getApplications(registration.getConfig()).forEach(application -> {
                 try {
-                    store.put(start(application.getUrl(), application.getProperties()), application.getUrl());
+                    store.put(start(application.getUrl()), application.getUrl());
                 } catch (Exception e) {
                     throw new RuntimeException("Can't start OSGi application " + application.getUrl(), e);
                 }
@@ -172,7 +168,7 @@ public class OsgiApplicationManagerService implements Service {
         return false;
     }
 
-    public String start(String url, Map<String, Object> properties) throws Exception {
+    public String start(String url) throws Exception {
         log.info("Starting OSGi application " + url);
         Bundle bundle;
         try {
@@ -190,19 +186,19 @@ public class OsgiApplicationManagerService implements Service {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to start OSGi application " + bundle.getSymbolicName() + "/" + bundle.getVersion(), e);
         }
-        return Long.toString(bundle.getBundleId());
+        return bundle.getLocation();
     }
 
-    public void stop(String id) throws Exception {
-        log.info("Stopping OSGi application " + id);
-        Bundle bundle = framework.getBundleContext().getBundle(id);
+    public void stop(String location) throws Exception {
+        log.info("Stopping OSGi application " + location);
+        Bundle bundle = framework.getBundleContext().getBundle(location);
         if (bundle == null) {
-            throw new IllegalArgumentException("OSGi application " + id + " not found");
+            throw new IllegalArgumentException("OSGi application " + location + " not found");
         }
         try {
             bundle.uninstall();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to stop OSGi application " + id, e);
+            throw new IllegalArgumentException("Failed to stop OSGi application " + location, e);
         }
     }
 

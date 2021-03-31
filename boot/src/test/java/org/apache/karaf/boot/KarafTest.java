@@ -25,19 +25,17 @@ public class KarafTest {
     @Test
     public void emptyRunProgrammaticallyTest() throws Exception {
         KarafConfig karafConfig = KarafConfig.build();
-        Karaf karaf = Karaf.build(karafConfig);
+        try (final var karaf = Karaf.builder().config(karafConfig).build().start()) {
 
-        karaf.init();
-        karaf.start();
+        }
     }
 
     @Test
     public void emptyPropertyJsonTest() throws Exception {
         System.setProperty("karaf.config", "target/test-classes/emptyrun.json");
-        Karaf karaf = Karaf.build();
+        try (final var karaf = Karaf.builder().build().start()) {
 
-        karaf.init();
-        karaf.start();
+        }
     }
 
 }

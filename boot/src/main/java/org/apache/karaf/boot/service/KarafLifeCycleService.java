@@ -18,33 +18,25 @@
 package org.apache.karaf.boot.service;
 
 import lombok.extern.java.Log;
-import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.spi.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Log
-public class KarafLifeCycleService implements Service {
+public class KarafLifeCycleService implements Service, AutoCloseable {
 
     private List<Runnable> startCallbacks = new ArrayList<>();
     private List<Runnable> shutdownCallbacks = new ArrayList<>();
 
-    public void KarafLifeCycle() {
-        log.info("Starting Karaf lifecycle service");
-    }
-
     @Override
-    public void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) {
-        serviceRegistry.add(this);
-    }
-
     public String name() {
         return "lifecycle";
     }
 
-    public Long priority() {
-        return -10L;
+    @Override
+    public int priority() {
+        return -DEFAULT_PRIORITY;
     }
 
     public void onStart(Runnable callback) {
@@ -56,15 +48,34 @@ public class KarafLifeCycleService implements Service {
     }
 
     public void start() {
+        log.info("Starting lifecycle service");
+        final IllegalStateException ise = new IllegalStateException("Can't start lifecycle service");
         startCallbacks.forEach(runnable -> {
-            runnable.run();
+            try {
+                runnable.run();
+            } catch (final Exception e) {
+                ise.addSuppressed(e);
+            }
         });
+        if (ise.getSuppressed().length > 0) {
+            throw ise;
+        }
     }
 
-    public void shutdown() {
+    @Override
+    public void close() {
+        log.info("Stopping lifecycle service");
+        final IllegalStateException ise = new IllegalStateException("Can't stop lifecycle service");
         shutdownCallbacks.forEach(runnable -> {
-            runnable.run();
+            try {
+                runnable.run();
+            } catch (final Exception e) {
+                ise.addSuppressed(e);
+            }
         });
+        if (ise.getSuppressed().length > 0) {
+            throw ise;
+        }
     }
 
 }

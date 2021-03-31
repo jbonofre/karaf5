@@ -42,17 +42,17 @@ public class SpringBootApplicationManagerService implements Service {
     }
 
     @Override
-    public Long priority() {
-        return 1L;
+    public int priority() {
+        return DEFAULT_PRIORITY + 100;
     }
 
     @Override
-    public void onRegister(KarafConfig karafConfig, ServiceRegistry serviceRegistry) throws Exception {
+    public void onRegister(Registration registration) throws Exception {
         log.info("Starting Spring Boot application manager service");
         log.info("Registering Spring Boot application manager service");
-        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
+        KarafLifeCycleService karafLifeCycleService = registration.getRegistry().get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(karafConfig).forEach(application -> {
+            getApplications(registration.getConfig()).forEach(application -> {
                 try {
                     start(application.getUrl(), application.getProperties());
                 } catch (Exception e) {
@@ -65,15 +65,17 @@ public class SpringBootApplicationManagerService implements Service {
 
     private List<Application> getApplications(KarafConfig karafConfig) {
         List<Application> applications = new LinkedList<>();
-        karafConfig.getApplications().forEach(application -> {
-            if (application.getType() == null) {
-                if (canHandle(application.getUrl())) {
+        if (karafConfig != null) {
+            karafConfig.getApplications().forEach(application -> {
+                if (application.getType() == null) {
+                    if (canHandle(application.getUrl())) {
+                        applications.add(application);
+                    }
+                } else if (application.getType().equals(this.getClass().getName())) {
                     applications.add(application);
                 }
-            } else if (application.getType().equals(this.getClass().getName())) {
-                applications.add(application);
-            }
-        });
+            });
+        }
         return applications;
     }
 
