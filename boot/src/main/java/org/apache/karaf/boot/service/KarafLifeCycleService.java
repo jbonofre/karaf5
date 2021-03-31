@@ -23,6 +23,9 @@ import org.apache.karaf.boot.spi.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Core Karaf LifeCycle service responsible of starting the registered (hooked) services.
+ */
 @Log
 public class KarafLifeCycleService implements Service, AutoCloseable {
 
@@ -39,14 +42,25 @@ public class KarafLifeCycleService implements Service, AutoCloseable {
         return -DEFAULT_PRIORITY;
     }
 
+    /**
+     * Add a start callback in the lifecycle.
+     * @param callback The runnable start callback.
+     */
     public void onStart(Runnable callback) {
         startCallbacks.add(callback);
     }
 
+    /**
+     * Add a stop callback in the lifecycle.
+     * @param callback The runnable stop callback.
+     */
     public void onShutdown(Runnable callback) {
         shutdownCallbacks.add(callback);
     }
 
+    /**
+     * Start the lifecycle service.
+     */
     public void start() {
         log.info("Starting lifecycle service");
         final IllegalStateException ise = new IllegalStateException("Can't start lifecycle service");
@@ -62,6 +76,9 @@ public class KarafLifeCycleService implements Service, AutoCloseable {
         }
     }
 
+    /**
+     * Close (stop) the lifecycle service.
+     */
     @Override
     public void close() {
         log.info("Stopping lifecycle service");

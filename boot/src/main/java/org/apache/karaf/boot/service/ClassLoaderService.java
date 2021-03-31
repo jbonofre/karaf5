@@ -15,15 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.spi;
+package org.apache.karaf.boot.service;
 
-import java.util.stream.Stream;
+import org.apache.karaf.boot.spi.Service;
 
 /**
- * Generic service loader.
+ * Main class loader manager service.
  */
-public interface ServiceLoader {
+public class ClassLoaderService implements Service, AutoCloseable {
 
-    Stream<Service> load();
+    @Override
+    public void close() {
+        // no-op
+    }
 
 }

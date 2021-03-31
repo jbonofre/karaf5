@@ -24,23 +24,44 @@ import org.apache.karaf.boot.spi.Service;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Main Karaf service registry.
+ */
 @Log
 public class ServiceRegistry implements AutoCloseable {
 
     private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
 
+    /**
+     * Retrieve a service from the registry.
+     * @param serviceClass the service class identifying the service.
+     * @param <T> the service type.
+     * @return the service instance from the registry.
+     */
     public <T> T get(final Class<T> serviceClass) {
         return (T) registry.get(serviceClass);
     }
 
+    /**
+     * Register a service in the registry.
+     * @param service the service to add in the registry.
+     * @return true if the service has been added, false else.
+     */
     public boolean add(final Service service) {
         return registry.putIfAbsent(service.getClass(), service) == null;
     }
 
+    /**
+     * Remove a service from the registry.
+     * @param service the service to remove.
+     */
     public void remove(final Service service) {
         registry.remove(service.getClass(), service);
     }
 
+    /**
+     * Close (stop) the service registry.
+     */
     @Override
     public void close() {
         log.info("Closing service registry");

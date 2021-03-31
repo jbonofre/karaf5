@@ -27,6 +27,9 @@ import org.apache.karaf.boot.spi.ServiceLoader;
 import java.util.Comparator;
 import java.util.stream.Stream;
 
+/**
+ * Main Karaf runtime.
+ */
 @Log
 @Builder
 public class Karaf implements AutoCloseable {
@@ -35,6 +38,10 @@ public class Karaf implements AutoCloseable {
     private final ServiceLoader loader;
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
 
+    /**
+     * Start the Karaf runtime.
+     * @return the Karaf runtime.
+     */
     public Karaf start() {
         // log format
         if (System.getProperty("java.util.logging.config.file") == null) {
@@ -56,6 +63,9 @@ public class Karaf implements AutoCloseable {
                 .sorted(Comparator.comparingInt(service -> Integer.getInteger(service.name() + ".priority", service.priority())));
     }
 
+    /**
+     * Close (stop) the Karaf runtime.
+     */
     @Override
     public void close() {
         serviceRegistry.close();

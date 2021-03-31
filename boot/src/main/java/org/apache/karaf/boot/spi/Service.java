@@ -23,18 +23,36 @@ import org.apache.karaf.boot.service.ServiceRegistry;
 
 import java.util.Locale;
 
+/**
+ * Generic Karaf Service.
+ */
 public interface Service {
 
     int DEFAULT_PRIORITY = 1000;
 
+    /**
+     * Register a service in the Karaf registry.
+     * @param registration the registration provides KarafConfig and ServiceRegistry.
+     * @throws Exception if register fails.
+     */
     default void onRegister(final Registration registration) throws Exception {
         // no-op, service
     }
 
+    /**
+     * Retrieve the service priority (allow services sorting).
+     * Default is 1000.
+     * @return the service priority.
+     */
     default int priority() {
         return DEFAULT_PRIORITY;
     }
 
+    /**
+     * Retrieve the service name.
+     * Default is the service simple class name.
+     * @return the service name.
+     */
     default String name() {
         return getClass().getSimpleName().toLowerCase(Locale.ROOT).replaceAll("Service", "");
     }
