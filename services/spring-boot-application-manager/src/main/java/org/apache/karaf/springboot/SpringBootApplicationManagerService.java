@@ -20,6 +20,7 @@ package org.apache.karaf.springboot;
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
 import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
@@ -47,12 +48,12 @@ public class SpringBootApplicationManagerService implements Service {
     }
 
     @Override
-    public void onRegister(Registration registration) throws Exception {
+    public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
         log.info("Starting Spring Boot application manager service");
         log.info("Registering Spring Boot application manager service");
-        KarafLifeCycleService karafLifeCycleService = registration.getRegistry().get(KarafLifeCycleService.class);
+        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(registration.getConfig()).forEach(application -> {
+            getApplications(serviceRegistry.get(KarafConfigService.class).getConfig()).forEach(application -> {
                 try {
                     start(application.getUrl(), application.getProperties());
                 } catch (Exception e) {

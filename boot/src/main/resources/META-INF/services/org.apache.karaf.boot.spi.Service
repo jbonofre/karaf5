@@ -17,3 +17,4 @@
 # under the License.
 #
 org.apache.karaf.boot.service.KarafLifeCycleService
+org.apache.karaf.boot.service.ClassLoaderService

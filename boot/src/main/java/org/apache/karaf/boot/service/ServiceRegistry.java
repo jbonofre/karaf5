@@ -81,13 +81,12 @@ public class ServiceRegistry implements AutoCloseable {
         }
     }
 
-    public void start(KarafConfig config) {
-        log.info("Starting service registry");
+    public void start() {
         final IllegalStateException ise = new IllegalStateException("Can't register service");
         registry.values().forEach(service -> {
             try {
                 log.info("Registering " + service.name() + " service");
-                service.onRegister(new Service.Registration(config, this));
+                service.onRegister(this);
             } catch (final Exception e) {
                 ise.addSuppressed(e);
             }

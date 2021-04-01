@@ -17,10 +17,6 @@
  */
 package org.apache.karaf.boot.spi;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.ServiceRegistry;
 
 import java.util.Locale;
@@ -34,10 +30,10 @@ public interface Service {
 
     /**
      * Register a service in the Karaf registry.
-     * @param registration the registration provides KarafConfig and ServiceRegistry.
+     * @param serviceRegistry the Karaf service registry.
      * @throws Exception if register fails.
      */
-    default void onRegister(final Registration registration) throws Exception {
+    default void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
         // no-op, service
     }
 
@@ -57,14 +53,6 @@ public interface Service {
      */
     default String name() {
         return getClass().getSimpleName().toLowerCase(Locale.ROOT).replaceAll("Service", "");
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    class Registration {
-        private KarafConfig config;
-        private ServiceRegistry registry;
     }
 
 }

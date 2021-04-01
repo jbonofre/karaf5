@@ -19,6 +19,8 @@ package org.apache.karaf.config.json;
 
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafConfigService;
+import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 
 import javax.json.bind.Jsonb;
@@ -41,11 +43,11 @@ public class JsonConfigLoaderService implements Service {
 
     @Override
     public int priority() {
-        return -Integer.MAX_VALUE;
+        return (-DEFAULT_PRIORITY) + 100;
     }
 
     @Override
-    public void onRegister(Registration registration) throws Exception {
+    public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
         KarafConfig karafConfig = KarafConfig.builder().build();
         if (System.getenv("KARAF_CONFIG") != null) {
             log.info("Loading JSON configuration from " + System.getenv("KARAF_CONFIG"));
@@ -62,7 +64,9 @@ public class JsonConfigLoaderService implements Service {
         } else {
             log.warning("JSON configuration not found");
         }
-        registration.setConfig(karafConfig);
+
+        KarafConfigService configService = serviceRegistry.get(KarafConfigService.class);
+        configService.setConfig(karafConfig);
     }
 
     private KarafConfig loadJson(InputStream inputStream) {

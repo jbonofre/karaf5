@@ -18,6 +18,7 @@
 package org.apache.karaf.banner;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 
 @Log
@@ -34,7 +35,7 @@ public class WelcomeBannerService implements Service {
     }
 
     @Override
-    public void onRegister(Registration registration) {
+    public void onRegister(ServiceRegistry serviceRegistry) {
         // banner
         if (System.getenv("KARAF_BANNER") != null) {
             log.info(System.getenv("KARAF_BANNER"));

@@ -20,9 +20,9 @@ package org.apache.karaf.config.json;
 import org.apache.karaf.boot.Karaf;
 import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
-import org.apache.karaf.boot.spi.Service;
+import org.apache.karaf.boot.service.KarafConfigService;
+import org.apache.karaf.boot.service.ServiceRegistry;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -33,24 +33,30 @@ public class JsonConfigLoaderServiceTest {
     public void loadingTestFromSystemProp() throws Exception {
         System.setProperty("karaf.config", "target/test-classes/emptyrun.json");
 
-        Service.Registration registration = new Service.Registration(KarafConfig.builder().build(), null);
+        ServiceRegistry serviceRegistry = new ServiceRegistry();
+        KarafConfigService configService = new KarafConfigService();
+        serviceRegistry.add(configService);
         JsonConfigLoaderService service = new JsonConfigLoaderService();
-        service.onRegister(registration);
+        service.onRegister(serviceRegistry);
 
-        KarafConfig karafConfig = registration.getConfig();
+        KarafConfig karafConfig = serviceRegistry.get(KarafConfigService.class).getConfig();
 
         Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
         Assertions.assertEquals(0, karafConfig.getProfiles().size());
         Assertions.assertEquals(0, karafConfig.getApplications().size());
+
+        System.clearProperty("karaf.config");
     }
 
     @Test
     public void loadingTestFromClasspath() throws Exception {
-        Service.Registration registration = new Service.Registration(KarafConfig.builder().build(), null);
+        ServiceRegistry serviceRegistry = new ServiceRegistry();
+        KarafConfigService configService = new KarafConfigService();
+        serviceRegistry.add(configService);
         JsonConfigLoaderService service = new JsonConfigLoaderService();
-        service.onRegister(registration);
+        service.onRegister(serviceRegistry);
 
-        KarafConfig karafConfig = registration.getConfig();
+        KarafConfig karafConfig = serviceRegistry.get(KarafConfigService.class).getConfig();
 
         // properties
         Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
@@ -72,12 +78,11 @@ public class JsonConfigLoaderServiceTest {
     }
 
     @Test
-    @Disabled("Need fix")
     public void runTest() throws Exception {
         Karaf karaf = Karaf.builder().build();
         karaf.start();
 
-        KarafConfig karafConfig = karaf.getConfig();
+        KarafConfig karafConfig = karaf.getServiceRegistry().get(KarafConfigService.class).getConfig();
 
         Assertions.assertEquals(2, karafConfig.getApplications().size());
     }

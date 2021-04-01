@@ -21,6 +21,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 import org.apache.karaf.boot.spi.ServiceLoader;
@@ -55,10 +56,14 @@ public class Karaf implements AutoCloseable {
             }
         }
 
-        log.info("Loading services");
+        log.info("Registering config service");
+        KarafConfigService configService = new KarafConfigService();
+        configService.setConfig(config);
+        serviceRegistry.add(configService);
+
         (this.loader == null ? loadServices() : this.loader.load()).forEach(serviceRegistry::add);
 
-        serviceRegistry.start(config);
+        serviceRegistry.start();
         return this;
     }
 

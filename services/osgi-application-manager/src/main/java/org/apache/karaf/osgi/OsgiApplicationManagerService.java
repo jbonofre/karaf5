@@ -23,7 +23,9 @@ import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
 import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
+import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -64,13 +66,13 @@ public class OsgiApplicationManagerService implements Service {
     }
 
     @Override
-    public void onRegister(final Registration registration) throws Exception {
+    public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
         log.info("Starting OSGi application manager service");
         log.info("Creating OSGi framework runtime");
         Map<String, Object> frameworkConfig = new HashMap<>();
 
         // looking for service properties
-        final Map<String, Object> properties = registration.getConfig().getProperties().entrySet()
+        final Map<String, Object> properties = serviceRegistry.get(KarafConfigService.class).getConfig().getProperties().entrySet()
                 .stream().filter(entry -> entry.getKey().startsWith(PREFIX))
                 .collect(toMap(entry -> entry.getKey().substring(PREFIX.length()), Map.Entry::getValue));
 
@@ -120,9 +122,9 @@ public class OsgiApplicationManagerService implements Service {
         frameworkStartLevel.setInitialBundleStartLevel(bundleStartLevel);
 
         log.info("Registering service into Karaf lifecycle");
-        KarafLifeCycleService karafLifeCycleService = registration.getRegistry().get(KarafLifeCycleService.class);
+        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(registration.getConfig()).forEach(application -> {
+            getApplications(serviceRegistry.get(KarafConfigService.class).getConfig()).forEach(application -> {
                 try {
                     store.put(start(application.getUrl()), application.getUrl());
                 } catch (Exception e) {
