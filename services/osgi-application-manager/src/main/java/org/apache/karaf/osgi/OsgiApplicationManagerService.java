@@ -72,7 +72,7 @@ public class OsgiApplicationManagerService implements Service {
         Map<String, Object> frameworkConfig = new HashMap<>();
 
         // looking for service properties
-        final Map<String, Object> properties = serviceRegistry.get(KarafConfigService.class).getConfig().getProperties().entrySet()
+        final Map<String, Object> properties = serviceRegistry.get(KarafConfigService.class).getProperties().entrySet()
                 .stream().filter(entry -> entry.getKey().startsWith(PREFIX))
                 .collect(toMap(entry -> entry.getKey().substring(PREFIX.length()), Map.Entry::getValue));
 
@@ -124,7 +124,7 @@ public class OsgiApplicationManagerService implements Service {
         log.info("Registering service into Karaf lifecycle");
         KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(serviceRegistry.get(KarafConfigService.class).getConfig()).forEach(application -> {
+            getApplications(serviceRegistry.get(KarafConfigService.class)).forEach(application -> {
                 try {
                     store.put(start(application.getUrl()), application.getUrl());
                 } catch (Exception e) {

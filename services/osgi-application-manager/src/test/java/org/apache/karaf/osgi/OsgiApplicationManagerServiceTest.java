@@ -20,13 +20,16 @@ package org.apache.karaf.osgi;
 import org.apache.karaf.boot.Karaf;
 import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafConfigService;
 import org.junit.jupiter.api.Test;
+
+import java.util.stream.Stream;
 
 public class OsgiApplicationManagerServiceTest {
 
     @Test
     public void simpleTest() throws Exception {
-        KarafConfig karafConfig = KarafConfig.builder().build();
+        final var karafConfig = new KarafConfigService();
         karafConfig.getProperties().put("osgi.storageDirectory", "target/osgi");
         karafConfig.getProperties().put("osgi.cache", "target/osgi/cache");
         Application application = new Application();
@@ -34,7 +37,7 @@ public class OsgiApplicationManagerServiceTest {
         application.setType("org.apache.karaf.osgi.OsgiApplicationManagerService");
         karafConfig.getApplications().add(application);
 
-        Karaf.builder().config(karafConfig).build().start();
+        Karaf.builder().loader(() -> Stream.of(karafConfig)).build().start();
     }
 
 }

@@ -36,13 +36,12 @@ import java.util.stream.Stream;
 @Builder
 @Data
 public class Karaf implements AutoCloseable {
-
-    private KarafConfig config;
     private final ServiceLoader loader;
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
 
     /**
      * Start the Karaf runtime.
+     *
      * @return the Karaf runtime.
      */
     public Karaf start() {
@@ -55,14 +54,7 @@ public class Karaf implements AutoCloseable {
                 System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tN %4$s [ %2$s ] : %5$s%6$s%n");
             }
         }
-
-        log.info("Registering config service");
-        KarafConfigService configService = new KarafConfigService();
-        configService.setConfig(config);
-        serviceRegistry.add(configService);
-
         (this.loader == null ? loadServices() : this.loader.load()).forEach(serviceRegistry::add);
-
         serviceRegistry.start();
         return this;
     }

@@ -39,7 +39,7 @@ public class JsonConfigLoaderServiceTest {
         JsonConfigLoaderService service = new JsonConfigLoaderService();
         service.onRegister(serviceRegistry);
 
-        KarafConfig karafConfig = serviceRegistry.get(KarafConfigService.class).getConfig();
+        KarafConfig karafConfig = serviceRegistry.get(KarafConfigService.class);
 
         Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
         Assertions.assertEquals(0, karafConfig.getProfiles().size());
@@ -56,7 +56,7 @@ public class JsonConfigLoaderServiceTest {
         JsonConfigLoaderService service = new JsonConfigLoaderService();
         service.onRegister(serviceRegistry);
 
-        KarafConfig karafConfig = serviceRegistry.get(KarafConfigService.class).getConfig();
+        KarafConfig karafConfig = serviceRegistry.get(KarafConfig.class);
 
         // properties
         Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
@@ -82,7 +82,7 @@ public class JsonConfigLoaderServiceTest {
         Karaf karaf = Karaf.builder().build();
         karaf.start();
 
-        KarafConfig karafConfig = karaf.getServiceRegistry().get(KarafConfigService.class).getConfig();
+        KarafConfig karafConfig = karaf.getServiceRegistry().get(KarafConfig.class);
 
         Assertions.assertEquals(2, karafConfig.getApplications().size());
     }

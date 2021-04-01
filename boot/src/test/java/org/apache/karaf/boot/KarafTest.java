@@ -18,32 +18,37 @@
 package org.apache.karaf.boot;
 
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.KarafConfigService;
+import org.apache.karaf.boot.service.KarafLifeCycleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class KarafTest {
+import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class KarafTest {
     @Test
-    public void simpleRun() throws Exception {
-        Karaf.builder().build().start();
+    void simpleRun() throws Exception {
+        try (final var karaf = Karaf.builder().build().start()) {
+        }
     }
 
     @Test
-    public void simpleRunWithEmptyConfig() throws Exception {
-        Karaf.builder().config(KarafConfig.builder().build())
-                .build().start();
-    }
-
-    @Test
-    public void simpleRunWithConfig() throws Exception {
-        KarafConfig karafConfig = KarafConfig.builder().build();
+    void simpleRunWithConfig() {
+        final KarafConfigService karafConfig = new KarafConfigService();
         karafConfig.getProperties().put("foo", "bar");
         karafConfig.getProperties().put("hello", "world");
 
-        Karaf karaf = Karaf.builder().config(karafConfig).build();
-
-        Assertions.assertEquals("bar", karaf.getConfig().getProperties().get("foo"));
-        Assertions.assertEquals("world", karaf.getConfig().getProperties().get("hello"));
+        try (final var karaf = Karaf.builder()
+                .loader(() -> Stream.of(karafConfig, new KarafLifeCycleService()))
+                .build()
+                .start()) {
+            final var config = karaf.getServiceRegistry().get(KarafConfig.class);
+            assertNotNull(config);
+            assertEquals("bar", config.getProperties().get("foo"));
+            assertEquals("world", config.getProperties().get("hello"));
+        }
     }
-
 }

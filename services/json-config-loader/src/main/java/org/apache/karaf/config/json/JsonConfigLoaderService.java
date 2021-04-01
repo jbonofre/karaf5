@@ -48,7 +48,7 @@ public class JsonConfigLoaderService implements Service {
 
     @Override
     public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
-        KarafConfig karafConfig = KarafConfig.builder().build();
+        KarafConfig karafConfig = null;
         if (System.getenv("KARAF_CONFIG") != null) {
             log.info("Loading JSON configuration from " + System.getenv("KARAF_CONFIG"));
             karafConfig = loadJson(new FileInputStream(System.getenv("KARAF_CONFIG")));
@@ -62,11 +62,12 @@ public class JsonConfigLoaderService implements Service {
             log.info("Loading JSON configuration from classpath karaf.json");
             karafConfig = loadJson(JsonConfigLoaderService.class.getResourceAsStream("/karaf.json"));
         } else {
-            log.warning("JSON configuration not found");
+            log.info("JSON configuration not found");
+            return;
         }
 
-        KarafConfigService configService = serviceRegistry.get(KarafConfigService.class);
-        configService.setConfig(karafConfig);
+        final var existing = serviceRegistry.get(KarafConfig.class);
+        existing.merge(karafConfig);
     }
 
     private KarafConfig loadJson(InputStream inputStream) {

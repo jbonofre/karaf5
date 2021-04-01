@@ -23,6 +23,10 @@ import org.apache.karaf.boot.spi.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
+
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Main Karaf service registry.
@@ -34,16 +38,40 @@ public class ServiceRegistry implements AutoCloseable {
 
     /**
      * Retrieve a service from the registry.
+     *
      * @param serviceClass the service class identifying the service.
-     * @param <T> the service type.
+     * @param <T>          the service type.
      * @return the service instance from the registry.
      */
     public <T> T get(final Class<T> serviceClass) {
-        return (T) registry.get(serviceClass);
+        return serviceClass.cast(ofNullable(registry.get(serviceClass)) // direct lookup, faster
+                .orElseGet(() -> { // fallback (hierarchy)
+                    final var selected = findByType(serviceClass).collect(toList());
+                    switch (selected.size()) {
+                        case 0:
+                            return null;
+                        case 1:
+                            return selected.iterator().next();
+                        default:
+                            throw new IllegalStateException("Ambiguous service lookup: " + serviceClass);
+                    }
+                }));
+    }
+
+    /**
+     * Lookup a stream of service by type.
+     *
+     * @param serviceClass looked up type.
+     * @param <T>          expected type.
+     * @return the instances matching the requested type.
+     */
+    public <T> Stream<Service> findByType(final Class<T> serviceClass) {
+        return registry.values().stream().filter(serviceClass::isInstance);
     }
 
     /**
      * Register a service in the registry.
+     *
      * @param service the service to add in the registry.
      * @return true if the service has been added, false else.
      */
@@ -53,6 +81,7 @@ public class ServiceRegistry implements AutoCloseable {
 
     /**
      * Remove a service from the registry.
+     *
      * @param service the service to remove.
      */
     public void remove(final Service service) {
@@ -94,8 +123,10 @@ public class ServiceRegistry implements AutoCloseable {
         if (ise.getSuppressed().length > 0) {
             throw ise;
         }
-        log.info("Starting services");
-        get(KarafLifeCycleService.class).start();
+        ofNullable(get(KarafLifeCycleService.class)).ifPresent(it -> {
+            log.info("Starting services");
+            it.start();
+        });
     }
 
 }

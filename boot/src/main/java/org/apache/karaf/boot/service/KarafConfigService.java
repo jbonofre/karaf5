@@ -17,18 +17,13 @@
  */
 package org.apache.karaf.boot.service;
 
-import lombok.Data;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.spi.Service;
 
 /**
  * Core Karaf Config service holding the main Karaf configuration.
  */
-@Data
-public class KarafConfigService implements Service {
-
-    private KarafConfig config;
-
+public class KarafConfigService extends KarafConfig implements Service {
     @Override
     public String name() {
         return "config";
@@ -38,5 +33,4 @@ public class KarafConfigService implements Service {
     public int priority() {
         return -Integer.MAX_VALUE;
     }
-
 }

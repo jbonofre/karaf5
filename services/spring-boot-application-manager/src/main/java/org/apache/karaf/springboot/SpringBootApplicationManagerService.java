@@ -53,7 +53,7 @@ public class SpringBootApplicationManagerService implements Service {
         log.info("Registering Spring Boot application manager service");
         KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(serviceRegistry.get(KarafConfigService.class).getConfig()).forEach(application -> {
+            getApplications(serviceRegistry.get(KarafConfigService.class)).forEach(application -> {
                 try {
                     start(application.getUrl(), application.getProperties());
                 } catch (Exception e) {

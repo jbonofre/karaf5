@@ -17,27 +17,26 @@
  */
 package org.apache.karaf.boot.config;
 
-import lombok.*;
+import lombok.Data;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Data
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
 public class KarafConfig {
-
-    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
-    @Builder.Default
     private List<Profile> profiles = new ArrayList<>();
-    @Builder.Default
     private List<Application> applications = new ArrayList<>();
 
-    public void set(KarafConfig karafConfig) {
-        this.properties = karafConfig.getProperties();
-        this.profiles = karafConfig.getProfiles();
-        this.applications = karafConfig.getApplications();
+    public void merge(final KarafConfig karafConfig) {
+        if (karafConfig == null) {
+            return;
+        }
+        // todo: better merge (by id etc with error when merge can't be guessed probably)
+        properties.putAll(karafConfig.getProperties());
+        profiles.addAll(karafConfig.getProfiles());
+        applications.addAll(karafConfig.getApplications());
     }
-
 }
