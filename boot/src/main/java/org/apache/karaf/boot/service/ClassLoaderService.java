@@ -25,6 +25,16 @@ import org.apache.karaf.boot.spi.Service;
 public class ClassLoaderService implements Service, AutoCloseable {
 
     @Override
+    public String name() {
+        return "classloader-service";
+    }
+
+    @Override
+    public int priority() {
+        return -DEFAULT_PRIORITY;
+    }
+
+    @Override
     public void close() {
         // no-op
     }

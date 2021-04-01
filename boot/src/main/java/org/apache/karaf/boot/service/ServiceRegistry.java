@@ -18,11 +18,9 @@
 package org.apache.karaf.boot.service;
 
 import lombok.extern.java.Log;
-import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.spi.Service;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
@@ -34,7 +32,7 @@ import static java.util.stream.Collectors.toList;
 @Log
 public class ServiceRegistry implements AutoCloseable {
 
-    private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
+    private final Map<Class<?>, Service> registry = Collections.synchronizedMap(new LinkedHashMap<>());
 
     /**
      * Retrieve a service from the registry.
@@ -76,7 +74,11 @@ public class ServiceRegistry implements AutoCloseable {
      * @return true if the service has been added, false else.
      */
     public boolean add(final Service service) {
-        return registry.putIfAbsent(service.getClass(), service) == null;
+        boolean added = registry.putIfAbsent(service.getClass(), service) == null;
+        if (added) {
+            log.info("Adding " + service.name() + " server (" + service.priority() + ")");
+        }
+        return added;
     }
 
     /**

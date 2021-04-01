@@ -1,0 +1,12 @@
+{
+  "properties": {
+    "osgi.storageDirectory": "data",
+    "osgi.cache": "data/cache"
+  },
+  "applications": [
+    {
+      "url": "system/commons-lang-2.6.jar",
+      "type": "osgi"
+    }
+  ]
+}

@@ -83,6 +83,7 @@ public class OsgiApplicationManagerService implements Service {
         } else {
             cache = "./osgi";
         }
+        log.info("OSGi framework storage: " + cache);
         frameworkConfig.put(Constants.FRAMEWORK_STORAGE, cache);
         // clear cache
         if (properties.get(CLEAR_CACHE_PROPERTY) != null) {
@@ -106,11 +107,14 @@ public class OsgiApplicationManagerService implements Service {
             frameworkConfig.put(FelixConstants.LOG_LEVEL_PROP, "3");
         }
         // cache
+        String cacheRootDir;
         if (properties.get(CACHE_PROPERTY) != null) {
-            frameworkConfig.put(BundleCache.CACHE_ROOTDIR_PROP, properties.get(CACHE_PROPERTY));
+            cacheRootDir = properties.get(CACHE_PROPERTY).toString();
         } else {
-            frameworkConfig.put(BundleCache.CACHE_ROOTDIR_PROP, "./osgi/bundles");
+            cacheRootDir = "./osgi/bundles";
         }
+        log.info("OSGi bundles cache: " + cacheRootDir);
+        frameworkConfig.put(BundleCache.CACHE_ROOTDIR_PROP, cacheRootDir);
 
         FrameworkFactory frameworkFactory = new FrameworkFactory();
         framework = frameworkFactory.newFramework(frameworkConfig);
@@ -124,9 +128,13 @@ public class OsgiApplicationManagerService implements Service {
         log.info("Registering service into Karaf lifecycle");
         KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
-            getApplications(serviceRegistry.get(KarafConfigService.class)).forEach(application -> {
+            serviceRegistry.get(KarafConfig.class).getApplications().forEach(application -> {
                 try {
-                    store.put(start(application.getUrl()), application.getUrl());
+                    if (application.getType() == null && canHandle(application.getUrl())) {
+                        store.put(start(application.getUrl()), application.getUrl());
+                    } else if (application.getType().equals("osgi")) {
+                        store.put(start(application.getUrl()), application.getUrl());
+                    }
                 } catch (Exception e) {
                     throw new RuntimeException("Can't start OSGi application " + application.getUrl(), e);
                 }
@@ -141,20 +149,6 @@ public class OsgiApplicationManagerService implements Service {
                 }
             });
         });
-    }
-
-    private List<Application> getApplications(KarafConfig karafConfig) {
-        List<Application> applications = new ArrayList<>();
-        karafConfig.getApplications().forEach(application -> {
-            if (application.getType() == null) {
-                if (canHandle(application.getUrl())) {
-                    applications.add(application);
-                }
-            } else if (application.getType().equals(this.getClass().getName())) {
-                applications.add(application);
-            }
-        });
-        return applications;
     }
 
     private boolean canHandle(String url) {

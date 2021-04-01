@@ -15,19 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.osgi;
+package org.apache.karaf.boot;
 
-import org.apache.karaf.boot.Karaf;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+public class Main {
 
-public class OsgiApplicationManagerServiceTest {
-
-    @Test
-    public void simpleTest() throws Exception {
-        Karaf karaf = Karaf.builder().build().start();
-
-        Assertions.assertNotNull(karaf.getServiceRegistry().get(OsgiApplicationManagerService.class));
+    public static final void main(String[] args) throws Exception {
+        Karaf.builder().build().start();
     }
 
 }

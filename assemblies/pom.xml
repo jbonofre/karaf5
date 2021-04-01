@@ -24,45 +24,17 @@
 
     <parent>
         <groupId>org.apache.karaf</groupId>
-        <artifactId>services</artifactId>
+        <artifactId>karaf</artifactId>
         <version>5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>osgi-application-manager</artifactId>
-    <name>Apache Karaf :: Services :: OSGi Application Manager</name>
+    <artifactId>assemblies</artifactId>
+    <name>Apache Karaf :: Assemblies</name>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>boot</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.framework</artifactId>
-            <version>7.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- test -->
-        <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>welcome-banner</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>json-config-loader</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>k4</module>
+    </modules>
 
 </project>
