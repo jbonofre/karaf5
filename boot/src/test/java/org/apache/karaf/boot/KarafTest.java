@@ -18,24 +18,32 @@
 package org.apache.karaf.boot;
 
 import org.apache.karaf.boot.config.KarafConfig;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class KarafTest {
 
     @Test
-    public void emptyRunProgrammaticallyTest() throws Exception {
-        KarafConfig karafConfig = KarafConfig.build();
-        try (final var karaf = Karaf.builder().config(karafConfig).build().start()) {
-
-        }
+    public void simpleRun() throws Exception {
+        Karaf.builder().build().start();
     }
 
     @Test
-    public void emptyPropertyJsonTest() throws Exception {
-        System.setProperty("karaf.config", "target/test-classes/emptyrun.json");
-        try (final var karaf = Karaf.builder().build().start()) {
+    public void simpleRunWithEmptyConfig() throws Exception {
+        Karaf.builder().config(KarafConfig.builder().build())
+                .build().start();
+    }
 
-        }
+    @Test
+    public void simpleRunWithConfig() throws Exception {
+        KarafConfig karafConfig = KarafConfig.builder().build();
+        karafConfig.getProperties().put("foo", "bar");
+        karafConfig.getProperties().put("hello", "world");
+
+        Karaf karaf = Karaf.builder().config(karafConfig).build();
+
+        Assertions.assertEquals("bar", karaf.getConfig().getProperties().get("foo"));
+        Assertions.assertEquals("world", karaf.getConfig().getProperties().get("hello"));
     }
 
 }

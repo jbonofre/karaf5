@@ -48,7 +48,7 @@ public class WelcomeBannerService implements Service {
                     "     / /| |/ /_/ / /  / /_/ / __/        \n" +
                     "    /_/ |_|\\__,_/_/   \\__,_/_/         \n" +
                     "\n" +
-                    "  Apache Karaf\n");
+                    "  Apache Karaf 5.x\n");
         }
     }
 

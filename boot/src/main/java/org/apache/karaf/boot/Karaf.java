@@ -18,6 +18,7 @@
 package org.apache.karaf.boot;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.ServiceRegistry;
@@ -32,9 +33,10 @@ import java.util.stream.Stream;
  */
 @Log
 @Builder
+@Data
 public class Karaf implements AutoCloseable {
 
-    private final KarafConfig config;
+    private KarafConfig config;
     private final ServiceLoader loader;
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
 
@@ -53,7 +55,9 @@ public class Karaf implements AutoCloseable {
             }
         }
 
+        log.info("Loading services");
         (this.loader == null ? loadServices() : this.loader.load()).forEach(serviceRegistry::add);
+
         serviceRegistry.start(config);
         return this;
     }

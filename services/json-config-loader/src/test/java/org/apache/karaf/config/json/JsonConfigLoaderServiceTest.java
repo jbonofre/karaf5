@@ -15,20 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.boot.config;
+package org.apache.karaf.config.json;
 
+import org.apache.karaf.boot.Karaf;
+import org.apache.karaf.boot.config.Application;
+import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.spi.Service;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
 import java.math.BigDecimal;
 
-public class KarafConfigTest {
+public class JsonConfigLoaderServiceTest {
 
     @Test
-    public void readTest() throws Exception {
-        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("karaf.json");
-        KarafConfig karafConfig = KarafConfig.read(inputStream);
+    public void loadingTestFromSystemProp() throws Exception {
+        System.setProperty("karaf.config", "target/test-classes/emptyrun.json");
+
+        Service.Registration registration = new Service.Registration(KarafConfig.builder().build(), null);
+        JsonConfigLoaderService service = new JsonConfigLoaderService();
+        service.onRegister(registration);
+
+        KarafConfig karafConfig = registration.getConfig();
+
+        Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
+        Assertions.assertEquals(0, karafConfig.getProfiles().size());
+        Assertions.assertEquals(0, karafConfig.getApplications().size());
+    }
+
+    @Test
+    public void loadingTestFromClasspath() throws Exception {
+        Service.Registration registration = new Service.Registration(KarafConfig.builder().build(), null);
+        JsonConfigLoaderService service = new JsonConfigLoaderService();
+        service.onRegister(registration);
+
+        KarafConfig karafConfig = registration.getConfig();
 
         // properties
         Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
@@ -47,6 +69,17 @@ public class KarafConfigTest {
         Assertions.assertEquals("spring-boot", springBootApp.getType());
         Assertions.assertTrue((boolean) springBootApp.getProperties().get("enableHttp"));
         Assertions.assertTrue((boolean) springBootApp.getProperties().get("enablePrometheus"));
+    }
+
+    @Test
+    @Disabled("Need fix")
+    public void runTest() throws Exception {
+        Karaf karaf = Karaf.builder().build();
+        karaf.start();
+
+        KarafConfig karafConfig = karaf.getConfig();
+
+        Assertions.assertEquals(2, karafConfig.getApplications().size());
     }
 
 }

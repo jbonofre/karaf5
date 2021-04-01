@@ -26,7 +26,7 @@ public class OsgiApplicationManagerServiceTest {
 
     @Test
     public void simpleTest() throws Exception {
-        KarafConfig karafConfig = new KarafConfig();
+        KarafConfig karafConfig = KarafConfig.builder().build();
         karafConfig.getProperties().put("osgi.storageDirectory", "target/osgi");
         karafConfig.getProperties().put("osgi.cache", "target/osgi/cache");
         Application application = new Application();
@@ -34,9 +34,7 @@ public class OsgiApplicationManagerServiceTest {
         application.setType("org.apache.karaf.osgi.OsgiApplicationManagerService");
         karafConfig.getApplications().add(application);
 
-        try (final var karaf = Karaf.builder().config(karafConfig).build().start()) {
-
-        }
+        Karaf.builder().config(karafConfig).build().start();
     }
 
 }

@@ -25,9 +25,7 @@ public class SpringBootApplicationManagerServiceTest {
     @Test
     public void simpleTest() throws Exception {
         // TODO add spring boot sample app
-        try (final var karaf = Karaf.builder().build().start()) {
-
-        }
+        Karaf.builder().build().start();
     }
 
 }

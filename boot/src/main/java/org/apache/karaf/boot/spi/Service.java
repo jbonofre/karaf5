@@ -17,7 +17,9 @@
  */
 package org.apache.karaf.boot.spi;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.ServiceRegistry;
 
@@ -58,9 +60,11 @@ public interface Service {
     }
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     class Registration {
-        private final KarafConfig config;
-        private final ServiceRegistry registry;
+        private KarafConfig config;
+        private ServiceRegistry registry;
     }
 
 }

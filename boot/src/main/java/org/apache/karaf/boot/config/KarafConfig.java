@@ -17,35 +17,27 @@
  */
 package org.apache.karaf.boot.config;
 
-import lombok.Data;
+import lombok.*;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class KarafConfig {
 
+    @Builder.Default
     private Map<String, Object> properties = new HashMap<>();
-    private List<Profile> profiles = new LinkedList<>();
-    private List<Application> applications = new LinkedList<>();
+    @Builder.Default
+    private List<Profile> profiles = new ArrayList<>();
+    @Builder.Default
+    private List<Application> applications = new ArrayList<>();
 
-    private final static Jsonb jsonb;
-
-    static {
-        jsonb = JsonbBuilder.create();
-    }
-
-    public final static KarafConfig build() throws Exception {
-        return new KarafConfig();
-    }
-
-    public final static KarafConfig read(InputStream inputStream) throws Exception {
-        return jsonb.fromJson(inputStream, KarafConfig.class);
+    public void set(KarafConfig karafConfig) {
+        this.properties = karafConfig.getProperties();
+        this.profiles = karafConfig.getProfiles();
+        this.applications = karafConfig.getApplications();
     }
 
 }

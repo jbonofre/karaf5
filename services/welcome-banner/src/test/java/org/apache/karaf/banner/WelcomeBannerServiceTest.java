@@ -34,7 +34,7 @@ public class WelcomeBannerServiceTest {
         logger.addHandler(testHandler);
         Karaf.builder().build().start();
 
-        Assertions.assertTrue(testHandler.getMessages().contains("Apache Karaf"));
+        Assertions.assertTrue(testHandler.getMessages().contains("Apache Karaf 5.x"));
     }
 
     @Test
