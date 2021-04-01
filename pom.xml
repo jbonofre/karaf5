@@ -144,6 +144,7 @@
                         <exclude>**/target/**</exclude>
                         <exclude>**/src/license/**</exclude>
                         <exclude>**/pom.xml.versionsBackup</exclude>
+                        <exclude>**/*.properties</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -174,10 +175,7 @@
                             <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
                             <excludeSubProjects>false</excludeSubProjects>
                             <excludes>
-                                <exclude>**/*.pub</exclude>
                                 <exclude>**/target/**/*</exclude>
-                                <exclude>**/*.packages</exclude>
-                                <exclude>**/*.delegation</exclude>
                                 <exclude>**/*.txt</exclude>
                                 <!-- GIT files -->
                                 <exclude>**/.git/**/*</exclude>
@@ -192,25 +190,14 @@
                                 <exclude>**/dependency-reduced-pom.xml</exclude>
                                 <exclude>**/.settings/**</exclude>
                                 <exclude>**/bin/**</exclude>
-                                <!-- resources file -->
-                                <exclude>**/goal.txt</exclude>
-                                <exclude>**/grep.txt</exclude>
-                                <exclude>**/edit.txt</exclude>
-                                <exclude>**/wc.txt</exclude>
-                                <exclude>**/foo</exclude>
-                                <exclude>**/org.ops4j.pax.exam.TestContainerFactory</exclude>
-                                <exclude>**/maven-metadata-local.xml</exclude>
                                 <!-- jline -->
                                 <exclude>**/src/main/java/jline/**/*.java</exclude>
                                 <!-- test manifests -->
                                 <exclude>**/*.mf</exclude>
                                 <!-- test json files -->
                                 <exclude>**/*.json</exclude>
-                                <!-- test wiring resource files -->
-                                <exclude>**/src/test/resources/wirings/*</exclude>
-                                <!-- SSH keys -->
-                                <exclude>**/*.key</exclude>
-                                <exclude>**/*.id_rsa</exclude>
+                                <!-- test properties files -->
+                                <exclude>**/*.properties</exclude>
                                 <!-- For Jenkins, ignore the .repository -->
                                 <exclude>.repository/**</exclude>
                                 <!-- jar files -->
