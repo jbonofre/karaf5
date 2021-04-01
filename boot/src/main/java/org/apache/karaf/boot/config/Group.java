@@ -20,26 +20,12 @@ package org.apache.karaf.boot.config;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
-public class KarafConfig {
+public class Group {
 
-    private Map<String, Object> properties = new HashMap<>();
-    private List<Profile> profiles = new ArrayList<>();
+    private String url;
     private List<Application> applications = new ArrayList<>();
-    private List<Group> groups = new ArrayList<>();
 
-    public void merge(final KarafConfig karafConfig) {
-        if (karafConfig == null) {
-            return;
-        }
-        // TODO better merge (by id etc with error when merge can't be guessed probably)
-        properties.putAll(karafConfig.getProperties());
-        profiles.addAll(karafConfig.getProfiles());
-        applications.addAll(karafConfig.getApplications());
-        groups.addAll(karafConfig.getGroups());
-    }
 }
