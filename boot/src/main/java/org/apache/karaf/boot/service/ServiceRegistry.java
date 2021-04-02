@@ -21,6 +21,7 @@ import lombok.extern.java.Log;
 import org.apache.karaf.boot.spi.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
@@ -32,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 @Log
 public class ServiceRegistry implements AutoCloseable {
 
-    private final Map<Class<?>, Service> registry = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
 
     /**
      * Retrieve a service from the registry.
@@ -77,6 +78,11 @@ public class ServiceRegistry implements AutoCloseable {
         boolean added = registry.putIfAbsent(service.getClass(), service) == null;
         if (added) {
             log.info("Adding " + service.name() + " server (" + service.priority() + ")");
+            try {
+                service.onRegister(this);
+            } catch (Exception e) {
+                throw new IllegalStateException("Can't register " + service.name(), e);
+            }
         }
         return added;
     }
@@ -113,18 +119,6 @@ public class ServiceRegistry implements AutoCloseable {
     }
 
     public void start() {
-        final IllegalStateException ise = new IllegalStateException("Can't register service");
-        registry.values().forEach(service -> {
-            try {
-                log.info("Registering " + service.name() + " service");
-                service.onRegister(this);
-            } catch (final Exception e) {
-                ise.addSuppressed(e);
-            }
-        });
-        if (ise.getSuppressed().length > 0) {
-            throw ise;
-        }
         ofNullable(get(KarafLifeCycleService.class)).ifPresent(it -> {
             log.info("Starting services");
             it.start();
