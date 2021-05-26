@@ -17,12 +17,20 @@
  */
 package org.apache.karaf.boot.service;
 
+import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.spi.Service;
+
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Main class loader manager service.
  */
 public class ClassLoaderService implements Service, AutoCloseable {
+
+    private Map<String, URLClassLoader> profiles = new HashMap<>();
 
     @Override
     public String name() {
@@ -37,6 +45,19 @@ public class ClassLoaderService implements Service, AutoCloseable {
     @Override
     public void close() {
         // no-op
+    }
+
+    @Override
+    public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
+        KarafConfig configService = serviceRegistry.get(KarafConfig.class);
+        configService.getProfiles().stream().forEach(profile -> {
+            URLClassLoader profileClassLoader = new URLClassLoader(profile.getUrls().toArray(new URL[]{}), this.getClass().getClassLoader());
+            profiles.put(profile.getName(), profileClassLoader);
+        });
+    }
+
+    public URLClassLoader getClassLoader(String profile) {
+        return profiles.get(profile);
     }
 
 }

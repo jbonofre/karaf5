@@ -20,6 +20,7 @@ package org.apache.karaf.springboot;
 import lombok.extern.java.Log;
 import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
+import org.apache.karaf.boot.service.ClassLoaderService;
 import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
 import org.apache.karaf.boot.service.ServiceRegistry;
@@ -51,11 +52,12 @@ public class SpringBootApplicationManagerService implements Service {
     public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
         log.info("Starting Spring Boot application manager service");
         log.info("Registering Spring Boot application manager service");
+        ClassLoaderService classLoaderService = serviceRegistry.get(ClassLoaderService.class);
         KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
             getApplications(serviceRegistry.get(KarafConfigService.class)).forEach(application -> {
                 try {
-                    start(application.getUrl(), application.getProperties());
+                    start(application.getUrl(), application.getProfile(), classLoaderService, application.getProperties());
                 } catch (Exception e) {
                     throw new RuntimeException("Can't start Spring Boot application " + application.getUrl(), e);
                 }
@@ -93,9 +95,14 @@ public class SpringBootApplicationManagerService implements Service {
         return false;
     }
 
-    private String start(String url, Map<String, Object> properties) throws Exception {
+    private String start(String url, String profile, ClassLoaderService classLoaderService, Map<String, Object> properties) throws Exception {
         log.info("Starting Spring Boot application " + url);
-        final URLClassLoader classLoader = new URLClassLoader(new URL[]{ new URL(url) }, this.getClass().getClassLoader());
+        URLClassLoader classLoader = null;
+        if (profile == null) {
+            classLoader = new URLClassLoader(new URL[]{new URL(url)}, this.getClass().getClassLoader());
+        } else {
+            classLoader = new URLClassLoader(new URL[]{new URL(url)}, classLoaderService.getClassLoader(profile));
+        }
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);

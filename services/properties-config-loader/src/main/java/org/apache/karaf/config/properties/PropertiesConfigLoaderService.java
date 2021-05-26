@@ -93,8 +93,8 @@ public class PropertiesConfigLoaderService implements Service {
                     application.setType((String) properties.get(value));
                 } else if (value.equals("application." + appName + ".url")) {
                     application.setUrl((String) properties.get(value));
-                } else if (value.equals("application." + appName + ".profiles")) {
-                    application.getProfiles().add((String) properties.get(value));
+                } else if (value.equals("application." + appName + ".profile")) {
+                    application.setProfile((String) properties.get(value));
                 } else {
                     application.getProperties().put(((String) value).substring(("application." + appName).length() + 1), properties.get(value));
                 }

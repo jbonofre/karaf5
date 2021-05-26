@@ -20,16 +20,16 @@ package org.apache.karaf.boot.config;
 import lombok.Data;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 @Data
 public class Application {
 
+    private String name;
+    private String version;
     private String url;
     private String type;
-    private List<String> profiles = new LinkedList<>();
+    private String profile;
     private Map<String, Object> properties = new HashMap<>();
 
 }

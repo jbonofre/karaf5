@@ -12,17 +12,15 @@
       "properties": {
         "foo": "bar"
       },
-      "classloader": {
-        "order": "PARENT_FIRST",
-        "priorities": [ { "type": "RESOURCE", "pattern": "org/slf4j/LoggerFactory" }, {"type": "CLASS", "name": "com.foo.[*]"} ],
-        "urls": [ "/path/to/jar/file.jar", "/path/to/folder" ]
-      }
+      "urls": [ "/path/to/jar/file.jar", "/path/to/folder" ]
     }
   ],
   "applications": [
     {
+      "name": "spring-boot-foo",
+      "version": "1.0-SNAPSHOT",
       "url": "/path/to/app/spring-boot.jar",
-      "profiles": [ "myprofile" ],
+      "profile": "myprofile",
       "type": "spring-boot",
       "properties": {
         "enableHttp": true,
@@ -30,6 +28,7 @@
       }
     },
     {
+      "name": "bundle-bar",
       "url": "/path/to/osgi/bundle.jar",
       "type": "osgi"
     }
