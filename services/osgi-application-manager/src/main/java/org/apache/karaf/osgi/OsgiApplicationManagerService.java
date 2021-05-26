@@ -21,7 +21,6 @@ import lombok.extern.java.Log;
 import org.apache.felix.framework.FrameworkFactory;
 import org.apache.felix.framework.cache.BundleCache;
 import org.apache.felix.framework.util.FelixConstants;
-import org.apache.karaf.boot.config.Application;
 import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
@@ -33,7 +32,8 @@ import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarInputStream;
 
@@ -132,7 +132,7 @@ public class OsgiApplicationManagerService implements Service {
                 try {
                     if (application.getType() == null && canHandle(application.getUrl())) {
                         store.put(start(application.getUrl()), application.getUrl());
-                    } else if (application.getType().equals("osgi")) {
+                    } else if (application.getType().equals(name())) {
                         store.put(start(application.getUrl()), application.getUrl());
                     }
                 } catch (Exception e) {

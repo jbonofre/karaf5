@@ -74,7 +74,7 @@ public class SpringBootApplicationManagerService implements Service {
                     if (canHandle(application.getUrl())) {
                         applications.add(application);
                     }
-                } else if (application.getType().equals(this.getClass().getName())) {
+                } else if (application.getType().equals(name())) {
                     applications.add(application);
                 }
             });
