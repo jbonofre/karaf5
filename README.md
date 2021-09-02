@@ -19,7 +19,8 @@
 
 # Apache Karaf
 
-Apache Karaf is a multi-runtime launcher.
+Apache Karaf is an application runtime. Karaf is able to operate different kind of applications using application 
+manager services.
 
 It provides extensible launchers per application kind and out of the box services that any application 
 running on Karaf can leverage without cost.
