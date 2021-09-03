@@ -77,7 +77,7 @@ public class ServiceRegistry implements AutoCloseable {
     public boolean add(final Service service) {
         boolean added = registry.putIfAbsent(service.getClass(), service) == null;
         if (added) {
-            log.info("Adding " + service.name() + " server (" + service.priority() + ")");
+            log.info("Adding " + service.name() + " service (" + service.priority() + ")");
             try {
                 service.onRegister(this);
             } catch (Exception e) {
