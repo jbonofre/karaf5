@@ -5,7 +5,7 @@
   },
   "applications": [
     {
-      "url": "system/commons-lang-2.6.jar",
+      "url": "classpath:system/commons-lang-2.6.jar",
       "type": "osgi"
     }
   ]
