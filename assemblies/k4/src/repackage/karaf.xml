@@ -41,7 +41,24 @@
             <unpack>false</unpack>
             <scope>provided</scope>
             <includes>
-                <include>commons-lang:commons-lang</include>
+                <include>org.apache.karaf.features:org.apache.karaf.features.extension</include>
+                <include>org.apache.karaf.services:org.apache.karaf.services.eventadmin</include>
+                <include>org.apache.felix:org.apache.felix.metatype</include>
+                <include>org.ops4j.pax.url:pax-url-aether</include>
+                <include>org.ops4j.pax.logging:pax-logging-api</include>
+                <include>org.ops4j.pax.logging:pax-logging-log4j2</include>
+                <include>org.fusesource.jansi:jansi</include>
+                <include>org.osgi:org.osgi.util.promise</include>
+                <include>org.apache.felix:org.apache.felix.coordinator</include>
+                <include>org.apache.felix:org.apache.felix.converter</include>
+                <include>org.osgi:org.osgi.util.function</include>
+                <include>org.apache.felix:org.apache.felix.configadmin</include>
+                <include>org.apache.felix:org.apache.felix.configadmin.plugin.interpolation</include>
+                <include>org.apache.felix:org.apache.felix.configurator</include>
+                <include>org.apache.sling:org.apache.sling.commons.johnzon</include>
+                <include>org.apache.felix:org.apache.felix.cm.json</include>
+                <include>org.apache.felix:org.apache.felix.fileinstall</include>
+                <include>org.apache.karaf.features:org.apache.karaf.features.core</include>
             </includes>
         </dependencySet>
     </dependencySets>
