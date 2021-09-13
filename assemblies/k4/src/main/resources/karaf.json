@@ -13,7 +13,7 @@
       "type": "osgi"
     },
     {
-      "url": "classpath:system/org.apache.felix.metatype-1.2.4.jar",
+      "url": "classpath:system/pax-logging-api-2.0.10.jar",
       "type": "osgi"
     },
     {
@@ -21,7 +21,7 @@
       "type": "osgi"
     },
     {
-      "url": "classpath:system/pax-logging-api-2.0.10.jar",
+      "url": "classpath:system/org.apache.felix.metatype-1.2.4.jar",
       "type": "osgi"
     },
     {
@@ -30,6 +30,10 @@
     },
     {
       "url": "classpath:system/jansi-1.18.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/org.osgi.util.function-1.1.0.jar",
       "type": "osgi"
     },
     {
@@ -45,19 +49,11 @@
       "type": "osgi"
     },
     {
-      "url": "classpath:system/org.osgi.util.function-1.1.0.jar",
-      "type": "osgi"
-    },
-    {
       "url": "classpath:system/org.apache.felix.configadmin-1.9.22.jar",
       "type": "osgi"
     },
     {
-      "url": "classpath:system/org.apache.felix.configadmin.plugin.interpolation-1.1.2.jar",
-      "type": "osgi"
-    },
-    {
-      "url": "classpath:system/org.apache.felix.configurator-1.0.14.jar",
+      "url": "classpath:system/org.apache.felix.configadmin.plugin.interpolation-1.1.4.jar",
       "type": "osgi"
     },
     {
@@ -69,7 +65,31 @@
       "type": "osgi"
     },
     {
-      "url": "classpath:system/org.apache.felix.fileinstall-3.6.8.jar",
+      "url": "classpath:system/org.apache.felix.configurator-1.0.14.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/org.apache.felix.fileinstall-3.7.0.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/jakarta.activation-api-1.2.2.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/jakarta.xml.bind-api-2.3.3.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/istack-commons-runtime-3.0.12.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/org.apache.servicemix.bundles.txw2-2.3.3_1-SNAPSHOT.jar",
+      "type": "osgi"
+    },
+    {
+      "url": "classpath:system/jaxb-runtime-2.3.3.jar",
       "type": "osgi"
     },
     {

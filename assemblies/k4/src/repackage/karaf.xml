@@ -58,6 +58,11 @@
                 <include>org.apache.sling:org.apache.sling.commons.johnzon</include>
                 <include>org.apache.felix:org.apache.felix.cm.json</include>
                 <include>org.apache.felix:org.apache.felix.fileinstall</include>
+                <include>jakarta.activation:jakarta.activation-api</include>
+                <include>jakarta.xml.bind:jakarta.xml.bind-api</include>
+                <include>com.sun.istack:istack-commons-runtime</include>
+                <include>org.apache.servicemix.bundles:org.apache.servicemix.bundles.txw2</include>
+                <include>org.glassfish.jaxb:jaxb-runtime</include>
                 <include>org.apache.karaf.features:org.apache.karaf.features.core</include>
             </includes>
         </dependencySet>
