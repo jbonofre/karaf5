@@ -106,19 +106,14 @@ public class SpringBootApplicationManagerService implements Service {
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);
-            // disable tomcat stream handler
-            final Method tomcat = classLoader.loadClass("org.apache.catalina.webresources.TomcatURLStreamHandlerFactory").getMethod("disable");
-            if (!tomcat.isBridge()) {
-                tomcat.setAccessible(true);
-            }
-            tomcat.invoke(null, null);
+
             // invoke spring boot main
             final Method main = classLoader.loadClass("org.springframework.boot.loader.JarLauncher").getMethod("main", String[].class);
             main.setAccessible(true);
             if (properties.get("args") != null) {
-                main.invoke(null, new Object[]{ properties.get("args") });
+                main.invoke(null, properties.get("args"));
             } else {
-                main.invoke(null);
+                main.invoke(null, (Object) new String[]{});
             }
         } finally {
             Thread.currentThread().setContextClassLoader(original);
