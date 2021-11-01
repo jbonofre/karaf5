@@ -25,8 +25,6 @@ import org.apache.karaf.boot.service.ServiceRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-
 public class PropertiesConfigLoaderServiceTest {
 
     @Test

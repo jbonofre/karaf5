@@ -22,16 +22,9 @@ import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.Collections;
-import java.util.List;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Log
 public class ExtractorService implements Service {
@@ -65,25 +58,28 @@ public class ExtractorService implements Service {
             log.info("Extracting " + url + " to " + target);
 
             URL resource = Thread.currentThread().getContextClassLoader().getResource(url);
-
-            try (FileSystem fs = FileSystems.newFileSystem(resource.toURI(), Collections.emptyMap())) {
-                String finalTarget = target;
-                Files.walk(fs.getPath(".")).filter(Files::isRegularFile)
-                        .forEach(path -> {
-                            try {
-                                String resourceTarget = path.getParent().toAbsolutePath().toString();
-                                if (resourceTarget.startsWith("/" + url)) {
-                                    resourceTarget = resourceTarget.substring(("/" + url).length());
-                                    Path directory = Paths.get(finalTarget + Paths.get(resourceTarget));
-                                    Files.createDirectories(directory);
-                                    Path copy = Paths.get(directory.toAbsolutePath() + "/" + path.getFileName());
-                                    Files.copy(path, copy, StandardCopyOption.REPLACE_EXISTING);
+            if (resource != null) {
+                try (FileSystem fs = FileSystems.newFileSystem(resource.toURI(), Collections.emptyMap())) {
+                    String finalTarget = target;
+                    Files.walk(fs.getPath(".")).filter(Files::isRegularFile)
+                            .forEach(path -> {
+                                try {
+                                    String resourceTarget = path.getParent().toAbsolutePath().toString();
+                                    if (resourceTarget.startsWith("/" + url)) {
+                                        resourceTarget = resourceTarget.substring(("/" + url).length());
+                                        Path directory = Paths.get(finalTarget + Paths.get(resourceTarget));
+                                        Files.createDirectories(directory);
+                                        Path copy = Paths.get(directory.toAbsolutePath() + "/" + path.getFileName());
+                                        Files.copy(path, copy, StandardCopyOption.REPLACE_EXISTING);
+                                    }
+                                } catch (Exception e) {
+                                    log.warning("Can't copy " + path.toAbsolutePath() + " to " + finalTarget);
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                log.warning("Can't copy " + path.toAbsolutePath() + " to " + finalTarget);
-                                e.printStackTrace();
-                            }
-                        });
+                            });
+                }
+            } else {
+                log.warning("URL resource '" + url + "' not found!");
             }
         }
     }

@@ -53,7 +53,7 @@ public class OsgiApplicationManagerService implements Service {
 
     private Framework framework = null;
 
-    private Map<String, String> store = new ConcurrentHashMap<>();
+    private final Map<String, String> store = new ConcurrentHashMap<>();
 
     @Override
     public String name() {

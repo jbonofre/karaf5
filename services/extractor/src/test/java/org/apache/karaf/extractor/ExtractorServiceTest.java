@@ -21,7 +21,6 @@ import org.apache.karaf.boot.Karaf;
 import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

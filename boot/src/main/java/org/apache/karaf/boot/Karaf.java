@@ -20,7 +20,6 @@ package org.apache.karaf.boot;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.java.Log;
-import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 import org.apache.karaf.boot.spi.ServiceLoader;
