@@ -29,10 +29,7 @@ import org.apache.karaf.boot.spi.Service;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.jar.JarInputStream;
 
 @Log
@@ -110,11 +107,8 @@ public class SpringBootApplicationManagerService implements Service {
             // invoke spring boot main
             final Method main = classLoader.loadClass("org.springframework.boot.loader.JarLauncher").getMethod("main", String[].class);
             main.setAccessible(true);
-            if (properties.get("args") != null) {
-                main.invoke(null, properties.get("args"));
-            } else {
-                main.invoke(null, (Object) new String[]{});
-            }
+            main.invoke(null, (Object)
+                    Arrays.stream(Optional.ofNullable((String) properties.get("args")).orElse("").split(" ")).map(String::trim).toArray(String[]::new));
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }
