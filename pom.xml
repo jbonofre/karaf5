@@ -35,7 +35,7 @@
     <name>Apache Karaf</name>
 
     <properties>
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <junit.version>5.7.1</junit.version>
         <slf4j.version>1.7.30</slf4j.version>
 
