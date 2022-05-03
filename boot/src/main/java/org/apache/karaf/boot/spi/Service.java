@@ -20,6 +20,7 @@ package org.apache.karaf.boot.spi;
 import org.apache.karaf.boot.service.ServiceRegistry;
 
 import java.util.Locale;
+import java.util.Properties;
 
 /**
  * Generic Karaf Service.
@@ -53,6 +54,16 @@ public interface Service {
      */
     default String name() {
         return getClass().getSimpleName().toLowerCase(Locale.ROOT).replaceAll("Service", "");
+    }
+
+    /**
+     * Add properties specific to a service that could be used by other services during lookup.
+     * Default is empty properties.
+     *
+     * @return the service properties.
+     */
+    default Properties properties() {
+        return new Properties();
     }
 
 }
