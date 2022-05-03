@@ -30,7 +30,6 @@ public class KarafConfig {
     private Map<String, Object> properties = new HashMap<>();
     private List<Profile> profiles = new ArrayList<>();
     private List<Application> applications = new ArrayList<>();
-    private List<Group> groups = new ArrayList<>();
 
     public void merge(final KarafConfig karafConfig) {
         if (karafConfig == null) {
@@ -40,6 +39,5 @@ public class KarafConfig {
         properties.putAll(karafConfig.getProperties());
         profiles.addAll(karafConfig.getProfiles());
         applications.addAll(karafConfig.getApplications());
-        groups.addAll(karafConfig.getGroups());
     }
 }
