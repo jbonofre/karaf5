@@ -37,7 +37,7 @@ Karaf boot can be described/configure programmatically or by a provided JSON fil
 
 ## Karaf Boot
 
-Karaf boot is the main runtimes orchestrator. It basically loads Karaf Services via SPI, and it's configured via
+Karaf boot is the main runtime orchestrator. It basically loads Karaf Services via SPI, and it's configured via
 `KarafConfig`.
 
 `KarafConfig` can be provided programmatically:
@@ -71,17 +71,60 @@ Karaf Boot is looking for `karaf.json` file (aka Karaf Config):
 * as environment variable: `export KARAF_CONFIG=/path/to/karaf.json`
 * in the current classpath
 
+### Karaf Services
+
+A Karaf Services is a class implementing the `org.apache.karaf.boot.spi.Service` interface, and loaded via `META-INF/services/org.apache.karaf.boot.spi.Service`, containing the FQDN of the implementation class.
+
+The service doesn't have to implement any method by default. Optionally, you can define the following methods:
+
+```java
+public class MyService implements org.apache.karaf.boot.spi.Service {
+    
+    @Override
+    public String name() {
+        // return the service name
+        return "my-service";
+    }
+    
+    @Override
+    public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
+        // callback method, called when the service is registered in the Karaf Service Registry
+        // you can interact with the Karaf Service Registry `serviceRegistry` here, looking for services, etc
+    }
+    
+    @Override
+    public int priority() {
+        // return the service priority, default is 1000. Lower priority are started before higher priority.
+        return 1001;
+    }
+    
+}
+
+```
+
 ### Runtime
 
-Karaf Boot provides:
-* a generic services launcher
-* a service registry
-* core Karaf services, as the Lifecycle service.
+Karaf Boot provides a runtime with:
+* a launcher
+* a service registry (`ServiceRegistry`) where all services will be located
+* a config service (`KarafConfigService`) loads Karaf config
+* a lifecycle service (`KarafLifeCycleService`) is responsible to callback start and stop methods from the services
 
-The runtimes are known as *Karaf Services*,
-and automatically discovered and loaded via Karaf Boot SPI.
+Then, `org.apache.karaf.boot.Karaf` launcher can start (`Karaf.builder().build().start()`) all Karaf services located in the classloader, you can repackage all dependencies (jar) in a single uber jar.
 
-The Karaf Services can be configured via the properties, using the service name as prefix.
+Karaf itself provides several "core" services:
+* `classpath:` protocol handler
+* archive extractor
+* JSON configuration loader
+* Properties configuration loader
+* welcome banner
+* ...
+
+Services can also deploy "third party" applications, for instance:
+* OSGi application manager is able to deploy OSGi applications (bundles, Karaf 4 features)
+* Spring Boot application manager is able to deploy Spring Boot applications
+
+Karaf Services can be configured via the properties, using the service name as prefix.
 
 You can configure launcher in `karaf.json`:
 
@@ -92,63 +135,30 @@ You can configure launcher in `karaf.json`:
     },
 ```
 
-### Profiles
+Each service is responsible to retrieve the `KarafConfig` service from the service registry, and get the properties.
 
-Karaf Profiles allows you to define a dependencies set that applications can use.
-It allows you to override application dependencies at runtime.
+### Third party applications
 
-The profiles are configured in `karaf.json` (`KarafConfig`) and loaded by Karaf Boot:
+When you use a third party application manager service, you can define the applications you want to deploy via `KarafConfig` service.
 
-```
-"profiles": [
+For instance, you can use the following `karaf.json` configuration file:
+
+```json
+{
+  "properties": {
+    "osgi.storageDirectory": "path/to/store",
+    "osgi.cache": "path/to/cache"
+  },
+  "applications": [
     {
-      "name": "myprofile",
-      "properties": {
-        "foo": "bar"
-      },
-      "classloader": {
-        "order": "PARENT_FIRST",
-        "priorities": [ { "type": "RESOURCE", "pattern": "org/slf4j/LoggerFactory" }, {"type": "CLASS", "name": "com.foo.[*]"} ],
-        "urls": [ "/path/to/jar/file.jar", "/path/to/folder" ]
-      }
-    }
-  ],
-```
-
-### Applications
-
-The applications in `karaf.json` (`KarafConfig`) are automatically started by Karaf Boot at runtime.
-
-By default, Karaf tries to find the applications manager to use for the application. However, you can "force" the manager
-(runtime) to use by providing manager name.
-It's also possible to override application dependencies by providing profiles.
-You can also pass some properties for Karaf service specifically to the application.
-
-```
-"applications": [
-    {
-      "url": "/path/to/app/spring-boot.jar",
-      "profiles": [ "myprofile" ],
-      "services": [
-        {
-          "name": "spring-boot",
-          "properties": {
-            "enableHttp": true,
-            "enablePrometheus": true
-          }
-        }
-      ]
-    },
-    {
-      "url": "/path/to/osgi/bundle.jar",
+      "url": "https://repo1.maven.org/maven2/commons-lang/commons-lang/2.6/commons-lang-2.6.jar",
       "type": "osgi"
     }
   ]
+}
 ```
 
-## Distributions
-
-As for Apache Karaf 4.x, you can find some ready to use distribution.
+Here, you can see how to configure and deploy `commons-lang-2.6.jar` in the OSGi application manager.
 
 ## Run
 
