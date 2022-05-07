@@ -35,6 +35,10 @@ public class ServiceRegistry implements AutoCloseable {
 
     private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
 
+    public Map<Class<?>, Service> getAll() {
+        return registry;
+    }
+
     /**
      * Retrieve a service from the registry.
      *
