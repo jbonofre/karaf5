@@ -39,6 +39,7 @@
         <module>json-config-loader</module>
         <module>properties-config-loader</module>
         <module>osgi-application-manager</module>
+        <module>rest-jersey</module>
         <module>spring-boot-application-manager</module>
         <module>web-jetty</module>
         <module>welcome-banner</module>
