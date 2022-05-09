@@ -18,6 +18,7 @@
 package org.apache.karaf.web.jetty;
 
 import org.apache.karaf.boot.Karaf;
+import org.apache.karaf.boot.config.KarafConfig;
 import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.KarafLifeCycleService;
 import org.junit.jupiter.api.Assertions;
@@ -30,6 +31,35 @@ import java.net.URL;
 import java.util.stream.Stream;
 
 public class JettyWebContainerServiceTest {
+
+    @Test
+    public void testDefaultConfig() throws Exception {
+        JettyWebContainerService webContainerService = new JettyWebContainerService();
+        Karaf karaf = Karaf.builder().loader(() -> Stream.of(new KarafConfigService(), new KarafLifeCycleService(), webContainerService)).build().start();
+
+        Assertions.assertEquals(8080, webContainerService.getServerConnector().getPort());
+        Assertions.assertEquals("0.0.0.0", webContainerService.getServerConnector().getHost());
+        Assertions.assertEquals(0, webContainerService.getServerConnector().getAcceptQueueSize());
+
+        karaf.close();
+    }
+
+    @Test
+    public void testSettingsConfig() throws Exception {
+        KarafConfigService config = new KarafConfigService();
+        config.getProperties().put("jetty.port", "8181");
+        config.getProperties().put("jetty.host", "127.0.0.1");
+        config.getProperties().put("jetty.acceptQueueSize", "10");
+
+        JettyWebContainerService webContainerService = new JettyWebContainerService();
+        Karaf karaf = Karaf.builder().loader(() -> Stream.of(config, new KarafLifeCycleService(), webContainerService)).build().start();
+
+        Assertions.assertEquals(8181, webContainerService.getServerConnector().getPort());
+        Assertions.assertEquals("127.0.0.1", webContainerService.getServerConnector().getHost());
+        Assertions.assertEquals(10, webContainerService.getServerConnector().getAcceptQueueSize());
+
+        karaf.close();
+    }
 
     @Test
     public void addServletAsService() throws Exception {
