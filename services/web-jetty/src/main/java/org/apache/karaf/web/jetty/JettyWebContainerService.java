@@ -28,7 +28,10 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
+import java.util.Dictionary;
 
 @Log
 public class JettyWebContainerService implements Service, AutoCloseable {
@@ -149,9 +152,9 @@ public class JettyWebContainerService implements Service, AutoCloseable {
         server.stop();
     }
 
-    public void addServlet(Class<? extends Servlet> servlet, String contextPath) throws Exception {
+    public ServletHolder addServlet(Class<? extends Servlet> servlet, String contextPath) throws Exception {
         log.info("Adding servlet " + servlet.getClass().getName() + " with context " + contextPath);
-        servlets.addServlet(servlet, contextPath);
+        return servlets.addServlet(servlet, contextPath);
     }
 
     private void addServlets(ServiceRegistry serviceRegistry) {
