@@ -24,26 +24,45 @@
 
     <parent>
         <groupId>org.apache.karaf</groupId>
-        <artifactId>karaf</artifactId>
+        <artifactId>services</artifactId>
         <version>5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>services</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache Karaf :: Services</name>
+    <artifactId>jpa-opanjpa</artifactId>
+    <name>Apache Karaf :: Services :: OpenJPA JPA Service</name>
 
-    <modules>
-        <module>classpath-protocol-handler</module>
-        <module>extractor</module>
-        <module>jpa-openjpa</module>
-        <module>json-config-loader</module>
-        <module>properties-config-loader</module>
-        <module>osgi-application-manager</module>
-        <module>rest-jersey</module>
-        <module>spring-boot-application-manager</module>
-        <module>web-jetty</module>
-        <module>welcome-banner</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>boot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.openjpa</groupId>
+            <artifactId>openjpa</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>10.15.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>10.15.2.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>
