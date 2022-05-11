@@ -29,13 +29,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>jpa-opanjpa</artifactId>
-    <name>Apache Karaf :: Services :: OpenJPA JPA Service</name>
+    <artifactId>karaf-config-json</artifactId>
+    <name>Apache Karaf :: Services :: JSON Config</name>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>boot</artifactId>
+            <artifactId>karaf-boot</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -45,23 +45,19 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>3.2.2</version>
-        </dependency>
-
-        <!-- test -->
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.15.2.0</version>
-            <scope>test</scope>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jsonb_1.0_spec</artifactId>
+            <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>10.15.2.0</version>
-            <scope>test</scope>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-json_1.1_spec</artifactId>
+            <version>1.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.johnzon</groupId>
+            <artifactId>johnzon-jsonb</artifactId>
+            <version>1.2.17</version>
         </dependency>
     </dependencies>
 

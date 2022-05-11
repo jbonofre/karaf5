@@ -29,17 +29,22 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>web-jetty</artifactId>
-    <name>Apache Karaf :: Services :: Jetty Web Container Service</name>
+    <artifactId>karaf-rest</artifactId>
+    <name>Apache Karaf :: Services :: REST</name>
 
     <properties>
-        <jetty.version>11.0.9</jetty.version>
+        <jersey.version>3.0.4</jersey.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>boot</artifactId>
+            <artifactId>karaf-boot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>karaf-http</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -49,24 +54,14 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.0-alpha6</version>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
         </dependency>
     </dependencies>
 

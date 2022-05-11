@@ -35,27 +35,27 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>boot</artifactId>
+            <artifactId>karaf-boot</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>json-config-loader</artifactId>
+            <artifactId>karaf-config-json</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>classpath-protocol-handler</artifactId>
+            <artifactId>karaf-classpath</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>osgi-application-manager</artifactId>
+            <artifactId>karaf-osgi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>welcome-banner</artifactId>
+            <artifactId>karaf-banner</artifactId>
             <version>${project.version}</version>
         </dependency>
 

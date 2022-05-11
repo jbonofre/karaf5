@@ -29,13 +29,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>json-config-loader</artifactId>
-    <name>Apache Karaf :: Services :: JSON Config Loader</name>
+    <artifactId>karaf-extractor</artifactId>
+    <name>Apache Karaf :: Services :: Extractor</name>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>boot</artifactId>
+            <artifactId>karaf-boot</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -44,20 +44,19 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- test -->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jsonb_1.0_spec</artifactId>
-            <version>1.4</version>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>karaf-banner</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-json_1.1_spec</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-jsonb</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>base</artifactId>
+            <version>4.3.7</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

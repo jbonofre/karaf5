@@ -34,16 +34,16 @@
     <name>Apache Karaf :: Services</name>
 
     <modules>
-        <module>classpath-protocol-handler</module>
-        <module>extractor</module>
-        <module>jpa-openjpa</module>
-        <module>json-config-loader</module>
-        <module>properties-config-loader</module>
-        <module>osgi-application-manager</module>
-        <module>rest-jersey</module>
-        <module>spring-boot-application-manager</module>
-        <module>web-jetty</module>
-        <module>welcome-banner</module>
+        <module>karaf-classpath</module>
+        <module>karaf-extractor</module>
+        <module>karaf-jpa</module>
+        <module>karaf-config-json</module>
+        <module>karaf-config-properties</module>
+        <module>karaf-osgi</module>
+        <module>karaf-rest</module>
+        <module>karaf-spring-boot</module>
+        <module>karaf-http</module>
+        <module>karaf-banner</module>
     </modules>
 
 </project>

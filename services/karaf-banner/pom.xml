@@ -29,13 +29,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>classpath-protocol-handler</artifactId>
-    <name>Apache Karaf :: Services :: Classpath Protocol Handler</name>
+    <artifactId>karaf-banner</artifactId>
+    <name>Apache Karaf :: Services :: Banner</name>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf</groupId>
-            <artifactId>boot</artifactId>
+            <artifactId>karaf-boot</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -43,14 +43,6 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- test -->
-        <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>welcome-banner</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -29,7 +29,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>boot</artifactId>
+    <artifactId>karaf-boot</artifactId>
     <name>Apache Karaf :: Boot</name>
 
     <dependencies>
