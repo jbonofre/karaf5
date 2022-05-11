@@ -1,0 +1,13 @@
+{
+  "applications": [
+    {
+      "name": "spring-boot-pet-clinic",
+      "version": "5.0-SNAPSHOT",
+      "url": "file:./repository/spring-boot-app-5.0-SNAPSHOT.jar",
+      "type": "spring-boot",
+      "properties":{
+        "args": "--server.port=8082 --server.servlet.context-path=/api"
+      }
+    }
+  ]
+}

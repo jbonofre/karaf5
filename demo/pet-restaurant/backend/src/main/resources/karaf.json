@@ -1,0 +1,6 @@
+{
+  "properties": {
+    "rest.path": "/petrestaurant/*",
+    "rest.packages": "org.apache.karaf.demo.petrestaurant.rest"
+  }
+}

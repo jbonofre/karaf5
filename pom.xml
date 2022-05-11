@@ -45,7 +45,7 @@
     <modules>
         <module>boot</module>
         <module>services</module>
-        <module>assemblies</module>
+        <module>demo</module>
     </modules>
 
     <dependencies>
