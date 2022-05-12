@@ -24,27 +24,40 @@
 
     <parent>
         <groupId>org.apache.karaf</groupId>
-        <artifactId>karaf</artifactId>
+        <artifactId>services</artifactId>
         <version>5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>services</artifactId>
-    <packaging>pom</packaging>
-    <name>Apache Karaf :: Services</name>
+    <artifactId>karaf-camel</artifactId>
+    <name>Apache Karaf :: Services :: Camel</name>
 
-    <modules>
-        <module>karaf-camel</module>
-        <module>karaf-classpath</module>
-        <module>karaf-extractor</module>
-        <module>karaf-jpa</module>
-        <module>karaf-config-json</module>
-        <module>karaf-config-properties</module>
-        <module>karaf-osgi</module>
-        <module>karaf-rest</module>
-        <module>karaf-spring-boot</module>
-        <module>karaf-http</module>
-        <module>karaf-banner</module>
-    </modules>
+    <properties>
+        <camel.version>3.16.0</camel.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>karaf-boot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.32</version>
+        </dependency>
+    </dependencies>
 
 </project>
