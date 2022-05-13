@@ -28,7 +28,15 @@ import java.util.Map;
 public class Profile {
 
     private String name;
-    private Map<String, Object> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
     private List<String> urls = new ArrayList<>();
+
+    public String getProperty(String key) {
+        return getProperty(key, null);
+    }
+
+    public String getProperty(String key, String defaultValue) {
+        return KarafConfig.getProperty(key, properties, defaultValue);
+    }
 
 }

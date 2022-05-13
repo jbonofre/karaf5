@@ -37,7 +37,7 @@ public class SpringBootApplicationManagerService implements Service {
 
     @Override
     public String name() {
-        return "spring-boot";
+        return "karaf-spring-boot";
     }
 
     @Override
@@ -47,8 +47,6 @@ public class SpringBootApplicationManagerService implements Service {
 
     @Override
     public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
-        log.info("Starting Spring Boot application manager service");
-        log.info("Registering Spring Boot application manager service");
         ClassLoaderService classLoaderService = serviceRegistry.get(ClassLoaderService.class);
         KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
         karafLifeCycleService.onStart(() -> {
@@ -92,7 +90,7 @@ public class SpringBootApplicationManagerService implements Service {
         return false;
     }
 
-    private String start(String url, String profile, ClassLoaderService classLoaderService, Map<String, Object> properties) throws Exception {
+    private String start(String url, String profile, ClassLoaderService classLoaderService, Map<String, String> properties) throws Exception {
         log.info("Starting Spring Boot application " + url);
         URLClassLoader classLoader = null;
         if (profile == null) {

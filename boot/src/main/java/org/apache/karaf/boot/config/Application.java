@@ -30,6 +30,14 @@ public class Application {
     private String url;
     private String type;
     private String profile;
-    private Map<String, Object> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
+
+    public String getProperty(String key) {
+        return getProperty(key, null);
+    }
+
+    public String getProperty(String key, String defaultValue) {
+        return KarafConfig.getProperty(key, properties, defaultValue);
+    }
 
 }

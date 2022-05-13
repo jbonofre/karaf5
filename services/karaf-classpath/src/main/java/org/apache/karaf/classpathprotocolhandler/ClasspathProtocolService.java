@@ -28,12 +28,11 @@ public class ClasspathProtocolService implements Service {
 
     @Override
     public String name() {
-        return "classpath-protocol";
+        return "karaf-classpath";
     }
 
     @Override
     public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
-        log.info("Starting classpath: protocol service");
         URL.setURLStreamHandlerFactory(new ClasspathURLStreamHandlerFactory());
     }
 

@@ -28,38 +28,38 @@ import org.glassfish.jersey.servlet.ServletContainer;
 @Log
 public class JerseyRestService implements Service {
 
-    public final static String JERSEY_PATH = "jersey.path";
-    public final static String JERSEY_PACKAGES = "jersey.packages";
+    public final static String REST_PATH = "rest.path";
+    public final static String REST_PACKAGES = "rest.packages";
 
     private String restPath;
     private String restPackages;
 
     @Override
     public String name() {
-        return "jersey-rest";
+        return "karaf-rest";
     }
 
     @Override
     public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
         KarafConfigService config = serviceRegistry.get(KarafConfigService.class);
         if (config == null) {
-            log.warning("KarafConfigService is not found in the service registry");
+            log.warning("karaf-config service is not found in the service registry");
         }
 
         // get jetty service from the registry
         JettyWebContainerService webContainerService = serviceRegistry.get(JettyWebContainerService.class);
         if (webContainerService == null) {
-            throw new IllegalStateException("JettyWebContainerService is not found in the service registry");
+            throw new IllegalStateException("karaf-http is not found in the service registry");
         }
 
-        restPath = (config != null && config.getProperties().get(JERSEY_PATH) != null) ? config.getProperties().get(JERSEY_PATH).toString() : "/rest/*";
-        if (config != null && config.getProperties().get(JERSEY_PACKAGES) != null) {
-            restPackages = config.getProperties().get(JERSEY_PACKAGES).toString();
+        restPath = (config != null && config.getProperty(REST_PATH) != null) ? config.getProperty(REST_PATH) : "/rest/*";
+        if (config != null && config.getProperty(REST_PACKAGES) != null) {
+            restPackages = config.getProperty(REST_PACKAGES);
         } else {
-            throw new IllegalStateException("jersey.packages configuration is not found in the KarafConfigService");
+            throw new IllegalStateException("rest.packages configuration is not found in the karaf-config service");
         }
 
-        log.info("Starting JerseyRestService");
+        log.info("Starting karaf-rest");
         log.info("\tpath: " + restPath);
         log.info("\tpackages: " + restPackages);
         ServletHolder servletHolder = webContainerService.addServlet(ServletContainer.class, restPath);

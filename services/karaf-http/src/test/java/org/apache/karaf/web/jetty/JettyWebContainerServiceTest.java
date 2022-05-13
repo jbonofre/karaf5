@@ -46,19 +46,22 @@ public class JettyWebContainerServiceTest {
 
     @Test
     public void testSettingsConfig() throws Exception {
-        KarafConfigService config = new KarafConfigService();
-        config.getProperties().put("jetty.port", "8181");
-        config.getProperties().put("jetty.host", "127.0.0.1");
-        config.getProperties().put("jetty.acceptQueueSize", "10");
+        System.setProperty("http.port", "8181");
+        System.setProperty("http.host", "127.0.0.1");
+        System.setProperty("http.acceptQueueSize", "10");
 
         JettyWebContainerService webContainerService = new JettyWebContainerService();
-        Karaf karaf = Karaf.builder().loader(() -> Stream.of(config, new KarafLifeCycleService(), webContainerService)).build().start();
+        Karaf karaf = Karaf.builder().loader(() -> Stream.of(new KarafConfigService(), new KarafLifeCycleService(), webContainerService)).build().start();
 
         Assertions.assertEquals(8181, webContainerService.getServerConnector().getPort());
         Assertions.assertEquals("127.0.0.1", webContainerService.getServerConnector().getHost());
         Assertions.assertEquals(10, webContainerService.getServerConnector().getAcceptQueueSize());
 
         karaf.close();
+
+        System.clearProperty("http.port");
+        System.clearProperty("http.host");
+        System.clearProperty("http.acceptQueueSize");
     }
 
     @Test

@@ -32,7 +32,7 @@ public class CamelService implements Service {
 
     @Override
     public String name() {
-        return "camel";
+        return "karaf-camel";
     }
 
     @Override

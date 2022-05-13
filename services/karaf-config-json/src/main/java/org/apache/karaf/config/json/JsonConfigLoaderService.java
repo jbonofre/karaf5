@@ -36,7 +36,7 @@ public class JsonConfigLoaderService implements Service {
 
     @Override
     public String name() {
-        return "json-config-loader";
+        return "karaf-config-json";
     }
 
     @Override
