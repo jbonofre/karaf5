@@ -15,32 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.jpa.openjpa;
+package org.apache.karaf.boot;
 
-import lombok.extern.java.Log;
-import org.apache.karaf.boot.service.ServiceRegistry;
-import org.apache.karaf.boot.spi.Service;
+import org.apache.karaf.boot.config.KarafConfig;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import javax.persistence.EntityManager;
+public class KarafConfigTest {
 
-@Log
-public class OpenJPAService implements Service {
+    @Test
+    public void defaultTest() {
+        System.setProperty("foo.test", "bar.test");
 
-    private OpenJPAService jpaService;
+        KarafConfig config = new KarafConfig();
+        config.getProperties().put("foo", "bar");
 
-    @Override
-    public String name() {
-        return "karaf-jpa";
-    }
-
-    @Override
-    public void onRegister(ServiceRegistry serviceRegistry) {
-        log.info("Starting karaf-jpa");
-        jpaService = new OpenJPAService();
-    }
-
-    public EntityManager getEntityManager() {
-        return jpaService.getEntityManager();
+        Assertions.assertEquals("world", config.getProperty("hello", "world"));
+        Assertions.assertEquals("bar", config.getProperty("foo"));
+        Assertions.assertEquals("bar.test", config.getProperty("foo.test"));
+        Assertions.assertNull(config.getProperty("not.defined"));
     }
 
 }

@@ -26,7 +26,7 @@ public class WelcomeBannerService implements Service {
 
     @Override
     public String name() {
-        return "welcome-banner";
+        return "karaf-banner";
     }
 
     @Override

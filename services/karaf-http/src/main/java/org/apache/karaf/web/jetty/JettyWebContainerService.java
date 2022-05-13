@@ -31,21 +31,17 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import java.util.Dictionary;
-
 @Log
 public class JettyWebContainerService implements Service, AutoCloseable {
 
-    public static final String JETTY_MAX_THREADS = "jetty.maxThreads";
-    public static final String JETTY_MIN_THREADS = "jetty.minThreads";
-    public static final String JETTY_IDLE_TIMEOUT = "jetty.idleTimeout";
-    public static final String JETTY_ACCEPTORS = "jetty.acceptors";
-    public static final String JETTY_SELECTORS = "jetty.selectors";
-    public static final String JETTY_PORT = "jetty.port";
+    public static final String HTTP_MAX_THREADS = "http.maxThreads";
+    public static final String HTTP_MIN_THREADS = "http.minThreads";
+    public static final String HTTP_IDLE_TIMEOUT = "http.idleTimeout";
+    public static final String HTTP_ACCEPTORS = "http.acceptors";
+    public static final String HTTP_SELECTORS = "http.selectors";
     public static final String HTTP_PORT = "http.port";
-    public static final String JETTY_HOST = "jetty.host";
     public static final String HTTP_HOST = "http.host";
-    public static final String JETTY_ACCEPT_QUEUE_SIZE = "jetty.acceptQueueSize";
+    public static final String HTTP_ACCEPT_QUEUE_SIZE = "http.acceptQueueSize";
 
     private Server server;
     private ServerConnector connector;
@@ -53,7 +49,7 @@ public class JettyWebContainerService implements Service, AutoCloseable {
 
     @Override
     public String name() {
-        return "jetty-web-container";
+        return "karaf-http";
     }
 
     @Override
@@ -63,30 +59,28 @@ public class JettyWebContainerService implements Service, AutoCloseable {
             log.warning("KarafConfigService is not found in the registry");
         }
 
-        log.info("Starting Jetty web container");
+        log.info("Starting HTTP service");
 
-        int maxThreads = (configService != null && configService.getProperties().get(JETTY_MAX_THREADS) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_MAX_THREADS).toString()) : 200;
-        int minThreads = (configService != null && configService.getProperties().get(JETTY_MIN_THREADS) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_MIN_THREADS).toString()) : Math.min(8, maxThreads);
-        int idleTimeout = (configService != null && configService.getProperties().get(JETTY_IDLE_TIMEOUT) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_IDLE_TIMEOUT).toString()) : 60000;
+        int maxThreads = (configService != null && configService.getProperty(HTTP_MAX_THREADS) != null) ? Integer.parseInt(configService.getProperty(HTTP_MAX_THREADS)) : 200;
+        int minThreads = (configService != null && configService.getProperty(HTTP_MIN_THREADS) != null) ? Integer.parseInt(configService.getProperty(HTTP_MIN_THREADS)) : Math.min(8, maxThreads);
+        int idleTimeout = (configService != null && configService.getProperty(HTTP_IDLE_TIMEOUT) != null) ? Integer.parseInt(configService.getProperty(HTTP_IDLE_TIMEOUT)) : 60000;
 
         QueuedThreadPool threadPool = new QueuedThreadPool(maxThreads, minThreads, idleTimeout);
-        threadPool.setName("jetty-web-container");
-        log.info("Creating Jetty queued thread pool jetty-web-container");
+        threadPool.setName("karaf-http");
+        log.info("Creating HTTP queued thread pool");
         log.info("\tmaxThreads: " + maxThreads);
         log.info("\tminThreads: " + minThreads);
         log.info("\tidleTimeout: " + idleTimeout);
 
         server = new Server(threadPool);
 
-        int acceptors = (configService != null && configService.getProperties().get(JETTY_ACCEPTORS) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_ACCEPTORS).toString()) : -1;
-        int selectors = (configService != null && configService.getProperties().get(JETTY_SELECTORS) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_SELECTORS).toString()) : -1;
-        int port = (configService != null && configService.getProperties().get(JETTY_PORT) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_PORT).toString()) : 8080;
-        port = (configService != null && configService.getProperties().get(HTTP_PORT) != null) ? Integer.parseInt(configService.getProperties().get(HTTP_PORT).toString()) : port;
-        String host = (configService != null && configService.getProperties().get(JETTY_HOST) != null) ? configService.getProperties().get(JETTY_HOST).toString() : "0.0.0.0";
-        host = (configService != null && configService.getProperties().get(HTTP_HOST) != null) ? configService.getProperties().get(HTTP_HOST).toString() : host;
-        int acceptQueueSize = (configService != null && configService.getProperties().get(JETTY_ACCEPT_QUEUE_SIZE) != null) ? Integer.parseInt(configService.getProperties().get(JETTY_ACCEPT_QUEUE_SIZE).toString()) : 0;
+        int acceptors = (configService != null && configService.getProperty(HTTP_ACCEPTORS) != null) ? Integer.parseInt(configService.getProperty(HTTP_ACCEPTORS)) : -1;
+        int selectors = (configService != null && configService.getProperty(HTTP_SELECTORS) != null) ? Integer.parseInt(configService.getProperty(HTTP_SELECTORS)) : -1;
+        int port = (configService != null && configService.getProperty(HTTP_PORT) != null) ? Integer.parseInt(configService.getProperty(HTTP_PORT)) : 8080;
+        String host = (configService != null && configService.getProperty(HTTP_HOST) != null) ? configService.getProperty(HTTP_HOST) : "0.0.0.0";
+        int acceptQueueSize = (configService != null && configService.getProperty(HTTP_ACCEPT_QUEUE_SIZE) != null) ? Integer.parseInt(configService.getProperty(HTTP_ACCEPT_QUEUE_SIZE)) : 0;
 
-        log.info("Creating Jetty server connector");
+        log.info("Creating HTTP server connector");
         log.info("\tacceptors: " + acceptors);
         log.info("\tselectors: " + selectors);
         log.info("\tport: " + port);
@@ -113,7 +107,7 @@ public class JettyWebContainerService implements Service, AutoCloseable {
                 server.start();
                 // server.join();
             } catch (Exception e) {
-                throw new RuntimeException("Can't start Jetty server", e);
+                throw new RuntimeException("Can't start HTTP service", e);
             }
         });
         karafLifeCycleService.onShutdown(() -> {
@@ -121,7 +115,7 @@ public class JettyWebContainerService implements Service, AutoCloseable {
                 connector.close();
                 server.stop();
             } catch (Exception e) {
-                log.warning("Can't stop Jetty server: " + e.getMessage());
+                log.warning("Can't stop HTTP service: " + e.getMessage());
             }
         });
     }

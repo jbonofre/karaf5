@@ -27,7 +27,7 @@ import java.util.Map;
 @Data
 public class KarafConfig {
 
-    private Map<String, Object> properties = new HashMap<>();
+    private Map<String, String> properties = new HashMap<>();
     private List<Profile> profiles = new ArrayList<>();
     private List<Application> applications = new ArrayList<>();
 
@@ -40,4 +40,27 @@ public class KarafConfig {
         profiles.addAll(karafConfig.getProfiles());
         applications.addAll(karafConfig.getApplications());
     }
+
+    public String getProperty(String key) {
+        return getProperty(key, null);
+    }
+
+    public String getProperty(String key, String defaultValue) {
+        return getProperty(key, this.properties, defaultValue);
+    }
+
+    protected static String getProperty(String key, Map<String, String> properties, String defaultValue) {
+        String envKey = key.replaceAll(".", "_").toUpperCase();
+        if (System.getenv(envKey) != null) {
+            return System.getenv(envKey);
+        }
+        if (System.getProperty(key) != null) {
+            return System.getProperty(key);
+        }
+        if (properties.get(key) != null) {
+            return properties.get(key);
+        }
+        return defaultValue;
+    }
+
 }

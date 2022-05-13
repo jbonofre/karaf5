@@ -31,7 +31,7 @@ public class ExtractorService implements Service {
 
     @Override
     public String name() {
-        return "extractor-service";
+        return "karaf-extractor";
     }
 
     @Override
@@ -44,12 +44,12 @@ public class ExtractorService implements Service {
             return;
         }
         String sources = "resources";
-        if (config.getProperties().get("extractor.sources") != null) {
-            sources = config.getProperties().get("extractor.sources").toString();
+        if (config.getProperty("extractor.sources") != null) {
+            sources = config.getProperty("extractor.sources").toString();
         }
         String target = ".";
-        if (config.getProperties().get("extractor.target") != null) {
-            target = config.getProperties().get("extractor.target").toString();
+        if (config.getProperty("extractor.target") != null) {
+            target = config.getProperty("extractor.target").toString();
         }
 
         String[] urls = sources.split(",");

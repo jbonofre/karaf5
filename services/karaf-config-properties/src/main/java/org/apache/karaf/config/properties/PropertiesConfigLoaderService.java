@@ -38,7 +38,7 @@ public class PropertiesConfigLoaderService implements Service {
 
     @Override
     public String name() {
-        return "properties-config-loader";
+        return "karaf-config-properties";
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PropertiesConfigLoaderService implements Service {
 
         properties.keySet().stream().filter(key -> !((String) key).startsWith("application."))
                 .forEach(key -> {
-                    karafConfig.getProperties().put(((String) key), properties.get(key));
+                    karafConfig.getProperties().put(((String) key), properties.get(key).toString());
                 });
 
         List<Object> applicationKeys = properties.keySet().stream().filter(key -> ((String) key).startsWith("application."))
@@ -96,7 +96,7 @@ public class PropertiesConfigLoaderService implements Service {
                 } else if (value.equals("application." + appName + ".profile")) {
                     application.setProfile((String) properties.get(value));
                 } else {
-                    application.getProperties().put(((String) value).substring(("application." + appName).length() + 1), properties.get(value));
+                    application.getProperties().put(((String) value).substring(("application." + appName).length() + 1), properties.get(value).toString());
                 }
             });
             karafConfig.getApplications().add(application);

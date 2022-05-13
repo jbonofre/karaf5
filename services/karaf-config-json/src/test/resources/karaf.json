@@ -1,10 +1,10 @@
 {
   "properties": {
     "foo": "bar",
-    "lifecycle.enabled": true,
+    "lifecycle.enabled": "true",
     "log.patternLayout": "%m %n",
     "osgi.storageDirectory": "./osgi/cache",
-    "osgi.priority": 1
+    "osgi.priority": "1"
   },
   "profiles": [
     {
@@ -23,8 +23,8 @@
       "profile": "myprofile",
       "type": "spring-boot",
       "properties": {
-        "enableHttp": true,
-        "enablePrometheus": true
+        "enableHttp": "true",
+        "enablePrometheus": "true"
       }
     },
     {

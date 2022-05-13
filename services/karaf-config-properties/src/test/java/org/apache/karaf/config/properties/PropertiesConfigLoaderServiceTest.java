@@ -39,7 +39,7 @@ public class PropertiesConfigLoaderServiceTest {
 
         KarafConfig karafConfig = serviceRegistry.get(KarafConfigService.class);
 
-        Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
+        Assertions.assertEquals("bar", karafConfig.getProperty("foo"));
 
         System.clearProperty("karaf.config");
     }
@@ -55,11 +55,11 @@ public class PropertiesConfigLoaderServiceTest {
         KarafConfig karafConfig = serviceRegistry.get(KarafConfig.class);
 
         // properties
-        Assertions.assertEquals("bar", karafConfig.getProperties().get("foo"));
-        Assertions.assertEquals("true", karafConfig.getProperties().get("lifecycle.enabled"));
-        Assertions.assertEquals("%m %n", karafConfig.getProperties().get("log.patternLayout"));
-        Assertions.assertEquals("./osgi/cache", karafConfig.getProperties().get("osgi.storageDirectory"));
-        Assertions.assertEquals("1", karafConfig.getProperties().get("osgi.priority"));
+        Assertions.assertEquals("bar", karafConfig.getProperty("foo"));
+        Assertions.assertEquals("true", karafConfig.getProperty("lifecycle.enabled"));
+        Assertions.assertEquals("%m %n", karafConfig.getProperty("log.patternLayout"));
+        Assertions.assertEquals("./osgi/cache", karafConfig.getProperty("osgi.storageDirectory"));
+        Assertions.assertEquals("1", karafConfig.getProperty("osgi.priority"));
 
         // TODO profiles
         // Assertions.assertEquals(1, karafConfig.getProfiles().size());
@@ -69,8 +69,8 @@ public class PropertiesConfigLoaderServiceTest {
         Application springBootApp = karafConfig.getApplications().get(1);
         Assertions.assertEquals("/path/to/app/spring-boot.jar", springBootApp.getUrl());
         Assertions.assertEquals("spring-boot", springBootApp.getType());
-        Assertions.assertEquals("true", springBootApp.getProperties().get("enableHttp"));
-        Assertions.assertEquals("true", springBootApp.getProperties().get("enablePrometheus"));
+        Assertions.assertEquals("true", springBootApp.getProperty("enableHttp"));
+        Assertions.assertEquals("true", springBootApp.getProperty("enablePrometheus"));
     }
 
     @Test

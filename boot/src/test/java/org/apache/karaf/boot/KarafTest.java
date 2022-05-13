@@ -47,8 +47,8 @@ class KarafTest {
                 .start()) {
             final var config = karaf.getServiceRegistry().get(KarafConfig.class);
             assertNotNull(config);
-            assertEquals("bar", config.getProperties().get("foo"));
-            assertEquals("world", config.getProperties().get("hello"));
+            assertEquals("bar", config.getProperty("foo"));
+            assertEquals("world", config.getProperty("hello"));
         }
     }
 }

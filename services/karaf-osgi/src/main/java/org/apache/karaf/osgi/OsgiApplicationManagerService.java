@@ -57,7 +57,7 @@ public class OsgiApplicationManagerService implements Service {
 
     @Override
     public String name() {
-        return "osgi";
+        return "karaf-osgi";
     }
 
     @Override

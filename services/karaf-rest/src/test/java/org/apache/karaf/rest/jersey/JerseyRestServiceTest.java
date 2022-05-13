@@ -34,10 +34,10 @@ public class JerseyRestServiceTest {
 
     @Test
     public void simple() throws Exception {
-        KarafConfigService configService = new KarafConfigService();
-        configService.getProperties().put("jersey.packages", "org.apache.karaf.rest.jersey");
+        System.setProperty("rest.packages", "org.apache.karaf.rest.jersey");
+
         JerseyRestService jerseyRestService = new JerseyRestService();
-        Karaf karaf = Karaf.builder().loader(() -> Stream.of(configService, new KarafLifeCycleService(), new JettyWebContainerService(), jerseyRestService)).build().start();
+        Karaf karaf = Karaf.builder().loader(() -> Stream.of(new KarafConfigService(), new KarafLifeCycleService(), new JettyWebContainerService(), jerseyRestService)).build().start();
 
         Assertions.assertEquals("/rest/*", jerseyRestService.getRestPath());
         Assertions.assertEquals("org.apache.karaf.rest.jersey", jerseyRestService.getRestPackages());
