@@ -29,33 +29,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>karaf-boot</artifactId>
-    <name>Apache Karaf :: Boot</name>
+    <artifactId>tooling</artifactId>
+    <packaging>pom</packaging>
+    <name>Apache Karaf :: Tooling</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>org.apache.karaf.boot.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <modules>
+        <module>common</module>
+        <module>cli</module>
+        <module>maven</module>
+        <!-- <module>gradle</module> -->
+        <!-- <module>rest</module> -->
+    </modules>
 
 </project>

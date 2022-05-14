@@ -45,6 +45,7 @@
     <modules>
         <module>boot</module>
         <module>services</module>
+        <module>tooling</module>
         <module>assemblies</module>
     </modules>
 
