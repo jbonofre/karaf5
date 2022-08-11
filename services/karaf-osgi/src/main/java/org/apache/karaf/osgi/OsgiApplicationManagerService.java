@@ -28,10 +28,12 @@ import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.startlevel.FrameworkStartLevel;
 
 import java.net.URL;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -162,6 +164,14 @@ public class OsgiApplicationManagerService implements Service {
             log.warning("Checking application " + url + " failed: " + e);
         }
         return false;
+    }
+
+    /**
+     * Allow application to expose services to osgi application.
+     * Acting as proxy of BundleContext.registerService method
+     */
+    public <S> ServiceRegistration<S> registerService(Class<S> clazz, S service, Dictionary<String, ?> properties) {
+        return framework.getBundleContext().registerService(clazz, service, properties);
     }
 
     public String start(String url) throws Exception {
