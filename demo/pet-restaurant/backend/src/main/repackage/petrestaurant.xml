@@ -20,7 +20,7 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
 
-    <id>karaf-jar</id>
+    <id>petrestaurant-jar</id>
 
     <formats>
         <format>jar</format>
@@ -34,15 +34,6 @@
             <useProjectArtifact>true</useProjectArtifact>
             <unpack>true</unpack>
             <scope>runtime</scope>
-        </dependencySet>
-        <dependencySet>
-            <outputDirectory>/system</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <unpack>false</unpack>
-            <scope>provided</scope>
-            <includes>
-                <include>commons-lang:commons-lang</include>
-            </includes>
         </dependencySet>
     </dependencySets>
 

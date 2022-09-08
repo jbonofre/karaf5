@@ -23,18 +23,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.karaf</groupId>
-        <artifactId>karaf</artifactId>
+        <groupId>org.apache.karaf.demo</groupId>
+        <artifactId>demo</artifactId>
         <version>5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>assemblies</artifactId>
-    <name>Apache Karaf :: Assemblies</name>
+    <artifactId>pet-clinic</artifactId>
+    <name>Apache Karaf :: Demo :: Pet Clinic</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>k4</module>
+        <module>spring-boot-app</module>
+        <module>runtime</module>
     </modules>
 
 </project>
