@@ -149,6 +149,7 @@
                         <exclude>**/src/license/**</exclude>
                         <exclude>**/pom.xml.versionsBackup</exclude>
                         <exclude>**/*.properties</exclude>
+												<exclude>**/doc/**/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -206,6 +207,8 @@
                                 <exclude>.repository/**</exclude>
                                 <!-- jar files -->
                                 <exclude>**/*.jar</exclude>
+																<!-- doc -->
+																<exclude>**/doc/**/*</exclude>
                             </excludes>
                         </configuration>
                     </plugin>

@@ -60,7 +60,7 @@ public class Runtime {
             try {
                 copyArtifact(dependency);
             } catch (Exception e) {
-                throw new IllegalArgumentException("Can't copy dependency " + dependency, e);
+                log.warning("Can't copy dependency " + dependency + ": " + e);
             }
         });
     }
@@ -146,7 +146,7 @@ public class Runtime {
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
         if (properties == null || properties.get("MainClass.disabled") == null || !properties.get("MainClass.disabled").toString().equalsIgnoreCase("true")) {
-            String mainClass = (properties.get("MainClass") != null) ? properties.get("MainClass").toString() : "org.apache.karaf.boot.Main";
+            String mainClass = (properties != null && properties.get("MainClass") != null) ? properties.get("MainClass").toString() : "org.apache.karaf.boot.Main";
             manifest.getMainAttributes().put(Attributes.Name.MAIN_CLASS, mainClass);
         }
         try (JarOutputStream uberJar = new JarOutputStream(new FileOutputStream(uberJarPath.toFile()), manifest)) {
