@@ -454,6 +454,10 @@ You can configure the HTTP container via `KarafConfig` properties:
 * `http.host`
 * `http.acceptQueueSize`
 
+### JMX (k5:karaf-jmx)
+
+_Coming soon!_
+
 ### JPA (k5:karaf-jpa)
 
 K5 JPA service provides a JPA engine (powered by OpenJPA) mapping your data beans with a database. To use K5 JPA service, you just have to add `k5:karaf-jpa` module in your runtime `dependencies` (or classpath).
