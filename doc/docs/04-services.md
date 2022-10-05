@@ -347,7 +347,7 @@ $ java -jar karaf-boot-5.0-SNAPSHOT.jar
 
 ### CDI Modules manager (k5:karaf-cdi)
 
-Coming soon !
+_Coming soon!_
 
 ### Classpath (k5:karaf-classpath)
 
@@ -498,7 +498,7 @@ You can "tweak" OSGi framework with the following properties:
 
 ### Microprofile modules manager (k5:karaf-microprofile)
 
-Coming soon!
+_Coming soon!_
 
 ### REST (k5:karaf-rest)
 
@@ -533,6 +533,12 @@ Here, we deploy the Spring Boot PetClinic demo application in our runtime.
 
 The location (`url`) of the Spring Boot modules can be remote (using `http`, `https`, `mvn`, ...) or local (`file`). 
 Of course, you can also package the Spring Boot module as part of the runtime `dependencies`, so included in the runtime "out of the box".
+
+### Shell (k5:karaf-shell)
+
+K5 Shell provides a full Unix like shell environment where you can interact your runtime: listing services from the registry, manipulating application modules, ...
+
+_Coming soon!_
 
 ## Create a service
 
