@@ -15,6 +15,11 @@ function HomepageHeader() {
         <h1 className="hero__title">
             <img src="img/logo.png" width="30%"/>
         </h1>
+			<div style={{ color: 'black' }}>
+				K5 is a green Java application modules runtime.<br/>
+				It provides extensible modules launchers per module kind, out of the box services that any module running on K5 runtime can leverage without cost.<br/>
+				K5 is GFLE (Green Fast Light Efficient) runtime.
+				</div>
       </div>
     </header>
   );
