@@ -18,8 +18,14 @@
 package org.apache.karaf.banner;
 
 import lombok.extern.java.Log;
+import org.apache.karaf.boot.Karaf;
+import org.apache.karaf.boot.service.KarafConfigService;
 import org.apache.karaf.boot.service.ServiceRegistry;
 import org.apache.karaf.boot.spi.Service;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
 @Log
 public class WelcomeBannerService implements Service {
@@ -36,21 +42,47 @@ public class WelcomeBannerService implements Service {
 
     @Override
     public void onRegister(ServiceRegistry serviceRegistry) {
-        // banner
+        if (serviceRegistry.get(KarafConfigService.class) != null) {
+            KarafConfigService configService = serviceRegistry.get(KarafConfigService.class);
+            if (configService.getProperty("karaf.banner") != null) {
+                log.info(configService.getProperty("karaf.banner"));
+                return;
+            }
+        }
+
         if (System.getenv("KARAF_BANNER") != null) {
             log.info(System.getenv("KARAF_BANNER"));
-        } else if (System.getProperty("karaf.banner") != null) {
-            log.info(System.getProperty("karaf.banner"));
-        } else {
-            log.info("\n" +
-                    "        __ __                  ____      \n" +
-                    "       / //_/____ __________ _/ __/      \n" +
-                    "      / ,<  / __ `/ ___/ __ `/ /_        \n" +
-                    "     / /| |/ /_/ / /  / /_/ / __/        \n" +
-                    "    /_/ |_|\\__,_/_/   \\__,_/_/         \n" +
-                    "\n" +
-                    "  Apache Karaf 5.x\n");
+            return;
         }
+
+        if (System.getProperty("karaf.banner") != null) {
+            log.info(System.getProperty("karaf.banner"));
+            return;
+        }
+
+        File file = new File("banner.txt");
+        if (file.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String line;
+                StringBuilder builder = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line).append("\n");
+                }
+                log.info("\n" + builder.toString());
+            } catch (Exception e) {
+                // no-op
+            }
+            return;
+        }
+
+        log.info("\n" +
+                "        __ __                  ____      \n" +
+                "       / //_/____ __________ _/ __/      \n" +
+                "      / ,<  / __ `/ ___/ __ `/ /_        \n" +
+                "     / /| |/ /_/ / /  / /_/ / __/        \n" +
+                "    /_/ |_|\\__,_/_/   \\__,_/_/         \n" +
+                "\n" +
+                "  Apache Karaf 5.x\n");
     }
 
 }
