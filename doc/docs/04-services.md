@@ -1,38 +1,38 @@
 # Services & registry
 
-K5 registry and services are the core of the runtime. Services provided additional features in your runtime, like supporting loading appliccations, starting a HTTP container, etc.
+Minho registry and services are the core of the runtime. Services provided additional features in your runtime, like supporting loading appliccations, starting a HTTP container, etc.
 
-Basically, a runtime is modules loader, easy module register services in the K5 service registry.
+Basically, a runtime is modules loader, easy module register services in the Minho service registry.
 
-## K5 service
+## Minho service
 
 A service is a "classic" Java SPI: a service is described by a Java interface.
 
-Any module in a K5 runtime can use and register services.
+Any module in a Minho runtime can use and register services.
 
 A service can:
 
 * have a name (default is class simple name)
 * have a priority (if you want to define an order between services or defining a kind of starting stages by grouping services).
 
-## K5 registry & loading services
+## Service registry & loading services
 
-The K5 Service Registry stores any K5 services. The registry is basically a `Map<Class<?>, Service>`.
+The Minho Service Registry stores any Minho services. The registry is basically a `Map<Class<?>, Service>`.
 
-It automatically loads K5 services: the services loading can be "ordered" by priority in the registry.
+It automatically loads Minho services: the services loading can be "ordered" by priority in the registry.
 
-K5 Service Registry is unique in a runtime and shared by any services/applications present in the runtime.
+Minho Service Registry is unique in a runtime and shared by any services/applications present in the runtime.
 
-The K5 service registration give you access to the Service Registry, and you can interact with it. You also have util method to get the K5 Service Registry without registrering a service.
+The Minho service registration give you access to the Service Registry, and you can interact with it. You also have util method to get the K5 Service Registry without registrering a service.
 
 Once you have the Service Registry, you can:
 
-* get any service from the registry (including the K5 core services)
+* get any service from the registry (including the Minho core services)
 * get all services from a certain type (interface)
 * registry your own services
 * unregister any service
 
-K5 Service Registry service class is `org.apache.karaf.boot.service.ServiceRegistry`:
+Minho Service Registry service class is `org.apache.karaf.minho.boot.service.ServiceRegistry`:
 
 ```java
 public class ServiceRegistry implements AutoCloseable {
@@ -92,29 +92,29 @@ public class ServiceRegistry implements AutoCloseable {
 }
 ```
 
-K5 Service Registry is itself a K5 service.
+Minho Service Registry is itself a Minho service.
 
 ## Core services
 
-Any K5 runtime includes karaf-boot module (runtime core). Karaf Boot provides the core services, provided out of the box for you, available in the service registry.
+Any Minho runtime includes minho-boot module (runtime core). Minho Boot provides the core services, provided out of the box for you, available in the service registry.
 
 ### Configuration service
 
 The configuration service is the main configuration store for the runtime itself, but can also be used by the modules to store their own configurations.
 
-`KarafConfigService` provides access to the `KarafConfig` resources:
+`ConfigService` provides access to the `Config` resources:
 
 * _Properties_ is key/value pair where you can store anything. These properties can be populated by system properties or environment variables.
 * _Profiles_ store libaries that you want to share accross several modules in the runtime.
 * _Applications_ define the properties of your applications modules.
 
-You can interact with the K5 configuration service programmatically, but you can also populate the configuration via other K5 services, like K5 JSON Configuration or K5 Properties Configuration services. You can also create your own service to populate and interact with the core K5 configuration service.
+You can interact with the Minho configuration service programmatically, but you can also populate the configuration via other Minho services, like Minho JSON Configuration or Minho Properties Configuration services. You can also create your own service to populate and interact with the core Minho configuration service.
 
 ### Lifecycle service
 
-K5 Lifecycle service allows you to "hook" your own services into the runtime lifecycle. It allows to call service method during runtime start and stop.
+Minho Lifecycle service allows you to "hook" your own services into the runtime lifecycle. It allows to call service method during runtime start and stop.
 
-The lifecycle service is registered in the K5 service registry, it means that starting the service registry is actually starting the lifecycle service.
+The lifecycle service is registered in the Minho service registry, it means that starting the service registry is actually starting the lifecycle service.
 
 You basically have two callback hooks you can create in your service:
 
@@ -124,13 +124,13 @@ You basically have two callback hooks you can create in your service:
     ...
   }
   ```
-* once you have the `ServiceRegistry`, you can add your service methods in the `KarafLifeCycleService`, in the `onStart()` and/or `onShutdown()` phases:
+* once you have the `ServiceRegistry`, you can add your service methods in the `LifeCycleService`, in the `onStart()` and/or `onShutdown()` phases:
   ```java
-  KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
-  karafLifeCycleService.onStart(() -> {
+  LifeCycleService lifeCycleService = serviceRegistry.get(LifeCycleService.class);
+  lifeCycleService.onStart(() -> {
     // start
   });
-  karafLifeCycleService.onShutdown(() -> {
+  lifeCycleService.onShutdown(() -> {
     // shutdow 
   });
   ```
@@ -138,18 +138,18 @@ You basically have two callback hooks you can create in your service:
 The runtime start cinetic is:
 
 1. Load and register all services
-2. Once all services are registered (all `onRegister()` methods executed), then, the `KarafLifeCycleService#start()` method is executed, calling all methods registered `onStart()`.
+2. Once all services are registered (all `onRegister()` methods executed), then, the `LifeCycleService#start()` method is executed, calling all methods registered `onStart()`.
 
 On the other hand, the runtime shutdown cinetic is:
 
-1. execute `KarafLifeCycleService#close()` method, calling all methods registered `onShutdown()`
+1. execute `LifeCycleService#close()` method, calling all methods registered `onShutdown()`
 2. actually shutdown the runtime.
 
 ### Classloader service
 
 ## Module services
 
-K5 also provides additional services that you can use "out of the box" to easily create your own services.
+Minho also provides additional services that you can use "out of the box" to easily create your own services.
 
 You don't have to implement everything, K5 services help you. Loading and using these services is very simple: just add the services in your dependencies (for instance in your Maven `pom.xml` dependencies) and in the runtime `dependencies` (classpath).
 
