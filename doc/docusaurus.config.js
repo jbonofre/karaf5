@@ -6,10 +6,10 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Apache Karaf 5',
-  tagline: 'Karaf modulith runtime',
+  title: 'Apache Karaf Minho',
+  tagline: 'NewGen modulith runtime',
   url: 'https://jbonofre.github.io/karaf5/',
-  baseUrl: '/karaf5/',
+  baseUrl: '/minho/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
@@ -47,7 +47,7 @@ const config = {
     ({
       navbar: {
         logo: {
-          alt: 'Apache Karaf 5',
+          alt: 'Apache Karaf Minho',
           src: 'img/logo.png',
         },
         items: [
@@ -162,7 +162,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} - Apache Karaf, Karaf, Apache, the Apache feather logo, and the Apache Karaf project logo are trademarks of The Apache Software Foundation.`
+        copyright: `Copyright © ${new Date().getFullYear()} - Apache Karaf Minho, Apache Karaf, Karaf, Apache, the Apache feather logo, and the Apache Karaf project logo are trademarks of The Apache Software Foundation.`
       },
       prism: {
         theme: lightCodeTheme,

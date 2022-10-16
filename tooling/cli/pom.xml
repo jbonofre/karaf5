@@ -23,19 +23,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.apache.karaf</groupId>
+        <groupId>org.apache.karaf.minho</groupId>
         <artifactId>tooling</artifactId>
-        <version>5.0-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.apache.karaf.tooling</groupId>
+    <groupId>org.apache.karaf.minho.tooling</groupId>
     <artifactId>cli</artifactId>
-    <name>Apache Karaf :: Tooling :: CLI</name>
+    <name>Apache Karaf Minho :: Tooling :: CLI</name>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.karaf.tooling</groupId>
+            <groupId>org.apache.karaf.minho.tooling</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -63,7 +63,7 @@
                                 <descriptor>src/assembly/bin.xml</descriptor>
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>karaf-build-${project.version}</finalName>
+                            <finalName>minho-build-${project.version}</finalName>
                         </configuration>
                     </execution>
                 </executions>

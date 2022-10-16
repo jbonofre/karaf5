@@ -605,20 +605,20 @@ Here's a very simple `MyService`:
 ```java
 package k5.my.service;
 
-import org.apache.karaf.boot.service.ServiceRegistry;
-import org.apache.karaf.boot.spi.Service;
+import org.apache.karaf.minho.boot.service.ServiceRegistry;
+import org.apache.karaf.minho.boot.spi.Service;
 
 public class MyService implements Service {
 
-    @Override
-    public String name() {
-        return "my-service";
-    }
+  @Override
+  public String name() {
+    return "my-service";
+  }
 
-    @Override
-    public void onRegister(ServiceRegistry serviceRegistry) {
-        System.out.println("HELLLLOOOOO K5 !");
-    }
+  @Override
+  public void onRegister(ServiceRegistry serviceRegistry) {
+    System.out.println("HELLLLOOOOO K5 !");
+  }
 
 }
 ```
@@ -713,28 +713,28 @@ Basically, `MyService` could look like:
 ```java
 package k5.my.service;
 
-import org.apache.karaf.boot.service.KarafLifeCycleService;
-import org.apache.karaf.boot.service.ServiceRegistry;
-import org.apache.karaf.boot.spi.Service;
+import org.apache.karaf.minho.boot.service.KarafLifeCycleService;
+import org.apache.karaf.minho.boot.service.ServiceRegistry;
+import org.apache.karaf.minho.boot.spi.Service;
 
 public class MyService implements Service {
 
-    @Override
-    public String name() {
-        return "my-service";
-    }
+  @Override
+  public String name() {
+    return "my-service";
+  }
 
-    @Override
-    public void onRegister(ServiceRegistry serviceRegistry) {
-        System.out.println("Hello K5!");
-        KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
-        karafLifeCycleService.onStart(() -> {
-            System.out.println("Hey, my-service is starting !");
-        });
-        karafLifeCycleService.onShutdown(() -> {
-            System.out.println("Hey, my-service is shutting down!");
-        });
-    }
+  @Override
+  public void onRegister(ServiceRegistry serviceRegistry) {
+    System.out.println("Hello K5!");
+    KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
+    karafLifeCycleService.onStart(() -> {
+      System.out.println("Hey, my-service is starting !");
+    });
+    karafLifeCycleService.onShutdown(() -> {
+      System.out.println("Hey, my-service is shutting down!");
+    });
+  }
 
 }
 ```

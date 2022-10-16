@@ -1,12 +1,14 @@
-# Apache Karaf 5
+# Apache Karaf Minho
 
-Apache Karaf 5 website  is built using [Docusaurus 2](https://docusaurus.io/).
+Apache Karaf Minho website is built using [Docusaurus 2](https://docusaurus.io/).
 
 ### Installation
 
 ```
 $ yarn
 ```
+
+_NB: it's also possible to use `npm` instead of `yarn`._
 
 ### Local Development
 
