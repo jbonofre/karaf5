@@ -9,7 +9,7 @@ const config = {
   title: 'Apache Karaf Minho',
   tagline: 'NewGen modulith runtime',
   url: 'https://jbonofre.github.io/karaf5/',
-  baseUrl: '/minho/',
+  baseUrl: '/karaf5/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
