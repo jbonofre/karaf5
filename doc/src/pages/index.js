@@ -13,7 +13,7 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">
-            <img src="img/logo.png" width="20%"/>
+            <img src="img/logo.gif" width="40%"/>
         </h1>
 			<div style={{ color: 'black' }}>
 				Apache Karaf Minho is a green Java application modules runtime.<br/>
