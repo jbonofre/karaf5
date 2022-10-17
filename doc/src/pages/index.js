@@ -16,7 +16,7 @@ function HomepageHeader() {
             <img src="img/logo.png" width="20%"/>
         </h1>
 			<div style={{ color: 'black' }}>
-				Minho is a green Java application modules runtime.<br/>
+				Apache Karaf Minho is a green Java application modules runtime.<br/>
 				It provides extensible modules launchers per module kind, out of the box services that any module running on Minho runtime can leverage without cost.<br/>
 				Minho is GFLE (Green Fast Light Efficient) runtime.
 				</div>
