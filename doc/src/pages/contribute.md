@@ -4,24 +4,24 @@ There are many ways you can help and contribute the Karaf community.
 
 * Try browsing the [documentation](docs/intro)
 * [Download](download) and try Apache Karaf K5
-* [Browse the source code](https://github.com/jbonofre/karaf5). Got an itch to scratch, want to tune some operation or add some feature ?
+* [Browse the source code](https://github.com/apache/karaf-minho). Got an itch to scratch, want to tune some operation or add some feature ?
 
 ## Report bugs and feature requests
 
-Did you find a bug or want something implemented? Please report an issue in our [tracker](https://github.com/jbonofre/karaf5/issues). 
+Did you find a bug or want something implemented? Please report an issue in our [tracker](https://github.com/apache/karaf-minho/issues). 
 When creating a bug make sure you document the steps to reproduce the issue and provide all necessary information like OS, versions your use, logs. When creating a feature request document your requirements first. Try to not directly describe the solution.
 
 If you want to dive into development yourself then you can also browse for open issues or features that need to be implemented. Take ownership of an issue and try to fix it. Before doing a bigger change describe the concept/design of what you plan to do. If unsure if the design is good or will be accepted discuss it on the dev list.
 
 ## Provide changes in a Pull Request
 
-The best way to provide changes is to fork `karaf5` repository on github and provide a pull request with your changes. To make it easy to apply your changes please use the following conventions:
+The best way to provide changes is to fork `karaf-minho` repository on github and provide a pull request with your changes. To make it easy to apply your changes please use the following conventions:
 
 * Every pull request should have a matching issue.
-* Do the change in a branch that is named like the issue, e.g. K5-xxxx.
+* Do the change in a branch that is named like the issue, e.g. MINHO-xxxx.
 	To create this branch you can use:
 	```bash
-	git clone https://github.com/jbonofre/karaf5
+	git clone https://github.com/apache/karaf-minho
 	git fetch --all
 	git checkout -b K5-xxxx origin/main
 	```

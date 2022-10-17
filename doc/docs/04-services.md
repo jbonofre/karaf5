@@ -23,7 +23,7 @@ It automatically loads Minho services: the services loading can be "ordered" by 
 
 Minho Service Registry is unique in a runtime and shared by any services/applications present in the runtime.
 
-The Minho service registration give you access to the Service Registry, and you can interact with it. You also have util method to get the K5 Service Registry without registrering a service.
+The Minho service registration give you access to the Service Registry, and you can interact with it. You also have util method to get the Service Registry without registrering a service.
 
 Once you have the Service Registry, you can:
 
@@ -151,22 +151,22 @@ On the other hand, the runtime shutdown cinetic is:
 
 Minho also provides additional services that you can use "out of the box" to easily create your own services.
 
-You don't have to implement everything, K5 services help you. Loading and using these services is very simple: just add the services in your dependencies (for instance in your Maven `pom.xml` dependencies) and in the runtime `dependencies` (classpath).
+You don't have to implement everything, Minho services help you. Loading and using these services is very simple: just add the services in your dependencies (for instance in your Maven `pom.xml` dependencies) and in the runtime `dependencies` (classpath).
 
-### Banner (k5:karaf-banner)
+### Banner (minho:minho-banner)
 
-Banner service just display a fancy message when the runtime start. To use K5 Banner service, you just have to add `k5:karaf-banner` module in your runtime `dependencies` (or classpath).
+Banner service just display a fancy message when the runtime start. To use Minho Banner service, you just have to add `minho:minho-banner` module in your runtime `dependencies` (or classpath).
 
-You can customize the message using the `KARAF_BANNER` environment variable or `karaf.banner` system property.
+You can customize the message using the `MINHO_BANNER` environment variable, `minho.banner` system property, or even `banner.txt` file in your runtime classpath.
 
-For instance, here's a `karaf-build.json` to add the Banner Service in a runtime:
+For instance, here's a `minho-build.json` to add the Banner Service in a runtime:
 
 ```json
 {
   "name": "my-runtime",
   "properties": {},
   "dependencies": [
-    "k5:karaf-boot", "k5:banner"
+    "minho:minho-boot", "minho:minho-banner"
   ]
 }
 ```
@@ -174,68 +174,68 @@ For instance, here's a `karaf-build.json` to add the Banner Service in a runtime
 If we start `my-runtime`, you can see the startup message:
 
 ```bash
-$ java -jar karaf-boot-5.0-SNAPSHOT.jar
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.Main main
-INFOS: Starting runtime in exploded mode
-Karaf lib: /Users/jbonofre/test/my-runtime
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding config service (-2147483647)
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding lifecycle service (-1000)
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding classloader-service service (-1000)
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding karaf-banner service (2147483647)
-oct. 02, 2022 12:05:25 PM org.apache.karaf.banner.WelcomeBannerService onRegister
-INFOS:
-        __ __                  ____
-       / //_/____ __________ _/ __/
-      / ,<  / __ `/ ___/ __ `/ /_
-     / /| |/ /_/ / /  / /_/ / __/
-    /_/ |_|\__,_/_/   \__,_/_/
+$ java -jar minho-boot-1.0-SNAPSHOT.jar
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.Main main
+INFO: Starting runtime in exploded mode
+Minho lib: /home/jbonofre/Workspace/karaf5/tooling/cli/target/minho-build-1.0-SNAPSHOT/bin/my-runtime
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding config-service service (-2147483647)
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding lifecycle-service service (-1000)
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding classloader-service service (-1000)
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding minho-banner-service service (2147483647)
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.banner.WelcomeBannerService onRegister
+INFO:
+ __  __ _       _
+|  \/  (_)_ __ | |__   ___
+| |\/| | | '_ \| '_ \ / _ \
+| |  | | | | | | | | | (_) |
+|_|  |_|_|_| |_|_| |_|\___/
+  Apache Karaf Minho 1.x
 
-  Apache Karaf 5.x
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.service.ServiceRegistry lambda$start$2
+INFO: Starting services
+Oct 17, 2022 10:14:47 AM org.apache.karaf.minho.boot.service.LifeCycleService start
+INFO: Starting lifecycle service
 
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.service.ServiceRegistry lambda$start$2
-INFOS: Starting services
-oct. 02, 2022 12:05:25 PM org.apache.karaf.boot.service.KarafLifeCycleService start
-INFOS: Starting lifecycle service
 ```
 
-Now, we can try to change the message by settings the `KARAF_BANNER` environment variable:
+Now, we can try to change the message by settings the `MINHO_BANNER` environment variable:
 
 ```bash
-$ export KARAF_BANNER="Hello K5"
+$ export MINHO_BANNER="Hello Minho"
 ```
 
 and we can see now our message when launching `my-runtime`:
 
 ```bash
-$ java -jar karaf-boot-5.0-SNAPSHOT.jar
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.Main main
-INFOS: Starting runtime in exploded mode
-Karaf lib: /Users/jbonofre/test/my-runtime
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding config service (-2147483647)
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding lifecycle service (-1000)
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding classloader-service service (-1000)
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding karaf-banner service (2147483647)
-oct. 02, 2022 12:07:58 PM org.apache.karaf.banner.WelcomeBannerService onRegister
-INFOS: Welcome K5
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.service.ServiceRegistry lambda$start$2
-INFOS: Starting services
-oct. 02, 2022 12:07:58 PM org.apache.karaf.boot.service.KarafLifeCycleService start
-INFOS: Starting lifecycle service
+$ java -jar minho-boot-1.0-SNAPSHOT.jar
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.Main main
+INFO: Starting runtime in exploded mode
+Minho lib: /home/jbonofre/Workspace/karaf5/tooling/cli/target/minho-build-1.0-SNAPSHOT/bin/my-runtime
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding config-service service (-2147483647)
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding lifecycle-service service (-1000)
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding classloader-service service (-1000)
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.service.ServiceRegistry add
+INFO: Adding minho-banner-service service (2147483647)
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.banner.WelcomeBannerService onRegister
+INFO: Hello Minho
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.service.ServiceRegistry lambda$start$2
+INFO: Starting services
+Oct 17, 2022 10:18:29 AM org.apache.karaf.minho.boot.service.LifeCycleService start
+INFO: Starting lifecycle service
 ```
 
-### Camel (k5:karaf-camel)
+### Camel (minho:minho-camel)
 
-You want to run [Apache Camel](https://camel.apache.org) routes in your K5 runtime, K5 Camel service can help you. To use K5 Camel service, you just have to add `k5:karaf-camel` module in your runtime `dependencies` (or classpath).
+You want to run [Apache Camel](https://camel.apache.org) routes in your Minho runtime, Minho Camel service can help you. To use Minho Camel service, you just have to add `minho:minho-camel` module in your runtime `dependencies` (or classpath).
 
-The K5 Camel service automatically creates a `CamelContext` for you. Then, you can directly create the Camel routes as K5 service and they will be automatically added to the `CamelContext`.
+The Minho Camel service automatically creates a `CamelContext` for you. Then, you can directly create the Camel routes as Minho service and they will be automatically added to the `CamelContext`.
 
 For instance, your Camel route service can look like:
 
@@ -255,7 +255,7 @@ public class MyRouteBuilder extends RouteBuilder implements Service {
 }
 ```
 
-Don't worry about the version, the K5 service modules provide all "verified" dependencies running in K5. For instance, if you use Apache Maven, you just need these dependencies:
+Don't worry about the version, the Minho service modules provide all "verified" dependencies running in Minho. For instance, if you use Apache Maven, you just need these dependencies:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -271,14 +271,14 @@ Don't worry about the version, the K5 service modules provide all "verified" dep
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>karaf-boot</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <groupId>org.apache.karaf.minho</groupId>
+            <artifactId>minho-boot</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>karaf-camel</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <groupId>org.apache.karaf.minho</groupId>
+            <artifactId>minho-camel</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -300,7 +300,7 @@ Don't worry about the version, the K5 service modules provide all "verified" dep
 
 Using Apache Maven, just build your route project with `mvn clean install`.
 
-Now, you can create the following `karaf-build.json`, optionally overriding Camel dependencies: 
+Now, you can create the following `minho-build.json`, optionally overriding Camel dependencies: 
 
 ```json
 {
@@ -309,61 +309,61 @@ Now, you can create the following `karaf-build.json`, optionally overriding Came
     "include.transitive": "true"
   },
   "dependencies": [
-    "k5:boot",
-    "k5:camel",
+    "minho:minho-boot",
+    "minho:minho-camel",
     "mvn:org.apache.camel/camel-core/3.17.0",
     "mvn:my.group.id/my-route/1.0-SNAPSHOT"
   ]
 }
 ```
 
-_Instead of using `karaf-build` CLI, you can also use directly the `karaf-maven-plugin` to easily create the runtime based on your Maven project._
+_Instead of using `minho-build` CLI, you can also use directly the `minho-maven-plugin` to easily create the runtime based on your Maven project._
 
 When we launch `my-runtime`, we can see the Camel route started:
 
 ```bash
-$ java -jar karaf-boot-5.0-SNAPSHOT.jar
-2022-10-02 18:46:01.774343000 INFO [ org.apache.karaf.boot.service.ServiceRegistry add ] : Adding config service (-2147483647)
-2022-10-02 18:46:01.812901000 INFO [ org.apache.karaf.boot.service.ServiceRegistry add ] : Adding lifecycle service (-1000)
-2022-10-02 18:46:01.813346000 INFO [ org.apache.karaf.boot.service.ServiceRegistry add ] : Adding test-route service (1000)
-2022-10-02 18:46:01.813705000 INFO [ org.apache.karaf.boot.service.ServiceRegistry add ] : Adding karaf-camel service (1001)
-2022-10-02 18:46:01.814024000 INFO [ org.apache.karaf.camel.CamelService onRegister ] : Creating default CamelContext
-2022-10-02 18:46:01.934149000 INFO [ org.apache.karaf.camel.CamelService onRegister ] : Looking for RouteBuilder in the registry
-2022-10-02 18:46:01.975948000 INFO [ org.apache.karaf.boot.service.ServiceRegistry lambda$start$2 ] : Starting services
-2022-10-02 18:46:01.976382000 INFO [ org.apache.karaf.boot.service.KarafLifeCycleService start ] : Starting lifecycle service
-2022-10-02 18:46:02.140007000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext doStartContext ] : Apache Camel 3.17.0 (default-camel-context) is starting
-2022-10-02 18:46:02.163201000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext logStartSummary ] : Routes startup (total:1 started:1)
-2022-10-02 18:46:02.163682000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext logStartSummary ] :     Started test-route (direct://test)
-2022-10-02 18:46:02.164197000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext logStartSummary ] : Apache Camel 3.17.0 (default-camel-context) started in 245ms (build:60ms init:161ms start:24ms)
-2022-10-02 18:46:02.190766000 INFO [ org.apache.camel.spi.CamelLogger log ] : Exchange[ExchangePattern: InOnly, BodyType: String, Body: Hello K5!]
-2022-10-02 18:46:02.196397000 INFO [ org.apache.camel.component.mock.MockEndpoint assertIsSatisfied ] : Asserting: mock://test is satisfied
-2022-10-02 18:46:02.196985000 INFO [ org.apache.karaf.boot.service.ServiceRegistry close ] : Closing service registry
-2022-10-02 18:46:02.198728000 INFO [ org.apache.karaf.boot.service.KarafLifeCycleService close ] : Stopping lifecycle service
-2022-10-02 18:46:02.200030000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext doStop ] : Apache Camel 3.17.0 (default-camel-context) shutting down (timeout:45s)
-2022-10-02 18:46:02.221227000 INFO [ org.apache.camel.spi.CamelLogger log ] : Routes stopped (total:1 stopped:1)
-2022-10-02 18:46:02.221589000 INFO [ org.apache.camel.spi.CamelLogger log ] :     Stopped test-route (direct://test)
-2022-10-02 18:46:02.224676000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext doStop ] : Apache Camel 3.17.0 (default-camel-context) shutdown in 25ms (uptime:84ms)
+$ java -jar minho-boot-1.0-SNAPSHOT.jar
+2022-10-17 10:49:25.084680000 INFO [ org.apache.karaf.minho.boot.service.ServiceRegistry add ] : Adding config-service service (-2147483647)
+2022-10-17 10:49:25.106504000 INFO [ org.apache.karaf.minho.boot.service.ServiceRegistry add ] : Adding lifecycle-service service (-1000)
+2022-10-17 10:49:25.106886000 INFO [ org.apache.karaf.minho.boot.service.ServiceRegistry add ] : Adding test-route service (1000)
+2022-10-17 10:49:25.107205000 INFO [ org.apache.karaf.minho.boot.service.ServiceRegistry add ] : Adding minho-camel-service service (1001)
+2022-10-17 10:49:25.107482000 INFO [ org.apache.karaf.minho.camel.CamelService onRegister ] : Creating default CamelContext
+2022-10-17 10:49:25.177597000 INFO [ org.apache.karaf.minho.camel.CamelService onRegister ] : Looking for RouteBuilder in the registry
+2022-10-17 10:49:25.200343000 INFO [ org.apache.karaf.minho.boot.service.ServiceRegistry lambda$start$2 ] : Starting services
+2022-10-17 10:49:25.200957000 INFO [ org.apache.karaf.minho.boot.service.LifeCycleService start ] : Starting lifecycle service
+2022-10-17 10:49:25.278259000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext doStartContext ] : Apache Camel 3.17.0 (default-camel-context) is starting
+2022-10-17 10:49:25.289817000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext logStartSummary ] : Routes startup (total:1 started:1)
+2022-10-17 10:49:25.290242000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext logStartSummary ] :     Started test-route (direct://test)
+2022-10-17 10:49:25.290532000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext logStartSummary ] : Apache Camel 3.17.0 (default-camel-context) started in 127ms (build:39ms init:76ms start:12ms)
+2022-10-17 10:49:25.304808000 INFO [ org.apache.camel.spi.CamelLogger log ] : Exchange[ExchangePattern: InOnly, BodyType: String, Body: Hello world!]
+2022-10-17 10:49:25.309058000 INFO [ org.apache.camel.component.mock.MockEndpoint assertIsSatisfied ] : Asserting: mock://test is satisfied
+2022-10-17 10:49:25.309417000 INFO [ org.apache.karaf.minho.boot.service.ServiceRegistry close ] : Closing service registry
+2022-10-17 10:49:25.310262000 INFO [ org.apache.karaf.minho.boot.service.LifeCycleService close ] : Stopping lifecycle service
+2022-10-17 10:49:25.311000000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext doStop ] : Apache Camel 3.17.0 (default-camel-context) shutting down (timeout:45s)
+2022-10-17 10:49:25.323954000 INFO [ org.apache.camel.spi.CamelLogger log ] : Routes stopped (total:1 stopped:1)
+2022-10-17 10:49:25.324325000 INFO [ org.apache.camel.spi.CamelLogger log ] :     Stopped test-route (direct://test)
+2022-10-17 10:49:25.326111000 INFO [ org.apache.camel.impl.engine.AbstractCamelContext doStop ] : Apache Camel 3.17.0 (default-camel-context) shutdown in 16ms (uptime:48ms)
 ```
 
-### CDI Modules manager (k5:karaf-cdi)
+### CDI Modules manager (minho:minho-cdi)
 
 _Coming soon!_
 
-### Classpath (k5:karaf-classpath)
+### Classpath (minho:minho-classpath)
 
-K5 Classpath service provides a protocol handler allowing you to use `classpath:` protocol in your modules. To use K5 Classpath service, you just have to add `k5:karaf-classpath` module in your runtime `dependencies` (or classpath).
+Minho Classpath service provides a protocol handler allowing you to use `classpath:` protocol in your modules. To use Minho Classpath service, you just have to add `minho:minho-classpath` module in your runtime `dependencies` (or classpath).
 
-You just need to have `k5:karaf-classpath` service in your `karaf-build.json` `dependencies`.
+You just need to have `minho:minho-classpath` service in your `minho-build.json` `dependencies`.
 
-### Configuration JSON (k5:karaf-config-json)
+### Config JSON (minho:minho-config-json)
 
-K5 Configuration JSON allows you to populate the K5 Configuration Service using a JSON file. To use K5 Configuration JSON service, you just have to add `k5:karaf-config-json` module in your runtime `dependencies` (or classpath).
+Minho Config JSON allows you to populate the Minho Config Service using a JSON file. To use Minho Config JSON service, you just have to add `minho:minho-config-json` module in your runtime `dependencies` (or classpath).
 
-As soon as you add `k5:karaf-config-json` module in your runtime, you can also include a `karaf.json` file.
+As soon as you add `minho:minho-config-json` module in your runtime, you can also include a `minho.json` file.
 
-_You can also define the location of the `karaf.json` file using `KARAF_CONFIG` environment variable or `karaf.config` system property._
+_You can also define the location of the `minho.json` file using `MINHO_CONFIG` environment variable or `minho.config` system property._
 
-The `karaf.json` populates the `KarafConfigService`, with `properties`, `profiles`, `applications`. For instance:
+The `minho.json` populates the `ConfigService`, with `properties`, `profiles`, `applications`. For instance:
 
 ```json
 {
@@ -402,19 +402,19 @@ The `karaf.json` populates the `KarafConfigService`, with `properties`, `profile
 }
 ```
 
-### Configuration Properties (k5:karaf-config-properties)
+### Config Properties (minho:minho-config-properties)
 
-K5 Configuration Properties allows you to populate the K5 Configuration Service using a Properties file. To use K5 Configurtion Properties service, you just have to add `k5:karaf-config-properties` module in your runtime `dependencies` (or classpath).
+Minho Config Properties allows you to populate the Minho Config Service using a Properties file. To use Minho Config Properties service, you just have to add `minho:minho-config-properties` module in your runtime `dependencies` (or classpath).
 
-As soon as you add `k5:karaf-config-properties` module in your runtime, you can also include a `karaf.properties` file.
+As soon as you add `minho:minho-config-properties` module in your runtime, you can also include a `minho.properties` file.
 
-_You can also define the location of the `karaf.properties` file using `KARAF_CONFIG` environment variable or `karaf.config` system property._
+_You can also define the location of the `minho.properties` file using `MINHO_CONFIG` environment variable or `minho.config` system property._
 
-The `karaf.properties` populates the `KarafConfigService`, with `properties`, `profiles`, `applications`. For instance:
+The `minho.properties` populates the `ConfigService`, with `properties`, `profiles`, `applications`. For instance:
 
 ```properties
 
-=bar
+foo=bar
 lifecycle.enabled=true
 log.patternLayout=%m %n
 
@@ -428,22 +428,22 @@ application.app2.url=/path/to/osgi/bundle.jar
 application.app2.type=osgi
 ```
 
-### Extractor (k5:karaf-extractor)
+### Extractor (minho:minho-extractor)
 
-K5 Extractor service is able to extract/copy folder to the location of your choice. To use K5 Extractor service, you just have to add `k5:karaf-extractor` module in your runtime `dependencies` (or classpath).
+Minho Extractor service is able to extract/copy folder to the location of your choice. To use Minho Extractor service, you just have to add `minho:minho-extractor` module in your runtime `dependencies` (or classpath).
 
 The extraction process is performed at register time.
 
-The Extractor service uses properties (from the `KarafConfig` service):
+The Extractor service uses properties (from the `Config` service):
 
 * `extractor.target` property (default is the current folder) is the target directory where the resources will be copied/extractor.
 * `extractor.sources` property (default is `resources` folder) is a list of source directories where to read the resources.
 
-### HTTP (k5:karaf-http)
+### HTTP (minho:minho-http)
 
-K5 HTTP service starts a HTTP container (powered by Jetty) where you can deploy your servlets. To use K5 HTTP service, you just have to add `k5:karaf-http` module in your runtime `dependencies` (or classpath).
+Minho HTTP service starts a HTTP container (powered by Jetty) where you can deploy your servlets. To use Minho HTTP service, you just have to add `minho:minho-http` module in your runtime `dependencies` (or classpath).
 
-You can configure the HTTP container via `KarafConfig` properties:
+You can configure the HTTP container via `Config` properties:
 
 * `http.maxThreads`
 * `http.minThreads`
@@ -454,23 +454,23 @@ You can configure the HTTP container via `KarafConfig` properties:
 * `http.host`
 * `http.acceptQueueSize`
 
-### JMX (k5:karaf-jmx)
+### JMX (minho:minho-jmx)
 
 _Coming soon!_
 
-### JPA (k5:karaf-jpa)
+### JPA (minho:minho-jpa)
 
-K5 JPA service provides a JPA engine (powered by OpenJPA) mapping your data beans with a database. To use K5 JPA service, you just have to add `k5:karaf-jpa` module in your runtime `dependencies` (or classpath).
+Minho JPA service provides a JPA engine (powered by OpenJPA) mapping your data beans with a database. To use Minho JPA service, you just have to add `minho:minho-jpa` module in your runtime `dependencies` (or classpath).
 
-K5 JPA service start the JPA engine at register time. Then, you can get the JPA service to get the JPA `EntityManager` to register your JPA entities.
+Minho JPA service start the JPA engine at register time. Then, you can get the JPA service to get the JPA `EntityManager` to register your JPA entities.
 
-### OSGi modules manager (k5:karaf-osgi)
+### OSGi modules manager (minho:minho-osgi)
 
-K5 OSGi Modules manager add support of OSGi bundles in your runtime. To enable OSGi support, you have to add `k5:karaf-osgi` module in your runtime `dependencies` (or classpath).
+Minho OSGi Modules manager add support of OSGi bundles in your runtime. To enable OSGi support, you have to add `minho:minho-osgi` module in your runtime `dependencies` (or classpath).
 
-It uses `KarafConfig` service to retrieve the OSGi `applications` to be deployed and started in the runtime.
+It uses `Config` service to retrieve the OSGi `applications` to be deployed and started in the runtime.
 
-For instance, using `karaf-config-json` module, you can configure the list of OSGi bundles part of your runtime:
+For instance, using `minho-config-json` module, you can configure the list of OSGi bundles part of your runtime:
 
 ```json
 {
@@ -482,14 +482,14 @@ For instance, using `karaf-config-json` module, you can configure the list of OS
 }
 ```
 
-_NOTE: K5 OSGi Modules Manager tries to automatically detect when an artifact is an OSGi bundle (so `type` is optional). However, defining application `type` as `osgi` is recommended to force K5 OSGi modules manager to handle the artifact._
+_NOTE: Minho OSGi Modules Manager tries to automatically detect when an artifact is an OSGi bundle (so `type` is optional). However, defining application `type` as `osgi` is recommended to force Minho OSGi modules manager to handle the artifact._
 
-Here, `commons-lang-2.6.jar` will be installed as an OSGi bundle into the K5 OSGi modules manager.
+Here, `commons-lang-2.6.jar` will be installed as an OSGi bundle into the Minho OSGi modules manager.
 
 The location (`url`) of the OSGi modules can be remote (using `http`, `https`, `mvn`, ...) or local (`file`). 
 Of course, you can also package the OSGi module as part of the runtime `dependencies`, so included in the runtime "out of the box".
 
-In details, K5 OSGi modules manager starts an OSGi framework (Apache Felix) and manage the bundles inside the framework.
+In details, Minho OSGi modules manager starts an OSGi framework (Apache Felix) and manage the bundles inside the framework.
 
 You can "tweak" OSGi framework with the following properties:
 
@@ -500,25 +500,25 @@ You can "tweak" OSGi framework with the following properties:
 * `osgi.logLevel`
 * `osgi.cache`
 
-### Microprofile modules manager (k5:karaf-microprofile)
+### Microprofile modules manager (minho:minho-microprofile)
 
 _Coming soon!_
 
-### REST (k5:karaf-rest)
+### REST (minho:minho-rest)
 
-K5 REST service provides JAX-RS REST API support (powered by Jersey). To use K5 REST service, you just have to add `k5:karaf-rest` module in your runtime `dependencies` (or classpath).
+Minho REST service provides JAX-RS REST API support (powered by Jersey). To use Minho REST service, you just have to add `minho:minho-rest` module in your runtime `dependencies` (or classpath).
 
-K5 REST service uses `KarafConfig` `rest.packages` property to define the packages where to look for JAX-RS resources.
+Minho REST service uses `Config` `rest.packages` property to define the packages where to look for JAX-RS resources.
 
-Optionally, K5 REST service can use `rest.path` property to define where the REST resources are exposed (by default it's `/rest/*`.
+Optionally, Minho REST service can use `rest.path` property to define where the REST resources are exposed (by default it's `/rest/*`).
 
-### Spring Boot modules manager (k5:karaf-spring-boot)
+### Spring Boot modules manager (minho:minho-spring-boot)
 
-K5 runtime can collocate multiple Spring Boot modules (applications). To add Spring Boot support, you have to load `k5:karaf-spring-boot` module in your runtime `dependencies` (or classpath).
+Minho runtime can collocate multiple Spring Boot modules (applications). To add Spring Boot support, you have to load `minho:minho-spring-boot` module in your runtime `dependencies` (or classpath).
 
-It uses `KarafConfig` service to retrieve the Spring Boot `applications` to be started in the runtime.
+It uses `Config` service to retrieve the Spring Boot `applications` to be started in the runtime.
 
-For instance, using `karaf-config-json`, you can configure the list of Spring Boot modules part of your runtime:
+For instance, using `minho-config-json`, you can configure the list of Spring Boot modules part of your runtime:
 
 ```json
 {
@@ -531,38 +531,38 @@ For instance, using `karaf-config-json`, you can configure the list of Spring Bo
 }
 ```
 
-_NOTE: K5 Spring Boot Modules Manager tries to automatically detect a Spring Boot artifact. However, defining application `type` as `spring-boot` is recommended to force K5 Spring Boot modules manager to handle the artifact._
+_NOTE: Minho Spring Boot Modules Manager tries to automatically detect a Spring Boot artifact. However, defining application `type` as `spring-boot` is recommended to force Minho Spring Boot modules manager to handle the artifact._
 
 Here, we deploy the Spring Boot PetClinic demo application in our runtime.
 
 The location (`url`) of the Spring Boot modules can be remote (using `http`, `https`, `mvn`, ...) or local (`file`). 
 Of course, you can also package the Spring Boot module as part of the runtime `dependencies`, so included in the runtime "out of the box".
 
-### Shell (k5:karaf-shell)
+### Shell (minho:minho-shell)
 
-K5 Shell provides a full Unix like shell environment where you can interact your runtime: listing services from the registry, manipulating application modules, ...
+Minho Shell provides a full Unix like shell environment where you can interact your runtime: listing services from the registry, manipulating application modules, ...
 
 _Coming soon!_
 
 ## Create a service
 
-You can create your own K5 service. It's very easy.
+You can create your own Minho service. It's very easy.
 
-To create your K5 service, you just have to write a class implementing `org.apache.karaf.boot.spi.Service` interface:
+To create your Minho service, you just have to write a class implementing `org.apache.karaf.minho.boot.spi.Service` interface:
 
 ```java
 
 
 /**
- * Generic Karaf Service.
+ * Generic Minho Service.
  */
 public interface Service {
 
     int DEFAULT_PRIORITY = 1000;
 
     /**
-     * Register a service in the Karaf registry.
-     * @param serviceRegistry the Karaf service registry.
+     * Register a service in the registry.
+     * @param serviceRegistry the service registry.
      * @throws Exception if register fails.
      */
     default void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
@@ -603,7 +603,7 @@ public interface Service {
 Here's a very simple `MyService`:
 
 ```java
-package k5.my.service;
+package minho.my.service;
 
 import org.apache.karaf.minho.boot.service.ServiceRegistry;
 import org.apache.karaf.minho.boot.spi.Service;
@@ -617,16 +617,16 @@ public class MyService implements Service {
 
   @Override
   public void onRegister(ServiceRegistry serviceRegistry) {
-    System.out.println("HELLLLOOOOO K5 !");
+    System.out.println("Hello Minho !");
   }
 
 }
 ```
 
-Then, you have to define your service implementation (for the Service Loader) in `META-INF/services/org.apache.karaf.boot.spi.Service` file:
+Then, you have to define your service implementation (for the Service Loader) in `META-INF/services/org.apache.karaf.minho.boot.spi.Service` file:
 
 ```
-k5.my.service.MyService
+minho.my.service.MyService
 ```
 
 You can use the following Maven `pom.xml` to build your service jar:
@@ -639,15 +639,15 @@ You can use the following Maven `pom.xml` to build your service jar:
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.nanthrax.test</groupId>
-    <artifactId>k5-my-service</artifactId>
+    <groupId>my.group.id</groupId>
+    <artifactId>minho-my-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.karaf</groupId>
-            <artifactId>karaf-boot</artifactId>
-            <version>5.0-SNAPSHOT</version>
+            <groupId>org.apache.karaf.minho</groupId>
+            <artifactId>minho-boot</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -667,14 +667,14 @@ You can use the following Maven `pom.xml` to build your service jar:
 </project>
 ```
 
-You can create a runtime with your service using the following `karaf-build.json` file:
+You can create a runtime with your service using the following `minho-build.json` file:
 
 ```json
 {
 	"name": "my-runtime",
 	"dependencies": [
-		"k5:karaf-boot",
-		"mvn:net.nanthrax.test/k5-my-service/1.0-SNAPSHOT"
+		"minho:minho-boot",
+		"mvn:my.group.id/minho-my-service/1.0-SNAPSHOT"
 	]
 }
 ```
@@ -682,38 +682,26 @@ You can create a runtime with your service using the following `karaf-build.json
 Then, you can launch the runtime and we see our service registered:
 
 ```bash
-java -jar karaf-boot-5.0-SNAPSHOT.jar
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.Main main
-INFOS: Starting runtime in exploded mode
-Karaf lib: /Users/jbonofre/test/my-runtime
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding config service (-2147483647)
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding lifecycle service (-1000)
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFOS: Adding classloader-service service (-1000)
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.service.ServiceRegistry add
+java -jar minho-boot-1.0-SNAPSHOT.jar
+...
 INFOS: Adding my-service service (1000)
-HELLLLOOOOO K5 !
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.service.ServiceRegistry lambda$start$2
-INFOS: Starting services
-oct. 03, 2022 7:08:07 PM org.apache.karaf.boot.service.KarafLifeCycleService start
-INFOS: Starting lifecycle service
+Hello Minho !
+....
 ```
 
-Let's now extend the service by adding callback in the K5 Lifecycle service.
+Let's now extend the service by adding callback in the Minho Lifecycle service.
 
-To "hook" in the K5 Lifecycle service, we have to:
+To "hook" in the lifecycle service, we have to:
 
-* get the `KarafLifecycleService` from the `ServiceRegistry` in the `onRegister()` method of our service
-* register callback method in `KarafLifeCycleService` `onStart()` and `onShutdown()` hooks
+* get the `LifecycleService` from the `ServiceRegistry` in the `onRegister()` method of our service
+* register callback method in `LifeCycleService` `onStart()` and `onShutdown()` hooks
 
 Basically, `MyService` could look like:
 
 ```java
-package k5.my.service;
+package minho.my.service;
 
-import org.apache.karaf.minho.boot.service.KarafLifeCycleService;
+import org.apache.karaf.minho.boot.service.LifeCycleService;
 import org.apache.karaf.minho.boot.service.ServiceRegistry;
 import org.apache.karaf.minho.boot.spi.Service;
 
@@ -726,12 +714,12 @@ public class MyService implements Service {
 
   @Override
   public void onRegister(ServiceRegistry serviceRegistry) {
-    System.out.println("Hello K5!");
-    KarafLifeCycleService karafLifeCycleService = serviceRegistry.get(KarafLifeCycleService.class);
-    karafLifeCycleService.onStart(() -> {
+    System.out.println("Hello Minho !");
+    LifeCycleService lifeCycleService = serviceRegistry.get(LifeCycleService.class);
+    lifeCycleService.onStart(() -> {
       System.out.println("Hey, my-service is starting !");
     });
-    karafLifeCycleService.onShutdown(() -> {
+    lifeCycleService.onShutdown(() -> {
       System.out.println("Hey, my-service is shutting down!");
     });
   }
@@ -742,22 +730,11 @@ public class MyService implements Service {
 After updating `my-runtime`, at launch we can see the start/shudown hooks called:
 
 ```bash
-java -jar karaf-boot-5.0-SNAPSHOT.jar                                                                                                                                             
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.Main main
-INFO: Starting runtime in exploded mode
-Karaf lib: /home/jbonofre/test/my-runtime
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFO: Adding config service (-2147483647)
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFO: Adding lifecycle service (-1000)
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.service.ServiceRegistry add
-INFO: Adding classloader-service service (-1000)
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.service.ServiceRegistry add
+$ java -jar minho-boot-1.0-SNAPSHOT.jar                                                                                                                                             
+...
 INFO: Adding my-service service (1000)
-Hello K5!
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.service.ServiceRegistry lambda$start$2
-INFO: Starting services
-Oct 04, 2022 2:01:05 PM org.apache.karaf.boot.service.KarafLifeCycleService start
+Hello Minho !
+...
 INFO: Starting lifecycle service
 Hey, my-service is starting !
 ```

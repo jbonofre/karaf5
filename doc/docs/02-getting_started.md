@@ -12,7 +12,7 @@ You have several options to create a Minho runtime:
 * Maven plugin
 * Gradle plugin
 * REST service
-* K5 Creator
+* Minho Creator
 
 For this first example, we are going to use the command line.
 

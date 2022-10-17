@@ -67,6 +67,11 @@ const config = {
             position: 'right',
             to: 'creator',
           },
+					{
+						label: 'Orchestrator',
+						position: 'right',
+						to: 'orchestrator',
+					},
           {
             label: 'Examples',
             position: 'right',
