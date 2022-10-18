@@ -17,40 +17,40 @@
     under the License.
 -->
 
-# Apache Karaf
+# Apache Karaf Minho
 
-Apache Karaf is an application runtime. Karaf is able to operate different kind of applications using application 
+Apache Karaf Minho is an application runtime, able to operate different kind of applications using application 
 manager services.
 
 It provides extensible launchers per application kind and out of the box services that any application 
-running on Karaf can leverage without cost.
+running on Minho can leverage without cost.
 
-Apache Karaf is composed by:
+Apache Karaf Minho is composed by:
 
-* Karaf boot (`Karaf`) bootstraps the runtimes for your applications, the runtimes are discovered and extensible
+* Minho boot (`Minho`) bootstraps the runtimes for your applications, the runtimes are discovered and extensible
 * an API to interact with the boot if you need
 * profiles to easily add cross runtimes dependencies
 * services to easily add cross runtimes features (log, configurations, URL handlers, ...)
 * boot applications
 
-Karaf boot can be described/configure programmatically or by a provided JSON file.
+Minho boot can be described/configure programmatically or by a provided JSON file.
 
-## Karaf Boot
+## Minho Boot
 
-Karaf boot is the main runtime orchestrator. It basically loads Karaf Services via SPI, and it's configured via
-`KarafConfig`.
+Minho boot is the main runtime orchestrator. It basically loads Minho Services via SPI, and it's configured via
+`Config`.
 
-`KarafConfig` can be provided programmatically:
+`Config` can be provided programmatically:
 
 ```
-KarafConfig config = new KarafConfig();
+Config config = new Config();
 ...
-Karaf karaf = Karaf.build(config);
-karaf.init();
-karaf.start();
+Minho minho = Minho.build(config);
+minho.init();
+minho.start();
 ```
 
-or loaded from an external resource like `karaf.json`:
+or loaded from an external resource like `minho.json`:
 
 ```
 {
@@ -65,20 +65,20 @@ or loaded from an external resource like `karaf.json`:
 }
 ```
 
-Karaf Boot is looking for `karaf.json` file (aka Karaf Config):
+Minho Boot is looking for `minho.json` file (aka Minho Config):
 
-* as system property: `-Dkaraf.config=/path/to/karaf.json`
-* as environment variable: `export KARAF_CONFIG=/path/to/karaf.json`
+* as system property: `-Dminho.config=/path/to/minho.json`
+* as environment variable: `export MINHO_CONFIG=/path/to/minho.json`
 * in the current classpath
 
-### Karaf Services
+### Minho Services
 
-A Karaf Services is a class implementing the `org.apache.karaf.boot.spi.Service` interface, and loaded via `META-INF/services/org.apache.karaf.boot.spi.Service`, containing the FQDN of the implementation class.
+A Minho Service is a class implementing the `org.apache.karaf.minho.boot.spi.Service` interface, and loaded via `META-INF/services/org.apache.karaf.minho.boot.spi.Service`, containing the FQDN of the implementation class.
 
 The service doesn't have to implement any method by default. Optionally, you can define the following methods:
 
 ```java
-public class MyService implements org.apache.karaf.boot.spi.Service {
+public class MyService implements org.apache.karaf.minho.boot.spi.Service {
     
     @Override
     public String name() {
@@ -88,8 +88,8 @@ public class MyService implements org.apache.karaf.boot.spi.Service {
     
     @Override
     public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
-        // callback method, called when the service is registered in the Karaf Service Registry
-        // you can interact with the Karaf Service Registry `serviceRegistry` here, looking for services, etc
+        // callback method, called when the service is registered in the Minho Service Registry
+        // you can interact with the Minho Service Registry `serviceRegistry` here, looking for services, etc
     }
     
     @Override
@@ -104,29 +104,29 @@ public class MyService implements org.apache.karaf.boot.spi.Service {
 
 ### Runtime
 
-Karaf Boot provides a runtime with:
+Minho Boot provides a runtime with:
 * a launcher
 * a service registry (`ServiceRegistry`) where all services will be located
-* a config service (`KarafConfigService`) loads Karaf config
-* a lifecycle service (`KarafLifeCycleService`) is responsible to callback start and stop methods from the services
+* a config service (`ConfigService`) loads Minho config
+* a lifecycle service (`LifeCycleService`) is responsible to callback start and stop methods from the services
 
-Then, `org.apache.karaf.boot.Karaf` launcher can start (`Karaf.builder().build().start()`) all Karaf services located in the classloader, you can repackage all dependencies (jar) in a single uber jar.
+Then, `org.apache.karaf.minho.boot.Karaf` launcher can start (`Minho.builder().build().start()`) all Minho services located in the classloader, you can repackage all dependencies (jar) in a single uber jar.
 
-Karaf itself provides several "core" services:
+Minho itself provides several "additional" services:
 * `classpath:` protocol handler
 * archive extractor
 * JSON configuration loader
 * Properties configuration loader
 * welcome banner
-* ...
+* a much more! (take a look on the documentation for details)
 
-Services can also deploy "third party" applications, for instance:
+Application manager services can also deploy "third party" applications, for instance:
 * OSGi application manager is able to deploy OSGi applications (bundles, Karaf 4 features)
 * Spring Boot application manager is able to deploy Spring Boot applications
 
-Karaf Services can be configured via the properties, using the service name as prefix.
+Minho Services can be configured via the properties, using the service name as prefix.
 
-You can configure launcher in `karaf.json`:
+You can configure launcher in `minho.json`:
 
 ```
     "properties": {
@@ -135,13 +135,13 @@ You can configure launcher in `karaf.json`:
     },
 ```
 
-Each service is responsible to retrieve the `KarafConfig` service from the service registry, and get the properties.
+Each service is responsible to retrieve the `Config` service from the service registry, and get the properties.
 
 ### Third party applications
 
-When you use a third party application manager service, you can define the applications you want to deploy via `KarafConfig` service.
+When you use a third party application manager service, you can define the applications you want to deploy via `Config` service.
 
-For instance, you can use the following `karaf.json` configuration file:
+For instance, you can use the following `minho.json` configuration file:
 
 ```json
 {
@@ -162,18 +162,18 @@ Here, you can see how to configure and deploy `commons-lang-2.6.jar` in the OSGi
 
 ## Run
 
-You can use Apache Karaf in your code, simply bootstrapping it and running with:
+You can use Apache Karaf Minho in your code, simply bootstrapping it and running with:
 
 ```
-Karaf karaf = Karaf.build(karafConfig);
-karaf.init();
-karaf.start();
+Minho minho = Minho.build(config);
+minho.init();
+minho.start();
 ```
 
-or simply run with a `karaf.json`:
+or simply run with a `minho.json`:
 
 ```
-$ java -jar karaf.jar -Dkaraf.config=karaf.json
+$ java -jar minho.jar -Dminho.config=minho.json
 ```
 
-Karaf is launching all you describe in the `karaf.json`.
+Minho is launching all you describe in the `minho.json`.

@@ -22,5 +22,5 @@ import java.lang.*;
 import java.util.*;
 
 File generated = new File(basedir, "target/runtime/test");
-File boot = new File(generated, "karaf-boot-5.0-SNAPSHOT.jar");
+File boot = new File(generated, "minho-boot-1.0-SNAPSHOT.jar");
 return generated.exists() && boot.exists();

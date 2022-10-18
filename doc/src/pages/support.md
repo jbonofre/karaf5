@@ -1,6 +1,6 @@
 # Support
 
-If you are experiencing problems using Apache Karaf K5, then please report your problem to our [issue tracker](https://github.com/jbonofre/karaf5/issues). You may also find it useful to discuss your issues with the community on the mailing list or Slack.
+If you are experiencing problems using Apache Karaf Minho, then please report your problem to our [issue tracker](https://github.com/apache/karaf-minho/issues). You may also find it useful to discuss your issues with the community on the mailing list or Slack.
 
 ## How to get help
 

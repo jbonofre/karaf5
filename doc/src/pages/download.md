@@ -1,10 +1,10 @@
 # DOWNLOAD
 
-Apache Karaf K5 is still under development. There's no official release yet.
+Apache Karaf Minho is still under development. There's no official release yet.
 
 However, you can download and try the SNAPSHOTs we periodically upload.
 
-## 5.0-SNAPSHOT
+## 1.0-SNAPSHOT
 
-* Source: [https://github.com/jbonofre/karaf5](https://github.com/jbonofre/karaf5)
+* Source: [https://github.com/apache/karaf-minho](https://github.com/apache/karaf-minho)
 * Binary: NA

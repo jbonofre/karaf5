@@ -38,7 +38,7 @@
 
     <files>
         <file>
-            <source>src/assembly/bin/karaf-build</source>
+            <source>src/assembly/bin/minho-build</source>
             <outputDirectory>/bin</outputDirectory>
             <fileMode>0755</fileMode>
             <lineEnding>unix</lineEnding>

@@ -13,12 +13,12 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">
-            <img src="img/logo.png" width="30%"/>
+            <img src="img/logo.gif" width="40%"/>
         </h1>
 			<div style={{ color: 'black' }}>
-				K5 is a green Java application modules runtime.<br/>
-				It provides extensible modules launchers per module kind, out of the box services that any module running on K5 runtime can leverage without cost.<br/>
-				K5 is GFLE (Green Fast Light Efficient) runtime.
+				Apache Karaf Minho is a green Java application modules runtime.<br/>
+				It provides extensible modules launchers per module kind, out of the box services that any module running on Minho runtime can leverage without cost.<br/>
+				Minho is GFLE (Green Fast Light Efficient) runtime.
 				</div>
       </div>
     </header>
@@ -29,8 +29,8 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title="Apache Karaf 5.x"
-      description="Apache Karaf 5.x, NewGen modulith runtime">
+      title="Apache Karaf Minho"
+      description="Apache Karaf Minho, NewGen modulith runtime">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
