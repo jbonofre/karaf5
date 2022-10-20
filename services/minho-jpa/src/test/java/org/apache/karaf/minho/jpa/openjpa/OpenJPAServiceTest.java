@@ -21,16 +21,21 @@ import org.apache.karaf.minho.boot.Minho;
 import org.apache.karaf.minho.boot.service.ConfigService;
 import org.apache.karaf.minho.boot.service.LifeCycleService;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.stream.Stream;
 
 public class OpenJPAServiceTest {
-
+    
     @Test
     public void simple() throws Exception {
         System.setProperty("derby.system.home", "target/derby");
