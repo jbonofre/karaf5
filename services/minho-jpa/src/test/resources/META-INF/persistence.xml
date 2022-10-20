@@ -23,6 +23,7 @@
     <persistence-unit name="MyEntity" transaction-type="RESOURCE_LOCAL">
         <class>org.apache.karaf.minho.jpa.openjpa.MyEntity</class>
         <properties>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create" />
             <property name="openjpa.RuntimeUnenhancedClasses" value="supported"/>
             <property name="openjpa.jdbc.SynchronizeMappings"
                       value="buildSchema"/>
