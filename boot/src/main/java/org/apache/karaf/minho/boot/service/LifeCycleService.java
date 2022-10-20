@@ -34,7 +34,7 @@ public class LifeCycleService implements Service, AutoCloseable {
 
     @Override
     public String name() {
-        return "lifecycle-service";
+        return "minho-lifecycle-service";
     }
 
     @Override

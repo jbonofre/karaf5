@@ -26,7 +26,7 @@ import org.apache.karaf.minho.boot.spi.Service;
 public class ConfigService extends Config implements Service {
     @Override
     public String name() {
-        return "config-service";
+        return "minho-config-service";
     }
 
     @Override

@@ -34,7 +34,7 @@ public class ClassLoaderService implements Service, AutoCloseable {
 
     @Override
     public String name() {
-        return "classloader-service";
+        return "minho-classloader-service";
     }
 
     @Override
