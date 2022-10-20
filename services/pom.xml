@@ -41,6 +41,7 @@
         <module>minho-config-properties</module>
         <module>minho-extractor</module>
         <module>minho-http</module>
+        <module>minho-jmx</module>
         <module>minho-jpa</module>
         <module>minho-osgi</module>
         <module>minho-rest</module>
