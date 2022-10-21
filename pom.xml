@@ -178,6 +178,7 @@
                         <exclude>**/pom.xml.versionsBackup</exclude>
                         <exclude>**/*.properties</exclude>
 												<exclude>**/doc/**/*</exclude>
+                        <exclude>.asf.yaml</exclude>
                     </excludes>
                 </configuration>
             </plugin>
