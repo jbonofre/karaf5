@@ -1,0 +1,12 @@
+github:
+  description: "Apache Karaf Minho"
+  homepage: https://karaf.apache.org/
+  ghp_branch: gh-pages
+  features:
+    wiki: true
+    issues: true
+    projects: true
+  enabled_merge_buttons:
+    squash: true
+    merge: true
+    rebase: true
