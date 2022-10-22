@@ -42,4 +42,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Deploy
-        run: mvn -U -B -e -fae -Papache-release clean deploy --settings .github/asf-deploy-settings.xml
+        run: mvn -U -B -e -fae clean deploy --settings .github/asf-deploy-settings.xml
