@@ -29,9 +29,9 @@ github:
     - service
   ghp_branch: gh-pages
   features:
-    wiki: true
+    wiki: false 
     issues: true
-    projects: true
+    projects: false
   enabled_merge_buttons:
     squash: true
     merge: true
