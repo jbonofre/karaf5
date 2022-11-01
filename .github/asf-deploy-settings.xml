@@ -22,8 +22,8 @@
   <servers>
     <server>
       <id>apache.snapshots.https</id>
-      <username>${env.NEXUS_DEPLOY_USERNAME}</username>
-      <password>${env.NEXUS_DEPLOY_PASSWORD}</password>
+      <username>${env.NEXUS_USER}</username>
+      <password>${env.NEXUS_PW}</password>
     </server>
   </servers>
 

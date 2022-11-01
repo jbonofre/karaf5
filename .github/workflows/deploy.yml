@@ -28,8 +28,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     env:
-      NEXUS_DEPLOY_USERNAME: ${{ secrets.NEXUS_USER }}
-      NEXUS_DEPLOY_PASSWORD: ${{ secrets.NEXUS_PW }}
+      NEXUS_USER: ${{ secrets.NEXUS_USER }}
+      NEXUS_PW: ${{ secrets.NEXUS_PW }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
