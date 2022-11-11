@@ -19,6 +19,9 @@
 
 # Apache Karaf Minho
 
+[![Github CI Build](https://github.com/apache/karaf-minho/actions/workflows/build.yml/badge.svg?branch=main)]()
+[![Github CI Deploy](https://github.com/apache/karaf-minho/actions/workflows/deploy.yml/badge.svg?branch=main)]()
+
 Apache Karaf Minho is an application runtime, able to operate different kind of applications using application 
 manager services.
 
