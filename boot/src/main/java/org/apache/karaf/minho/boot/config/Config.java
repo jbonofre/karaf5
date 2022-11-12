@@ -23,9 +23,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @Data
 public class Config {
+
+    private static Pattern envKeyPattern = Pattern.compile("\\.");
 
     private Map<String, String> properties = new HashMap<>();
     private List<Profile> profiles = new ArrayList<>();
@@ -50,7 +53,7 @@ public class Config {
     }
 
     protected static String getProperty(String key, Map<String, String> properties, String defaultValue) {
-        String envKey = key.replaceAll(".", "_").toUpperCase();
+        String envKey = envKeyPattern.matcher(key).replaceAll("_").toUpperCase();
         if (System.getenv(envKey) != null) {
             return System.getenv(envKey);
         }
