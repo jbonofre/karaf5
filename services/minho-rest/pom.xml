@@ -33,7 +33,7 @@
     <name>Apache Karaf Minho :: Services :: REST</name>
 
     <properties>
-        <jersey.version>3.0.4</jersey.version>
+        <jersey.version>3.1.0</jersey.version>
     </properties>
 
     <dependencies>
