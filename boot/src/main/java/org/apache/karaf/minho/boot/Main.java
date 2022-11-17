@@ -30,11 +30,11 @@ import java.util.ArrayList;
 public class Main {
 
     public static final void main(String[] args) throws Exception {
-        boolean karafJar = false;
-        karafJar = (System.getenv("MINHO_JAR") != null) ? System.getenv("MINHO_JAR").equalsIgnoreCase("true") : karafJar;
-        karafJar = (System.getProperty("minho.jar") != null) ? System.getProperty("minho.jar").equalsIgnoreCase("true") : karafJar;
+        boolean minhoJar = false;
+        minhoJar = (System.getenv("MINHO_JAR") != null) ? System.getenv("MINHO_JAR").equalsIgnoreCase("true") : minhoJar;
+        minhoJar = (System.getProperty("minho.jar") != null) ? System.getProperty("minho.jar").equalsIgnoreCase("true") : minhoJar;
 
-        if (!karafJar) {
+        if (!minhoJar) {
             log.info("Starting runtime in exploded mode");
             // try to load classpath
             String minhoLib = (System.getProperty("minho.lib") != null) ? System.getProperty("minho.lib") : System.getProperty("user.dir");
