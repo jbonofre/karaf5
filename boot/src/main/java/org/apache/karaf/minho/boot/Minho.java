@@ -35,6 +35,8 @@ import java.util.stream.Stream;
 @Data
 public class Minho implements AutoCloseable {
 
+    private static Minho instance;
+
     private final ServiceLoader loader;
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
 
@@ -55,7 +57,8 @@ public class Minho implements AutoCloseable {
         }
         (this.loader == null ? loadServices() : this.loader.load()).forEach(serviceRegistry::add);
         serviceRegistry.start();
-        return this;
+        instance = this;
+        return instance;
     }
 
     private Stream<Service> loadServices() {
@@ -69,6 +72,15 @@ public class Minho implements AutoCloseable {
     @Override
     public void close() {
         serviceRegistry.close();
+    }
+
+    /**
+     * Retrieve the Minho instance.
+     *
+     * @return the Minho instance.
+     */
+    public static Minho getInstance() {
+        return instance;
     }
 
 }
