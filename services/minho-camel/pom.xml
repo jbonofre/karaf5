@@ -33,7 +33,7 @@
     <name>Apache Karaf Minho :: Services :: Camel</name>
 
     <properties>
-        <camel.version>3.17.0</camel.version>
+        <camel.version>3.19.0</camel.version>
     </properties>
 
     <dependencies>

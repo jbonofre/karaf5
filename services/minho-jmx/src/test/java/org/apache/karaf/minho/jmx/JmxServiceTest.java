@@ -32,19 +32,20 @@ public class JmxServiceTest {
 
     @Test
     public void simpleRun() throws Exception {
-        Minho minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), new JmxService())).build().start();
+        try (final Minho minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), new JmxService())).build().start()) {
 
-        ServiceRegistry serviceRegistry = minho.getServiceRegistry();
+            ServiceRegistry serviceRegistry = minho.getServiceRegistry();
 
-        JmxService jmxService = serviceRegistry.get(JmxService.class);
+            JmxService jmxService = serviceRegistry.get(JmxService.class);
 
-        jmxService.registerMBean(new TestMBeanImpl(), "org.apache.karaf.minho:type=test");
+            jmxService.registerMBean(new TestMBeanImpl(), "org.apache.karaf.minho:type=test");
 
-        MBeanServer mBeanServer = jmxService.getmBeanServer();
+            MBeanServer mBeanServer = jmxService.getmBeanServer();
 
-        String echo = (String) mBeanServer.invoke(new ObjectName("org.apache.karaf.minho:type=test"), "echo", new Object[]{ "test" }, new String[]{ "java.lang.String" });
+            String echo = (String) mBeanServer.invoke(new ObjectName("org.apache.karaf.minho:type=test"), "echo", new Object[]{"test"}, new String[]{"java.lang.String"});
 
-        Assertions.assertEquals("test", echo);
+            Assertions.assertEquals("test", echo);
+        }
     }
 
 }

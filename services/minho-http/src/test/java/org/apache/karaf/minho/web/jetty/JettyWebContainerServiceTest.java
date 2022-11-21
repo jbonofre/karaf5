@@ -34,13 +34,13 @@ public class JettyWebContainerServiceTest {
     @Test
     public void testDefaultConfig() throws Exception {
         JettyWebContainerService webContainerService = new JettyWebContainerService();
-        Minho minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), webContainerService)).build().start();
+        try (final var minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), webContainerService)).build().start()) {
 
-        Assertions.assertEquals(8080, webContainerService.getServerConnector().getPort());
-        Assertions.assertEquals("0.0.0.0", webContainerService.getServerConnector().getHost());
-        Assertions.assertEquals(0, webContainerService.getServerConnector().getAcceptQueueSize());
+            Assertions.assertEquals(8080, webContainerService.getServerConnector().getPort());
+            Assertions.assertEquals("0.0.0.0", webContainerService.getServerConnector().getHost());
+            Assertions.assertEquals(0, webContainerService.getServerConnector().getAcceptQueueSize());
 
-        minho.close();
+        }
     }
 
     @Test
@@ -50,13 +50,13 @@ public class JettyWebContainerServiceTest {
         System.setProperty("http.acceptQueueSize", "10");
 
         JettyWebContainerService webContainerService = new JettyWebContainerService();
-        Minho minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), webContainerService)).build().start();
+        try (final var minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), webContainerService)).build().start()) {
 
-        Assertions.assertEquals(8181, webContainerService.getServerConnector().getPort());
-        Assertions.assertEquals("127.0.0.1", webContainerService.getServerConnector().getHost());
-        Assertions.assertEquals(10, webContainerService.getServerConnector().getAcceptQueueSize());
+            Assertions.assertEquals(8181, webContainerService.getServerConnector().getPort());
+            Assertions.assertEquals("127.0.0.1", webContainerService.getServerConnector().getHost());
+            Assertions.assertEquals(10, webContainerService.getServerConnector().getAcceptQueueSize());
 
-        minho.close();
+        }
 
         System.clearProperty("http.port");
         System.clearProperty("http.host");
@@ -67,24 +67,24 @@ public class JettyWebContainerServiceTest {
     public void addServletAsService() throws Exception {
         ConfigService config = new ConfigService();
         JettyWebContainerService webContainerService = new JettyWebContainerService();
-        Minho minho = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), new TestServlet(), webContainerService)).build().start();
+        try (final var minho = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), new TestServlet(), webContainerService)).build().start()) {
 
-        verify("/test");
+            verify("/test");
 
-        minho.close();
+        }
     }
 
     @Test
     public void addServletViaMethod() throws Exception {
         ConfigService config = new ConfigService();
         JettyWebContainerService webContainerService = new JettyWebContainerService();
-        Minho minho = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), webContainerService)).build().start();
+        try (final var minho =  Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), webContainerService)).build().start()) {
 
-        webContainerService.addServlet(TestServlet.class, "/test-method");
+            webContainerService.addServlet(TestServlet.class, "/test-method");
 
-        verify("/test-method");
+            verify("/test-method");
 
-        minho.close();
+        }
     }
 
     private void verify(String path) throws Exception {

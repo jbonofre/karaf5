@@ -17,11 +17,11 @@
  */
 package org.apache.karaf.minho.boot.service;
 
-import lombok.extern.java.Log;
 import org.apache.karaf.minho.boot.spi.Service;
 
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
@@ -30,9 +30,8 @@ import static java.util.stream.Collectors.toList;
 /**
  * Main service registry.
  */
-@Log
 public class ServiceRegistry implements AutoCloseable {
-
+    private final Logger log = Logger.getLogger(LifeCycleService.class.getName());
     private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
 
     public Map<Class<?>, Service> getAll() {
@@ -79,16 +78,17 @@ public class ServiceRegistry implements AutoCloseable {
      * @return true if the service has been added, false else.
      */
     public boolean add(final Service service) {
-        boolean added = registry.putIfAbsent(service.getClass(), service) == null;
-        if (added) {
-            log.info("Adding " + service.name() + " service (" + service.priority() + ")");
-            try {
-                service.onRegister(this);
-            } catch (Exception e) {
-                throw new IllegalStateException("Can't register " + service.name(), e);
-            }
+        if (registry.putIfAbsent(service.getClass(), service) != null) {
+            return false;
         }
-        return added;
+
+        log.info(() -> "Adding " + service.name() + " service (" + service.priority() + ")");
+        try {
+            service.onRegister(this);
+        } catch (final Exception e) {
+            throw new IllegalStateException("Can't register " + service.name(), e);
+        }
+        return true;
     }
 
     /**
@@ -106,7 +106,7 @@ public class ServiceRegistry implements AutoCloseable {
     @Override
     public void close() {
         log.info("Closing service registry");
-        final IllegalStateException ise = new IllegalStateException("Can't stop service registry");
+        final var ise = new IllegalStateException("Can't stop service registry");
         registry.values().stream() // we should filter only for lifecycle service as others must use it
                 .filter(AutoCloseable.class::isInstance)
                 .map(AutoCloseable.class::cast)

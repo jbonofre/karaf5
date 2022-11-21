@@ -52,9 +52,9 @@ public class JerseyRestService implements Service {
             throw new IllegalStateException("minho-http-service is not found in the service registry");
         }
 
-        restPath = (config != null && config.getProperty(REST_PATH) != null) ? config.getProperty(REST_PATH) : "/rest/*";
-        if (config != null && config.getProperty(REST_PACKAGES) != null) {
-            restPackages = config.getProperty(REST_PACKAGES);
+        restPath = (config != null && config.property(REST_PATH) != null) ? config.property(REST_PATH) : "/rest/*";
+        if (config != null && config.property(REST_PACKAGES) != null) {
+            restPackages = config.property(REST_PACKAGES);
         } else {
             throw new IllegalStateException("rest.packages configuration is not found in the ConfigService");
         }

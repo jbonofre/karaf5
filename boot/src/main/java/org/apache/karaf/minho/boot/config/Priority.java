@@ -17,13 +17,33 @@
  */
 package org.apache.karaf.minho.boot.config;
 
-import lombok.Data;
-
-@Data
+// todo: move to record
 public class Priority {
-
     private String type;
     private String pattern;
     private String name;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(final String pattern) {
+        this.pattern = pattern;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 }

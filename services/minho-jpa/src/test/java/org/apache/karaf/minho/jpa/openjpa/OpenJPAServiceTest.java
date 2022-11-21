@@ -21,17 +21,12 @@ import org.apache.karaf.minho.boot.Minho;
 import org.apache.karaf.minho.boot.service.ConfigService;
 import org.apache.karaf.minho.boot.service.LifeCycleService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.stream.Stream;
 
 public class OpenJPAServiceTest {
@@ -41,30 +36,30 @@ public class OpenJPAServiceTest {
         System.setProperty("derby.system.home", "target/derby");
         System.setProperty("derby.stream.error.file", "target/derby.log");
 
-        Minho minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), new OpenJPAService())).build().start();
+        try (final var minho =  Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), new OpenJPAService())).build().start()) {
 
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("MyEntity", System.getProperties());
-        EntityManager em = factory.createEntityManager();
+            EntityManagerFactory factory = Persistence.createEntityManagerFactory("MyEntity", System.getProperties());
+            EntityManager em = factory.createEntityManager();
 
-        MyEntity first = new MyEntity();
-        first.setKey("foo");
-        first.setValue("bar");
+            MyEntity first = new MyEntity();
+            first.setKey("foo");
+            first.setValue("bar");
 
-        em.getTransaction().begin();
-        em.persist(first);
-        em.getTransaction().commit();
+            em.getTransaction().begin();
+            em.persist(first);
+            em.getTransaction().commit();
 
-        Query query = em.createQuery("SELECT my FROM MyEntity my");
-        Assertions.assertEquals(1, query.getResultList().size());
+            Query query = em.createQuery("SELECT my FROM MyEntity my");
+            Assertions.assertEquals(1, query.getResultList().size());
 
-        MyEntity result = (MyEntity) query.getResultList().get(0);
-        Assertions.assertEquals("foo", result.getKey());
-        Assertions.assertEquals("bar", result.getValue());
+            MyEntity result = (MyEntity) query.getResultList().get(0);
+            Assertions.assertEquals("foo", result.getKey());
+            Assertions.assertEquals("bar", result.getValue());
 
-        em.close();
-        factory.close();
+            em.close();
+            factory.close();
 
-        minho.close();
+        }
     }
 
 }

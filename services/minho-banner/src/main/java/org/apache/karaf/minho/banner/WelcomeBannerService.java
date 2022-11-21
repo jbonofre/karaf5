@@ -43,8 +43,8 @@ public class WelcomeBannerService implements Service {
     public void onRegister(ServiceRegistry serviceRegistry) {
         if (serviceRegistry.get(ConfigService.class) != null) {
             ConfigService configService = serviceRegistry.get(ConfigService.class);
-            if (configService.getProperty("minho.banner") != null) {
-                log.info(configService.getProperty("minho.banner"));
+            if (configService.property("minho.banner") != null) {
+                log.info(configService.property("minho.banner"));
                 return;
             }
         }

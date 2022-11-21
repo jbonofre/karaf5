@@ -17,15 +17,16 @@
  */
 package org.apache.karaf.minho.boot.config;
 
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
-@Data
+// todo: move to record
 public class Config {
+    private static Pattern TO_ENV_KEY = Pattern.compile("\\.");
 
     private Map<String, String> properties = new HashMap<>();
     private List<Profile> profiles = new ArrayList<>();
@@ -41,16 +42,16 @@ public class Config {
         applications.addAll(config.getApplications());
     }
 
-    public String getProperty(String key) {
-        return getProperty(key, null);
+    public String property(String key) {
+        return property(key, null);
     }
 
-    public String getProperty(String key, String defaultValue) {
-        return getProperty(key, this.properties, defaultValue);
+    public String property(String key, String defaultValue) {
+        return property(key, this.properties, defaultValue);
     }
 
-    protected static String getProperty(String key, Map<String, String> properties, String defaultValue) {
-        String envKey = key.replaceAll(".", "_").toUpperCase();
+    protected static String property(String key, Map<String, String> properties, String defaultValue) {
+        String envKey = TO_ENV_KEY.matcher(key).replaceAll("_").toUpperCase();
         if (System.getenv(envKey) != null) {
             return System.getenv(envKey);
         }
@@ -63,4 +64,27 @@ public class Config {
         return defaultValue;
     }
 
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(final List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
+    public List<Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(final List<Application> applications) {
+        this.applications = applications;
+    }
 }

@@ -19,7 +19,10 @@ package org.apache.karaf.minho.tooling.common.maven;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.building.*;
+import org.apache.maven.model.building.DefaultModelBuilder;
+import org.apache.maven.model.building.DefaultModelBuildingRequest;
+import org.apache.maven.model.building.DefaultModelProcessor;
+import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.model.composition.DefaultDependencyManagementImporter;
 import org.apache.maven.model.inheritance.DefaultInheritanceAssembler;
 import org.apache.maven.model.interpolation.DefaultModelVersionProcessor;
@@ -28,7 +31,11 @@ import org.apache.maven.model.io.DefaultModelReader;
 import org.apache.maven.model.management.DefaultDependencyManagementInjector;
 import org.apache.maven.model.management.DefaultPluginManagementInjector;
 import org.apache.maven.model.normalization.DefaultModelNormalizer;
-import org.apache.maven.model.path.*;
+import org.apache.maven.model.path.DefaultModelPathTranslator;
+import org.apache.maven.model.path.DefaultModelUrlNormalizer;
+import org.apache.maven.model.path.DefaultPathTranslator;
+import org.apache.maven.model.path.DefaultUrlNormalizer;
+import org.apache.maven.model.path.ProfileActivationFilePathInterpolator;
 import org.apache.maven.model.profile.DefaultProfileInjector;
 import org.apache.maven.model.profile.DefaultProfileSelector;
 import org.apache.maven.model.resolution.ModelResolver;
@@ -45,7 +52,22 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.LocalRepositoryProvider;
-import org.eclipse.aether.internal.impl.*;
+import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
+import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
+import org.eclipse.aether.internal.impl.DefaultFileProcessor;
+import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
+import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
+import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
+import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
+import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
+import org.eclipse.aether.internal.impl.DefaultRepositoryLayoutProvider;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
+import org.eclipse.aether.internal.impl.DefaultSyncContextFactory;
+import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
+import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
+import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
+import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.LocalRepositoryManager;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -54,7 +76,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
-import java.io.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,6 +85,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// todo: do not use aether as a lib, either impl it from scratch (see tomee for ex) or use maven injections
 public class Parser
 {
 
@@ -218,7 +241,7 @@ public class Parser
         return parser.getArtifactPath();
     }
 
-    public static String pathToMaven(String location, Map parts) {
+    public static String pathToMaven(String location, Map<String, String> parts) {
         String[] p = location.split("/");
         if (p.length >= 4 && p[p.length-1].startsWith(p[p.length-3] + "-" + p[p.length-2])) {
             String artifactId = p[p.length-3];
@@ -780,10 +803,8 @@ public class Parser
         return artifactResolver;
     }
 
+    // todo: this will not work very quickly
     private static List<RemoteRepository> getRemoteRepositories() {
-        List<RemoteRepository> remoteRepositories = new ArrayList<>();
-        remoteRepositories.add(new RemoteRepository.Builder("maven-central", "default", "https://repo1.maven.org/maven2").build());
-        return remoteRepositories;
+        return List.of(new RemoteRepository.Builder("maven-central", "default", "https://repo.maven.apache.org/maven2").build());
     }
-
 }

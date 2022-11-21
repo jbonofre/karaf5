@@ -16,6 +16,12 @@
 # specific language governing permissions and limitations
 # under the License.
 #
+
+# IMPORTANT: don't register all services, only minimal ones
+
+# required
 org.apache.karaf.minho.boot.service.ConfigService
 org.apache.karaf.minho.boot.service.LifeCycleService
-org.apache.karaf.minho.boot.service.ClassLoaderService
+
+# optional
+# org.apache.karaf.minho.boot.service.ClassLoaderService

@@ -33,12 +33,7 @@
     <name>Apache Karaf Minho :: Boot</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!-- are you sure, probably not -->
     </dependencies>
 
     <build>

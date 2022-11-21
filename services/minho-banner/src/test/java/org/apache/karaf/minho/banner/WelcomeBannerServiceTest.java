@@ -32,9 +32,9 @@ public class WelcomeBannerServiceTest {
         TestHandler testHandler = new TestHandler();
         Logger logger = Logger.getLogger("org.apache.karaf.minho.banner");
         logger.addHandler(testHandler);
-        Minho.builder().build().start();
-
-        Assertions.assertTrue(testHandler.getMessages().contains("Apache Karaf Minho 1.x"));
+        try (final var m = Minho.builder().build().start()) {
+            Assertions.assertTrue(testHandler.getMessages().contains("Apache Karaf Minho 1.x"));
+        }
     }
 
     @Test
@@ -44,14 +44,13 @@ public class WelcomeBannerServiceTest {
         TestHandler testHandler = new TestHandler();
         Logger logger = Logger.getLogger("org.apache.karaf.minho.banner");
         logger.addHandler(testHandler);
-        Minho.builder().build().start();
-
-        Assertions.assertTrue(testHandler.getMessages().contains("My Test Banner"));
+        try (final var m = Minho.builder().build().start()) {
+            Assertions.assertTrue(testHandler.getMessages().contains("My Test Banner"));
+        }
     }
 
-    class TestHandler extends Handler {
-
-        StringBuilder builder = new StringBuilder();
+    static class TestHandler extends Handler {
+        private final StringBuilder builder = new StringBuilder();
 
         @Override
         public void publish(LogRecord record) {

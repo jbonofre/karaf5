@@ -22,8 +22,10 @@ import org.apache.karaf.minho.boot.config.Application;
 import org.apache.karaf.minho.boot.config.Config;
 import org.apache.karaf.minho.boot.service.ConfigService;
 import org.apache.karaf.minho.boot.service.ServiceRegistry;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonConfigLoaderServiceTest {
 
@@ -39,9 +41,9 @@ public class JsonConfigLoaderServiceTest {
 
         Config config = serviceRegistry.get(ConfigService.class);
 
-        Assertions.assertEquals("bar", config.getProperty("foo"));
-        Assertions.assertEquals(0, config.getProfiles().size());
-        Assertions.assertEquals(0, config.getApplications().size());
+        assertEquals("bar", config.property("foo"));
+        assertEquals(0, config.getProfiles().size());
+        assertEquals(0, config.getApplications().size());
 
         System.clearProperty("minho.config");
     }
@@ -57,32 +59,29 @@ public class JsonConfigLoaderServiceTest {
         Config config = serviceRegistry.get(Config.class);
 
         // properties
-        Assertions.assertEquals("bar", config.getProperty("foo"));
-        Assertions.assertTrue(Boolean.parseBoolean(config.getProperty("lifecycle.enabled")));
-        Assertions.assertEquals("%m %n", config.getProperty("log.patternLayout"));
-        Assertions.assertEquals("./osgi/cache", config.getProperty("osgi.storageDirectory"));
-        Assertions.assertEquals(1, Long.parseLong(config.getProperty("osgi.priority")));
+        assertEquals("bar", config.property("foo"));
+        assertTrue(Boolean.parseBoolean(config.property("lifecycle.enabled")));
+        assertEquals("%m %n", config.property("log.patternLayout"));
+        assertEquals("./osgi/cache", config.property("osgi.storageDirectory"));
+        assertEquals(1, Long.parseLong(config.property("osgi.priority")));
 
         // profiles
-        Assertions.assertEquals(1, config.getProfiles().size());
+        assertEquals(1, config.getProfiles().size());
 
         // applications
-        Assertions.assertEquals(2, config.getApplications().size());
+        assertEquals(2, config.getApplications().size());
         Application springBootApp = config.getApplications().get(0);
-        Assertions.assertEquals("/path/to/app/spring-boot.jar", springBootApp.getUrl());
-        Assertions.assertEquals("spring-boot", springBootApp.getType());
-        Assertions.assertTrue(Boolean.parseBoolean(springBootApp.getProperty("enableHttp")));
-        Assertions.assertTrue(Boolean.parseBoolean(springBootApp.getProperty("enablePrometheus")));
+        assertEquals("/path/to/app/spring-boot.jar", springBootApp.getUrl());
+        assertEquals("spring-boot", springBootApp.getType());
+        assertTrue(Boolean.parseBoolean(springBootApp.property("enableHttp")));
+        assertTrue(Boolean.parseBoolean(springBootApp.property("enablePrometheus")));
     }
 
     @Test
-    public void runTest() throws Exception {
-        Minho minho = Minho.builder().build();
-        minho.start();
-
-        Config config = minho.getServiceRegistry().get(Config.class);
-
-        Assertions.assertEquals(2, config.getApplications().size());
+    public void runTest() {
+        try (final var minho = Minho.builder().build().start()) {
+            final var config = minho.getServiceRegistry().get(Config.class);
+            assertEquals(2, config.getApplications().size());
+        }
     }
-
 }

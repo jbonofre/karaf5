@@ -17,26 +17,38 @@
  */
 package org.apache.karaf.minho.boot;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.extern.java.Log;
 import org.apache.karaf.minho.boot.service.ServiceRegistry;
 import org.apache.karaf.minho.boot.spi.Service;
 import org.apache.karaf.minho.boot.spi.ServiceLoader;
+import org.apache.karaf.minho.boot.spi.impl.DefaultLoaderService;
 
-import java.util.Comparator;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 /**
  * Main Karaf runtime.
  */
-@Log
-@Builder
-@Data
-public class Minho implements AutoCloseable {
-
+public class Minho implements AutoCloseable, Service {
     private final ServiceLoader loader;
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
+    private volatile boolean closed = false;
+
+    protected Minho(final ServiceLoader loader) {
+        this.loader = loader;
+    }
+
+    public ServiceRegistry getServiceRegistry() {
+        return serviceRegistry;
+    }
+
+    @Override
+    public String name() {
+        return "minho";
+    }
+
+    @Override
+    public int priority() {
+        return Integer.MIN_VALUE;
+    }
 
     /**
      * Start the Karaf runtime.
@@ -45,30 +57,43 @@ public class Minho implements AutoCloseable {
      */
     public Minho start() {
         // log format
-        if (System.getProperty("java.util.logging.config.file") == null) {
-            if (System.getenv("KARAF_LOG_FORMAT") != null) {
-                System.setProperty("java.util.logging.SimpleFormatter.format", System.getenv("KARAF_LOG_FORMAT"));
-            }
-            if (System.getProperty("java.util.logging.SimpleFormatter.format") == null) {
-                System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tN %4$s [ %2$s ] : %5$s%6$s%n");
-            }
+        if (System.getProperty("java.util.logging.config.file") == null &&
+                System.getProperty("java.util.logging.SimpleFormatter.format") == null) {
+            System.setProperty("java.util.logging.SimpleFormatter.format",
+                    Objects.requireNonNullElse(System.getenv("MINHO_LOG_FORMAT"), "%1$tF %1$tT.%1$tN %4$s [ %2$s ] : %5$s%6$s%n"));
         }
-        (this.loader == null ? loadServices() : this.loader.load()).forEach(serviceRegistry::add);
+        serviceRegistry.add(this);
+        loader.load().forEach(serviceRegistry::add);
         serviceRegistry.start();
         return this;
     }
 
-    private Stream<Service> loadServices() {
-        return java.util.ServiceLoader.load(Service.class).stream().map(java.util.ServiceLoader.Provider::get)
-                .sorted(Comparator.comparingInt(service -> Integer.getInteger(service.name() + ".priority", service.priority())));
-    }
-
     /**
-     * Close (stop) the Karaf runtime.
+     * Close (stop) the Minho runtime.
      */
     @Override
     public void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         serviceRegistry.close();
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private ServiceLoader loader = new DefaultLoaderService();
+
+        public Builder loader(final ServiceLoader loader) {
+            this.loader = loader;
+            return this;
+        }
+
+        public Minho build() {
+            return new Minho(loader);
+        }
+    }
 }

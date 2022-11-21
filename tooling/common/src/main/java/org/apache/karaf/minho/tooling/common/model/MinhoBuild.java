@@ -17,9 +17,9 @@
  */
 package org.apache.karaf.minho.tooling.common.model;
 
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
 import lombok.Data;
-import org.apache.johnzon.mapper.Mapper;
-import org.apache.johnzon.mapper.MapperBuilder;
 
 import java.io.InputStream;
 import java.util.List;
@@ -33,9 +33,10 @@ public class MinhoBuild {
     private Map<String, Object> properties;
     private List<String> dependencies;
 
-    public static MinhoBuild load(InputStream inputStream) throws Exception {
-        Mapper mapper = new MapperBuilder().build();
-        return mapper.readObject(inputStream, MinhoBuild.class);
+    public static MinhoBuild load(final InputStream inputStream) throws Exception {
+        try (final var jsonb = JsonbBuilder.create(new JsonbConfig().setProperty("johnzon.skip-cdi", true))) {
+            return jsonb.fromJson(inputStream, MinhoBuild.class);
+        }
     }
 
 }

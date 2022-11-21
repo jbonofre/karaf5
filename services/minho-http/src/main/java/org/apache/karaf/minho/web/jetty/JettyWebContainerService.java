@@ -61,9 +61,9 @@ public class JettyWebContainerService implements Service, AutoCloseable {
 
         log.info("Starting HTTP service");
 
-        int maxThreads = (configService != null && configService.getProperty(HTTP_MAX_THREADS) != null) ? Integer.parseInt(configService.getProperty(HTTP_MAX_THREADS)) : 200;
-        int minThreads = (configService != null && configService.getProperty(HTTP_MIN_THREADS) != null) ? Integer.parseInt(configService.getProperty(HTTP_MIN_THREADS)) : Math.min(8, maxThreads);
-        int idleTimeout = (configService != null && configService.getProperty(HTTP_IDLE_TIMEOUT) != null) ? Integer.parseInt(configService.getProperty(HTTP_IDLE_TIMEOUT)) : 60000;
+        int maxThreads = (configService != null && configService.property(HTTP_MAX_THREADS) != null) ? Integer.parseInt(configService.property(HTTP_MAX_THREADS)) : 200;
+        int minThreads = (configService != null && configService.property(HTTP_MIN_THREADS) != null) ? Integer.parseInt(configService.property(HTTP_MIN_THREADS)) : Math.min(8, maxThreads);
+        int idleTimeout = (configService != null && configService.property(HTTP_IDLE_TIMEOUT) != null) ? Integer.parseInt(configService.property(HTTP_IDLE_TIMEOUT)) : 60000;
 
         QueuedThreadPool threadPool = new QueuedThreadPool(maxThreads, minThreads, idleTimeout);
         threadPool.setName("minho-http");
@@ -74,11 +74,11 @@ public class JettyWebContainerService implements Service, AutoCloseable {
 
         server = new Server(threadPool);
 
-        int acceptors = (configService != null && configService.getProperty(HTTP_ACCEPTORS) != null) ? Integer.parseInt(configService.getProperty(HTTP_ACCEPTORS)) : -1;
-        int selectors = (configService != null && configService.getProperty(HTTP_SELECTORS) != null) ? Integer.parseInt(configService.getProperty(HTTP_SELECTORS)) : -1;
-        int port = (configService != null && configService.getProperty(HTTP_PORT) != null) ? Integer.parseInt(configService.getProperty(HTTP_PORT)) : 8080;
-        String host = (configService != null && configService.getProperty(HTTP_HOST) != null) ? configService.getProperty(HTTP_HOST) : "0.0.0.0";
-        int acceptQueueSize = (configService != null && configService.getProperty(HTTP_ACCEPT_QUEUE_SIZE) != null) ? Integer.parseInt(configService.getProperty(HTTP_ACCEPT_QUEUE_SIZE)) : 0;
+        int acceptors = (configService != null && configService.property(HTTP_ACCEPTORS) != null) ? Integer.parseInt(configService.property(HTTP_ACCEPTORS)) : -1;
+        int selectors = (configService != null && configService.property(HTTP_SELECTORS) != null) ? Integer.parseInt(configService.property(HTTP_SELECTORS)) : -1;
+        int port = (configService != null && configService.property(HTTP_PORT) != null) ? Integer.parseInt(configService.property(HTTP_PORT)) : 8080;
+        String host = (configService != null && configService.property(HTTP_HOST) != null) ? configService.property(HTTP_HOST) : "0.0.0.0";
+        int acceptQueueSize = (configService != null && configService.property(HTTP_ACCEPT_QUEUE_SIZE) != null) ? Integer.parseInt(configService.property(HTTP_ACCEPT_QUEUE_SIZE)) : 0;
 
         log.info("Creating HTTP server connector");
         log.info("\tacceptors: " + acceptors);

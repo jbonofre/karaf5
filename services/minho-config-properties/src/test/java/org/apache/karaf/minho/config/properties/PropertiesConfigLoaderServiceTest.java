@@ -39,7 +39,7 @@ public class PropertiesConfigLoaderServiceTest {
 
         Config config = serviceRegistry.get(ConfigService.class);
 
-        Assertions.assertEquals("bar", config.getProperty("foo"));
+        Assertions.assertEquals("bar", config.property("foo"));
 
         System.clearProperty("minho.config");
     }
@@ -55,11 +55,11 @@ public class PropertiesConfigLoaderServiceTest {
         Config config = serviceRegistry.get(Config.class);
 
         // properties
-        Assertions.assertEquals("bar", config.getProperty("foo"));
-        Assertions.assertEquals("true", config.getProperty("lifecycle.enabled"));
-        Assertions.assertEquals("%m %n", config.getProperty("log.patternLayout"));
-        Assertions.assertEquals("./osgi/cache", config.getProperty("osgi.storageDirectory"));
-        Assertions.assertEquals("1", config.getProperty("osgi.priority"));
+        Assertions.assertEquals("bar", config.property("foo"));
+        Assertions.assertEquals("true", config.property("lifecycle.enabled"));
+        Assertions.assertEquals("%m %n", config.property("log.patternLayout"));
+        Assertions.assertEquals("./osgi/cache", config.property("osgi.storageDirectory"));
+        Assertions.assertEquals("1", config.property("osgi.priority"));
 
         // TODO profiles
         // Assertions.assertEquals(1, config.getProfiles().size());
@@ -69,18 +69,15 @@ public class PropertiesConfigLoaderServiceTest {
         Application springBootApp = config.getApplications().get(1);
         Assertions.assertEquals("/path/to/app/spring-boot.jar", springBootApp.getUrl());
         Assertions.assertEquals("spring-boot", springBootApp.getType());
-        Assertions.assertEquals("true", springBootApp.getProperty("enableHttp"));
-        Assertions.assertEquals("true", springBootApp.getProperty("enablePrometheus"));
+        Assertions.assertEquals("true", springBootApp.property("enableHttp"));
+        Assertions.assertEquals("true", springBootApp.property("enablePrometheus"));
     }
 
     @Test
-    public void runTest() throws Exception {
-        Minho minho = Minho.builder().build();
-        minho.start();
-
-        Config config = minho.getServiceRegistry().get(Config.class);
-
-        Assertions.assertEquals(2, config.getApplications().size());
+    public void runTest() {
+        try (final var minho = Minho.builder().build().start()) {
+            Config config = minho.getServiceRegistry().get(Config.class);
+            Assertions.assertEquals(2, config.getApplications().size());
+        }
     }
-
 }

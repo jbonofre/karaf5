@@ -25,9 +25,10 @@ public class OsgiModuleManagerServiceTest {
 
     @Test
     public void simpleTest() throws Exception {
-        Minho minho = Minho.builder().build().start();
+        try (final var minho =  Minho.builder().build().start()) {
 
-        Assertions.assertNotNull(minho.getServiceRegistry().get(OsgiModuleManagerService.class));
+            Assertions.assertNotNull(minho.getServiceRegistry().get(OsgiModuleManagerService.class));
+        }
     }
 
 }

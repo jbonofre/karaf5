@@ -25,10 +25,12 @@ import org.apache.karaf.minho.boot.spi.Service;
 
 import java.io.FileInputStream;
 import java.io.StringReader;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Load Config from a properties.
@@ -49,6 +51,10 @@ public class PropertiesConfigLoaderService implements Service {
     @Override
     public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
         Properties properties = new Properties();
+
+        // todo:
+        //  - revisit, it uses the same keys than json service so it can't work reliably since both should be usable at the same time
+        //  - avoid the leaks -- see json config loader service
         if (System.getenv("MINHO_CONFIG") != null) {
             log.info("Loading properties from MINHO_CONFIG env variable");
             properties.load(new StringReader(System.getenv("MINHO_CONFIG")));
@@ -71,32 +77,32 @@ public class PropertiesConfigLoaderService implements Service {
     }
 
     private Config parse(final Properties properties) {
-        Config config = new Config();
+        final var config = new Config();
 
-        properties.keySet().stream().filter(key -> !((String) key).startsWith("application."))
-                .forEach(key -> {
-                    config.getProperties().put(((String) key), properties.get(key).toString());
-                });
+        config.getProperties()
+                .putAll(properties.stringPropertyNames().stream()
+                        .filter(key -> !key.startsWith("application."))
+                        .collect(toMap(identity(), properties::getProperty)));
 
-        List<Object> applicationKeys = properties.keySet().stream().filter(key -> ((String) key).startsWith("application."))
-                .collect(Collectors.toList());
-        Map<Object, List<Object>> groupBy = applicationKeys.stream()
-                .collect(Collectors.groupingBy(key -> {
-                    String local = ((String) key).substring("application.".length());
+        final var applicationKeys = properties.stringPropertyNames().stream()
+                .filter(key -> key.startsWith("application."))
+                .collect(toList());
+        final var groupBy = applicationKeys.stream()
+                .collect(groupingBy(key -> {
+                    final var local = key.substring("application.".length());
                     return local.substring(0, local.indexOf("."));
                 }));
-        groupBy.entrySet().forEach(entry -> {
+        groupBy.forEach((appName, value) -> {
             Application application = new Application();
-            String appName = (String) entry.getKey();
-            entry.getValue().forEach(value -> {
-                if (value.equals("application." + appName + ".type")) {
-                    application.setType((String) properties.get(value));
-                } else if (value.equals("application." + appName + ".url")) {
-                    application.setUrl((String) properties.get(value));
-                } else if (value.equals("application." + appName + ".profile")) {
-                    application.setProfile((String) properties.get(value));
+            value.forEach(v -> {
+                if (v.equals("application." + appName + ".type")) {
+                    application.setType((String) properties.get(v));
+                } else if (v.equals("application." + appName + ".url")) {
+                    application.setUrl((String) properties.get(v));
+                } else if (v.equals("application." + appName + ".profile")) {
+                    application.setProfile((String) properties.get(v));
                 } else {
-                    application.getProperties().put(((String) value).substring(("application." + appName).length() + 1), properties.get(value).toString());
+                    application.getProperties().put(v.substring(("application." + appName).length() + 1), properties.get(v).toString());
                 }
             });
             config.getApplications().add(application);

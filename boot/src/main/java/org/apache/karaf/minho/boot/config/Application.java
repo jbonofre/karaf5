@@ -17,14 +17,11 @@
  */
 package org.apache.karaf.minho.boot.config;
 
-import lombok.Data;
-
 import java.util.HashMap;
 import java.util.Map;
 
-@Data
+// todo: move to record
 public class Application {
-
     private String name;
     private String version;
     private String url;
@@ -32,12 +29,59 @@ public class Application {
     private String profile;
     private Map<String, String> properties = new HashMap<>();
 
-    public String getProperty(String key) {
-        return getProperty(key, null);
+    public String property(final String key) {
+        return property(key, null);
     }
 
-    public String getProperty(String key, String defaultValue) {
-        return Config.getProperty(key, properties, defaultValue);
+    public String property(String key, String defaultValue) {
+        return Config.property(key, properties, defaultValue);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(final String version) {
+        this.version = version;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(final String profile) {
+        this.profile = profile;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
+    }
 }

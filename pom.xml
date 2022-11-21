@@ -36,7 +36,7 @@
 
     <properties>
         <lombok.version>1.18.24</lombok.version>
-        <junit.version>5.8.2</junit.version>
+        <junit.version>5.9.1</junit.version>
         <slf4j.version>1.7.36</slf4j.version>
         <project.build.outputTimestamp>1</project.build.outputTimestamp>
     </properties>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>4.3</version>
+            <version>5.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -101,6 +101,18 @@
                 <artifactId>minho-http</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.yupiik.uship</groupId>
+                <artifactId>json-dependencies</artifactId>
+                <version>1.0.15</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>io.yupiik.uship</groupId>
+                <artifactId>backbone-johnzon</artifactId>
+                <version>1.0.15</version>
+                <type>pom</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -125,7 +137,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -148,7 +160,7 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>4.0.rc1</version>
+                <version>4.2.rc3</version>
                 <executions>
                     <execution>
                         <id>check-license</id>
@@ -178,6 +190,7 @@
                         <exclude>**/pom.xml.versionsBackup</exclude>
                         <exclude>**/*.properties</exclude>
 												<exclude>**/doc/**/*</exclude>
+                        <exclude>.asf.yaml</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -8,8 +8,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'Apache Karaf Minho',
   tagline: 'NewGen modulith runtime',
-  url: 'https://jbonofre.github.io/karaf5/',
-  baseUrl: '/karaf5/',
+  url: 'https://jbonofre.github.io/',
+  baseUrl: '/karaf-minho',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
@@ -17,7 +17,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'jbonofre', // Usually your GitHub org/user name.
-  projectName: 'karaf5', // Usually your repo name.
+  projectName: 'karaf-minho', // Usually your repo name.
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
@@ -78,7 +78,7 @@ const config = {
             to: 'examples',
           },
           {
-            href: 'https://github.com/jbonofre/karaf5',
+            href: 'https://github.com/apache/karaf-minho',
             label: 'GitHub',
             position: 'right',
           },
@@ -104,7 +104,7 @@ const config = {
               },
               {
                 label: 'Issues',
-                href: 'https://github.com/jbonofre/karaf5/issues',
+                href: 'https://github.com/apache/karaf-minho/issues',
               },
             ],
           },
@@ -113,11 +113,11 @@ const config = {
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/jbonofre/karaf5',
+                href: 'https://github.com/apache/karaf-minho',
               },
               {
                 label: 'CI/CD',
-                href: 'https://github.com/jbonofre/karaf5/actions',
+                href: 'https://github.com/apache/karaf-minho/actions',
               },
               {
                 label: 'Team',

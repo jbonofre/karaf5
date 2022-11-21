@@ -33,7 +33,7 @@
     <name>Apache Karaf Minho :: Services :: HTTP</name>
 
     <properties>
-        <jetty.version>11.0.9</jetty.version>
+        <jetty.version>11.0.12</jetty.version>
     </properties>
 
     <dependencies>

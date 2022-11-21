@@ -17,20 +17,19 @@
  */
 package org.apache.karaf.minho.boot.service;
 
-import lombok.extern.java.Log;
 import org.apache.karaf.minho.boot.spi.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
- * Core LifeCycle service responsible of starting the registered (hooked) services.
+ * Core LifeCycle service responsible for starting the registered (hooked) services.
  */
-@Log
 public class LifeCycleService implements Service, AutoCloseable {
-
-    private List<Runnable> startCallbacks = new ArrayList<>();
-    private List<Runnable> shutdownCallbacks = new ArrayList<>();
+    private final Logger log = Logger.getLogger(LifeCycleService.class.getName());
+    private final List<Runnable> startCallbacks = new ArrayList<>();
+    private final List<Runnable> shutdownCallbacks = new ArrayList<>();
 
     @Override
     public String name() {
@@ -46,7 +45,7 @@ public class LifeCycleService implements Service, AutoCloseable {
      * Add a start callback in the lifecycle.
      * @param callback The runnable start callback.
      */
-    public void onStart(Runnable callback) {
+    public void onStart(final Runnable callback) {
         startCallbacks.add(callback);
     }
 
@@ -54,7 +53,7 @@ public class LifeCycleService implements Service, AutoCloseable {
      * Add a stop callback in the lifecycle.
      * @param callback The runnable stop callback.
      */
-    public void onShutdown(Runnable callback) {
+    public void onShutdown(final Runnable callback) {
         shutdownCallbacks.add(callback);
     }
 
@@ -94,5 +93,4 @@ public class LifeCycleService implements Service, AutoCloseable {
             throw ise;
         }
     }
-
 }
