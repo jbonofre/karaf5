@@ -17,15 +17,10 @@
  */
 package org.apache.karaf.minho.boot;
 
-import lombok.extern.java.Log;
 import org.apache.karaf.minho.boot.service.ConfigService;
-import org.apache.karaf.minho.boot.service.ServiceRegistry;
 
 import java.util.concurrent.CountDownLatch;
 
-import static java.util.Optional.ofNullable;
-
-@Log
 public class SimpleMain {
     private SimpleMain() {
         // no-op

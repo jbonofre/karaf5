@@ -21,7 +21,6 @@ import org.apache.karaf.minho.boot.Minho;
 import org.apache.karaf.minho.boot.config.Config;
 import org.apache.karaf.minho.boot.service.ConfigService;
 import org.apache.karaf.minho.boot.service.LifeCycleService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
@@ -52,16 +51,4 @@ class MinhoTest {
             assertEquals("world", configService.property("hello"));
         }
     }
-
-    @Test
-    void getInstance() throws Exception {
-        Minho minho = Minho.builder().build().start();
-
-        Minho instance = Minho.getInstance();
-
-        Assertions.assertTrue(minho == instance);
-
-        Assertions.assertNotNull(instance.getServiceRegistry().get(ConfigService.class));
-    }
-
 }

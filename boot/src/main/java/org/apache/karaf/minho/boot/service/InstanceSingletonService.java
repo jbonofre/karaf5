@@ -15,39 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.minho.boot.config;
+package org.apache.karaf.minho.boot.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.karaf.minho.boot.Minho;
+import org.apache.karaf.minho.boot.spi.Service;
 
-public class Profile {
-    private String name;
-    private Map<String, String> properties = new HashMap<>();
-    private List<String> urls = new ArrayList<>();
+public class InstanceSingletonService implements Service, AutoCloseable {
+    private static Minho instance;
 
-    public String getName() {
-        return name;
+    @Override
+    public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
+        instance = serviceRegistry.get(Minho.class);
     }
 
-    public void setName(final String name) {
-        this.name = name;
+    @Override
+    public void close() throws Exception {
+        instance = null;
     }
 
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(final Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-    public List<String> getUrls() {
-        return urls;
-    }
-
-    public void setUrls(final List<String> urls) {
-        this.urls = urls;
+    public static Minho getInstance() {
+        return instance;
     }
 }

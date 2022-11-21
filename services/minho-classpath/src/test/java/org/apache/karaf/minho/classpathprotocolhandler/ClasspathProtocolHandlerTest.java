@@ -18,6 +18,7 @@
 package org.apache.karaf.minho.classpathprotocolhandler;
 
 import org.apache.karaf.minho.boot.Minho;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,16 @@ import java.net.URL;
 
 public class ClasspathProtocolHandlerTest {
 
+    private static Minho minho;
+
     @BeforeAll
-    public static void setup() throws Exception {
-        Minho karaf = Minho.builder().build().start();
+    public static void setup() {
+        minho = Minho.builder().build().start();
+    }
+
+    @AfterAll
+    public static void teardown() {
+        minho.close();
     }
 
     @Test

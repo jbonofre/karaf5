@@ -17,8 +17,6 @@
  */
 package org.apache.karaf.minho.boot;
 
-import lombok.extern.java.Log;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,10 +24,10 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 import static java.util.Optional.ofNullable;
 
-@Log
 public class Main {
     private Main() {
         // no-op
@@ -38,6 +36,7 @@ public class Main {
     public static void main(final String... args) throws Exception {
         final boolean minhoJar = Boolean.parseBoolean(System.getenv("MINHO_JAR")) || Boolean.parseBoolean(System.getProperty("minho.jar"));
 
+        final var log = Logger.getLogger(Main.class.getName());
         if (!minhoJar) {
             log.info("Starting runtime in exploded mode");
             // try to load classpath

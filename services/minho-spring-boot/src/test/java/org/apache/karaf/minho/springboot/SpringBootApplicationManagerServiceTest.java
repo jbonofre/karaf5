@@ -25,7 +25,7 @@ public class SpringBootApplicationManagerServiceTest {
     @Test
     public void simpleTest() throws Exception {
         // TODO add spring boot sample app
-        Minho.builder().build().start();
+        Minho.builder().build().start().close();
     }
 
 }

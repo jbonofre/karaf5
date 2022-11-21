@@ -17,20 +17,25 @@
  */
 package org.apache.karaf.minho.boot.service;
 
-import org.apache.karaf.minho.boot.config.Config;
-import org.apache.karaf.minho.boot.spi.Service;
+import org.apache.karaf.minho.boot.Minho;
+import org.apache.karaf.minho.boot.spi.impl.DefaultLoaderService;
+import org.junit.jupiter.api.Test;
 
-/**
- * Core Karaf Config service holding the main Karaf configuration.
- */
-public class ConfigService extends Config implements Service {
-    @Override
-    public String name() {
-        return "minho-config-service";
-    }
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-    @Override
-    public int priority() {
-        return Integer.MIN_VALUE + 1;
+class InstanceSingletonServiceTest {
+    @Test
+    void singleton() {
+        final var holder = new InstanceSingletonService();
+        assertNull(InstanceSingletonService.getInstance());
+        try (final var minho = Minho.builder()
+                .loader(new DefaultLoaderService()
+                        .add(holder))
+                .build()
+                .start()) {
+            assertSame(minho, InstanceSingletonService.getInstance());
+        }
+        assertNull(InstanceSingletonService.getInstance());
     }
 }

@@ -17,7 +17,6 @@
  */
 package org.apache.karaf.minho.boot.config;
 
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@Data
+// todo: move to record
 public class Config {
-    private static Pattern envKeyPattern = Pattern.compile("\\.");
+    private static Pattern TO_ENV_KEY = Pattern.compile("\\.");
 
     private Map<String, String> properties = new HashMap<>();
     private List<Profile> profiles = new ArrayList<>();
@@ -52,7 +51,7 @@ public class Config {
     }
 
     protected static String property(String key, Map<String, String> properties, String defaultValue) {
-        String envKey = envKeyPattern.matcher(key).replaceAll("_").toUpperCase();
+        String envKey = TO_ENV_KEY.matcher(key).replaceAll("_").toUpperCase();
         if (System.getenv(envKey) != null) {
             return System.getenv(envKey);
         }
@@ -63,5 +62,29 @@ public class Config {
             return properties.get(key);
         }
         return defaultValue;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(final Map<String, String> properties) {
+        this.properties = properties;
+    }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(final List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
+    public List<Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(final List<Application> applications) {
+        this.applications = applications;
     }
 }

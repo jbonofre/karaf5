@@ -32,18 +32,17 @@ public class CamelServiceTest {
     public void routeBuilderServiceTest() throws Exception {
         CamelService camelService = new CamelService();
         MyRouteBuilder routeBuilder = new MyRouteBuilder();
-        Minho karaf = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), routeBuilder, camelService)).build().start();
+        try (final var karaf = Minho.builder()
+                .loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), routeBuilder, camelService)).build().start()) {
+            MockEndpoint mockEndpoint = camelService.getCamelContext().getEndpoint("mock:test", MockEndpoint.class);
+            mockEndpoint.expectedMessageCount(1);
+            mockEndpoint.expectedBodiesReceived("Hello world!");
 
-        MockEndpoint mockEndpoint = camelService.getCamelContext().getEndpoint("mock:test", MockEndpoint.class);
-        mockEndpoint.expectedMessageCount(1);
-        mockEndpoint.expectedBodiesReceived("Hello world!");
+            ProducerTemplate producerTemplate = camelService.getCamelContext().createProducerTemplate();
+            producerTemplate.sendBody("direct:test", "Hello world!");
 
-        ProducerTemplate producerTemplate = camelService.getCamelContext().createProducerTemplate();
-        producerTemplate.sendBody("direct:test", "Hello world!");
-
-        mockEndpoint.assertIsSatisfied();
-
-        karaf.close();
+            mockEndpoint.assertIsSatisfied();
+        }
     }
 
 }

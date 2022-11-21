@@ -74,13 +74,10 @@ public class PropertiesConfigLoaderServiceTest {
     }
 
     @Test
-    public void runTest() throws Exception {
-        Minho minho = Minho.builder().build();
-        minho.start();
-
-        Config config = minho.getServiceRegistry().get(Config.class);
-
-        Assertions.assertEquals(2, config.getApplications().size());
+    public void runTest() {
+        try (final var minho = Minho.builder().build().start()) {
+            Config config = minho.getServiceRegistry().get(Config.class);
+            Assertions.assertEquals(2, config.getApplications().size());
+        }
     }
-
 }

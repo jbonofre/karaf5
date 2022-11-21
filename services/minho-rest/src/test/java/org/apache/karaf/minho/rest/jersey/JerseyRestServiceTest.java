@@ -20,7 +20,6 @@ package org.apache.karaf.minho.rest.jersey;
 import org.apache.karaf.minho.boot.Minho;
 import org.apache.karaf.minho.boot.service.ConfigService;
 import org.apache.karaf.minho.boot.service.LifeCycleService;
-import org.apache.karaf.minho.rest.jersey.JerseyRestService;
 import org.apache.karaf.minho.web.jetty.JettyWebContainerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,24 +37,24 @@ public class JerseyRestServiceTest {
         System.setProperty("rest.packages", "org.apache.karaf.minho.rest.jersey");
 
         JerseyRestService jerseyRestService = new JerseyRestService();
-        Minho minho = Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), new JettyWebContainerService(), jerseyRestService)).build().start();
+        try (final var minho =  Minho.builder().loader(() -> Stream.of(new ConfigService(), new LifeCycleService(), new JettyWebContainerService(), jerseyRestService)).build().start()) {
 
-        Assertions.assertEquals("/rest/*", jerseyRestService.getRestPath());
-        Assertions.assertEquals("org.apache.karaf.minho.rest.jersey", jerseyRestService.getRestPackages());
+            Assertions.assertEquals("/rest/*", jerseyRestService.getRestPath());
+            Assertions.assertEquals("org.apache.karaf.minho.rest.jersey", jerseyRestService.getRestPackages());
 
-        URL url = new URL("http://localhost:8080/rest/test");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setDoInput(true);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String line;
-        StringBuilder buffer = new StringBuilder();
-        while ((line = reader.readLine()) != null) {
-            buffer.append(line);
+            URL url = new URL("http://localhost:8080/rest/test");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setDoInput(true);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line;
+            StringBuilder buffer = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line);
+            }
+            Assertions.assertEquals("Hello World!", buffer.toString());
+
         }
-        Assertions.assertEquals("Hello World!", buffer.toString());
-
-        minho.close();
     }
 
 }

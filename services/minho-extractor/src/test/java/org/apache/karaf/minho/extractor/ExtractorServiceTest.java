@@ -33,26 +33,26 @@ public class ExtractorServiceTest {
 
     @Test
     @Disabled
-    public void singleDefault() throws Exception {
+    public void singleDefault() {
         ConfigService config = new ConfigService();
         config.getProperties().put("extractor.target", "./target/extracted/single");
-        Minho karaf = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), new ExtractorService())).build().start();
-        Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/single/bin")));
-        Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/single/bin/client")));
-        Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/single/system/README")));
-        karaf.close();
+        try (final var minho = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), new ExtractorService())).build().start()) {
+            Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/single/bin")));
+            Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/single/bin/client")));
+            Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/single/system/README")));
+        }
     }
 
     @Test
     @Disabled
-    public void multiResources() throws Exception {
+    public void multiResources() {
         ConfigService config = new ConfigService();
         config.getProperties().put("extractor.target", "./target/extracted/multi");
         config.getProperties().put("extractor.sources", "resources,META-INF");
-        Minho karaf = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), new ExtractorService())).build().start();
-        Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/multi/bin")));
-        Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/multi/MANIFEST.MF")));
-        karaf.close();
+        try (final var minho = Minho.builder().loader(() -> Stream.of(config, new LifeCycleService(), new ExtractorService())).build().start()) {
+            Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/multi/bin")));
+            Assertions.assertTrue(Files.exists(Paths.get("./target/extracted/multi/MANIFEST.MF")));
+        }
     }
 
 }
