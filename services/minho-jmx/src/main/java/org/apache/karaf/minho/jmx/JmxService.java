@@ -17,7 +17,6 @@
  */
 package org.apache.karaf.minho.jmx;
 
-import lombok.Data;
 import lombok.extern.java.Log;
 import org.apache.karaf.minho.boot.service.ConfigService;
 import org.apache.karaf.minho.boot.service.LifeCycleService;
@@ -27,7 +26,6 @@ import org.apache.karaf.minho.boot.spi.Service;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 
 @Log
@@ -50,19 +48,19 @@ public class JmxService implements Service {
         if (lifeCycleService == null) {
             throw new IllegalStateException("LifeCycleService is not found");
         }
-        String rmiRegistryHost = configService.getProperty("jmx.rmiRegistryHost", "");
-        int rmiRegistryPort = Integer.parseInt(configService.getProperty("jmx.rmiRegistryPort", "1099"));
-        String rmiServerHost = configService.getProperty("jmx.rmiServerHost", "0.0.0.0");
-        int rmiServerPort = Integer.parseInt(configService.getProperty("jmx.rmiServerPort", "44444"));
+        String rmiRegistryHost = configService.property("jmx.rmiRegistryHost", "");
+        int rmiRegistryPort = Integer.parseInt(configService.property("jmx.rmiRegistryPort", "1099"));
+        String rmiServerHost = configService.property("jmx.rmiServerHost", "0.0.0.0");
+        int rmiServerPort = Integer.parseInt(configService.property("jmx.rmiServerPort", "44444"));
 
-        String serviceUrl = configService.getProperty("jmx.serverUrl", "service:jmx:rmi://" + rmiServerHost + ":" + rmiServerPort + "/jndi/rmi://" + rmiRegistryHost + ":" + rmiRegistryPort + "/minho");
+        String serviceUrl = configService.property("jmx.serverUrl", "service:jmx:rmi://" + rmiServerHost + ":" + rmiServerPort + "/jndi/rmi://" + rmiRegistryHost + ":" + rmiRegistryPort + "/minho");
 
-        boolean daemon = Boolean.parseBoolean(configService.getProperty("jmx.daemon", "true"));
-        boolean threaded = Boolean.parseBoolean(configService.getProperty("jmx.threaded", "true"));
-        ObjectName objectName = new ObjectName(configService.getProperty("jmx.objectName", "connector:name=rmi"));
-        boolean createRmiRegistry = Boolean.parseBoolean(configService.getProperty("jmx.createRmiRegistry", "true"));
-        boolean locateRmiRegistry = Boolean.parseBoolean(configService.getProperty("jmx.locateRmiRegistry", "true"));
-        boolean locateExistingMBeanServerIfPossible = Boolean.parseBoolean(configService.getProperty("jmx.locateExistingMBeanServerIfPossible", "true"));
+        boolean daemon = Boolean.parseBoolean(configService.property("jmx.daemon", "true"));
+        boolean threaded = Boolean.parseBoolean(configService.property("jmx.threaded", "true"));
+        ObjectName objectName = new ObjectName(configService.property("jmx.objectName", "connector:name=rmi"));
+        boolean createRmiRegistry = Boolean.parseBoolean(configService.property("jmx.createRmiRegistry", "true"));
+        boolean locateRmiRegistry = Boolean.parseBoolean(configService.property("jmx.locateRmiRegistry", "true"));
+        boolean locateExistingMBeanServerIfPossible = Boolean.parseBoolean(configService.property("jmx.locateExistingMBeanServerIfPossible", "true"));
 
         final MBeanServerFactory mBeanServerFactory = new MBeanServerFactory();
         mBeanServerFactory.setLocateExistingServerIfPossible(locateExistingMBeanServerIfPossible);

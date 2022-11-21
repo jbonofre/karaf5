@@ -39,7 +39,7 @@ public class JsonConfigLoaderServiceTest {
 
         Config config = serviceRegistry.get(ConfigService.class);
 
-        Assertions.assertEquals("bar", config.getProperty("foo"));
+        Assertions.assertEquals("bar", config.property("foo"));
         Assertions.assertEquals(0, config.getProfiles().size());
         Assertions.assertEquals(0, config.getApplications().size());
 
@@ -57,11 +57,11 @@ public class JsonConfigLoaderServiceTest {
         Config config = serviceRegistry.get(Config.class);
 
         // properties
-        Assertions.assertEquals("bar", config.getProperty("foo"));
-        Assertions.assertTrue(Boolean.parseBoolean(config.getProperty("lifecycle.enabled")));
-        Assertions.assertEquals("%m %n", config.getProperty("log.patternLayout"));
-        Assertions.assertEquals("./osgi/cache", config.getProperty("osgi.storageDirectory"));
-        Assertions.assertEquals(1, Long.parseLong(config.getProperty("osgi.priority")));
+        Assertions.assertEquals("bar", config.property("foo"));
+        Assertions.assertTrue(Boolean.parseBoolean(config.property("lifecycle.enabled")));
+        Assertions.assertEquals("%m %n", config.property("log.patternLayout"));
+        Assertions.assertEquals("./osgi/cache", config.property("osgi.storageDirectory"));
+        Assertions.assertEquals(1, Long.parseLong(config.property("osgi.priority")));
 
         // profiles
         Assertions.assertEquals(1, config.getProfiles().size());
@@ -71,8 +71,8 @@ public class JsonConfigLoaderServiceTest {
         Application springBootApp = config.getApplications().get(0);
         Assertions.assertEquals("/path/to/app/spring-boot.jar", springBootApp.getUrl());
         Assertions.assertEquals("spring-boot", springBootApp.getType());
-        Assertions.assertTrue(Boolean.parseBoolean(springBootApp.getProperty("enableHttp")));
-        Assertions.assertTrue(Boolean.parseBoolean(springBootApp.getProperty("enablePrometheus")));
+        Assertions.assertTrue(Boolean.parseBoolean(springBootApp.property("enableHttp")));
+        Assertions.assertTrue(Boolean.parseBoolean(springBootApp.property("enablePrometheus")));
     }
 
     @Test

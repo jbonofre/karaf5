@@ -32,7 +32,6 @@ import static java.util.stream.Collectors.toList;
  */
 @Log
 public class ServiceRegistry implements AutoCloseable {
-
     private final Map<Class<?>, Service> registry = new ConcurrentHashMap<>();
 
     public Map<Class<?>, Service> getAll() {

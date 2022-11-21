@@ -32,12 +32,12 @@ public class Application {
     private String profile;
     private Map<String, String> properties = new HashMap<>();
 
-    public String getProperty(String key) {
-        return getProperty(key, null);
+    public String property(final String key) {
+        return property(key, null);
     }
 
-    public String getProperty(String key, String defaultValue) {
-        return Config.getProperty(key, properties, defaultValue);
+    public String property(String key, String defaultValue) {
+        return Config.property(key, properties, defaultValue);
     }
 
 }

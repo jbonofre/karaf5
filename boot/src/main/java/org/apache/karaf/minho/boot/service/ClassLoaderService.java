@@ -20,6 +20,7 @@ package org.apache.karaf.minho.boot.service;
 import org.apache.karaf.minho.boot.config.Config;
 import org.apache.karaf.minho.boot.spi.Service;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 public class ClassLoaderService implements Service, AutoCloseable {
 
-    private Map<String, URLClassLoader> profiles = new HashMap<>();
+    private final Map<String, URLClassLoader> profiles = new HashMap<>();
 
     @Override
     public String name() {
@@ -44,19 +45,25 @@ public class ClassLoaderService implements Service, AutoCloseable {
 
     @Override
     public void close() {
-        // no-op
+        profiles.values().forEach(it -> {
+            try {
+                it.close();
+            } catch (final IOException e) {
+                // no-op, not critical
+            }
+        });
     }
 
     @Override
     public void onRegister(ServiceRegistry serviceRegistry) throws Exception {
         Config configService = serviceRegistry.get(Config.class);
-        configService.getProfiles().stream().forEach(profile -> {
-            URLClassLoader profileClassLoader = new URLClassLoader(profile.getUrls().toArray(new URL[]{}), this.getClass().getClassLoader());
+        configService.getProfiles().forEach(profile -> {
+            URLClassLoader profileClassLoader = new URLClassLoader(profile.getUrls().toArray(new URL[0]), this.getClass().getClassLoader());
             profiles.put(profile.getName(), profileClassLoader);
         });
     }
 
-    public URLClassLoader getClassLoader(String profile) {
+    public URLClassLoader getClassLoader(final String profile) {
         return profiles.get(profile);
     }
 

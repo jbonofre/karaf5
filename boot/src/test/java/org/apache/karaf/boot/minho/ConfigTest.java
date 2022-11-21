@@ -30,10 +30,10 @@ public class ConfigTest {
         Config config = new Config();
         config.getProperties().put("foo", "bar");
 
-        Assertions.assertEquals("world", config.getProperty("hello", "world"));
-        Assertions.assertEquals("bar", config.getProperty("foo"));
-        Assertions.assertEquals("bar.test", config.getProperty("foo.test"));
-        Assertions.assertNull(config.getProperty("not.defined"));
+        Assertions.assertEquals("world", config.property("hello", "world"));
+        Assertions.assertEquals("bar", config.property("foo"));
+        Assertions.assertEquals("bar.test", config.property("foo.test"));
+        Assertions.assertNull(config.property("not.defined"));
     }
 
 }

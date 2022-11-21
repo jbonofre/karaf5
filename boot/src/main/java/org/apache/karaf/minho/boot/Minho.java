@@ -25,6 +25,7 @@ import org.apache.karaf.minho.boot.spi.Service;
 import org.apache.karaf.minho.boot.spi.ServiceLoader;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -34,9 +35,6 @@ import java.util.stream.Stream;
 @Builder
 @Data
 public class Minho implements AutoCloseable {
-
-    private static Minho instance;
-
     private final ServiceLoader loader;
     private final ServiceRegistry serviceRegistry = new ServiceRegistry();
 
@@ -47,22 +45,19 @@ public class Minho implements AutoCloseable {
      */
     public Minho start() {
         // log format
-        if (System.getProperty("java.util.logging.config.file") == null) {
-            if (System.getenv("KARAF_LOG_FORMAT") != null) {
-                System.setProperty("java.util.logging.SimpleFormatter.format", System.getenv("KARAF_LOG_FORMAT"));
-            }
-            if (System.getProperty("java.util.logging.SimpleFormatter.format") == null) {
-                System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tN %4$s [ %2$s ] : %5$s%6$s%n");
-            }
+        if (System.getProperty("java.util.logging.config.file") == null &&
+                System.getProperty("java.util.logging.SimpleFormatter.format") == null) {
+            System.setProperty("java.util.logging.SimpleFormatter.format",
+                    Objects.requireNonNullElse(System.getenv("KARAF_LOG_FORMAT"), "%1$tF %1$tT.%1$tN %4$s [ %2$s ] : %5$s%6$s%n"));
         }
         (this.loader == null ? loadServices() : this.loader.load()).forEach(serviceRegistry::add);
         serviceRegistry.start();
-        instance = this;
-        return instance;
+        return this;
     }
 
     private Stream<Service> loadServices() {
-        return java.util.ServiceLoader.load(Service.class).stream().map(java.util.ServiceLoader.Provider::get)
+        return java.util.ServiceLoader.load(Service.class).stream()
+                .map(java.util.ServiceLoader.Provider::get)
                 .sorted(Comparator.comparingInt(service -> Integer.getInteger(service.name() + ".priority", service.priority())));
     }
 
@@ -72,15 +67,6 @@ public class Minho implements AutoCloseable {
     @Override
     public void close() {
         serviceRegistry.close();
-    }
-
-    /**
-     * Retrieve the Minho instance.
-     *
-     * @return the Minho instance.
-     */
-    public static Minho getInstance() {
-        return instance;
     }
 
 }

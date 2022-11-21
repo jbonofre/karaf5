@@ -20,41 +20,55 @@ package org.apache.karaf.minho.boot;
 import lombok.extern.java.Log;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.function.Predicate;
+
+import static java.util.Optional.ofNullable;
 
 @Log
 public class Main {
+    private Main() {
+        // no-op
+    }
 
-    public static final void main(String[] args) throws Exception {
-        boolean minhoJar = false;
-        minhoJar = (System.getenv("MINHO_JAR") != null) ? System.getenv("MINHO_JAR").equalsIgnoreCase("true") : minhoJar;
-        minhoJar = (System.getProperty("minho.jar") != null) ? System.getProperty("minho.jar").equalsIgnoreCase("true") : minhoJar;
+    public static void main(final String... args) throws Exception {
+        final boolean minhoJar = Boolean.parseBoolean(System.getenv("MINHO_JAR")) || Boolean.parseBoolean(System.getProperty("minho.jar"));
 
         if (!minhoJar) {
             log.info("Starting runtime in exploded mode");
             // try to load classpath
-            String minhoLib = (System.getProperty("minho.lib") != null) ? System.getProperty("minho.lib") : System.getProperty("user.dir");
+            final var minhoLib = ofNullable(System.getProperty("minho.lib"))
+                    .orElseGet(() -> System.getProperty("user.dir"));
             System.out.println("Minho lib: " + minhoLib);
-            Path libFolder = Paths.get(minhoLib);
-            ArrayList<URL> urls = new ArrayList<URL>();
-            Files.walkFileTree(libFolder, new SimpleFileVisitor<>() {
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) throws IOException {
-                    if (!Files.isDirectory(file)) {
-                        urls.add(file.toFile().toURI().toURL());
+            final var libFolder = Paths.get(minhoLib);
+            try (final var walk = Files.walk(libFolder)) {
+                final var urls = walk
+                        .filter(Predicate.not(Files::isDirectory))
+                        .map(it -> {
+                            try {
+                                return it.toUri().toURL();
+                            } catch (final MalformedURLException e) {
+                                throw new IllegalStateException(e);
+                            }
+                        })
+                        .toArray(URL[]::new);
+                final var classLoader = new URLClassLoader(urls);
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        classLoader.close();
+                    } catch (final IOException e) {
+                        // no-op, not critical
                     }
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-            URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[]{}));
-            Thread.currentThread().setContextClassLoader(classLoader);
+                }, Main.class.getName() + "-classloader-close"));
+                Thread.currentThread().setContextClassLoader(classLoader);
+            }
         } else {
             log.info("Starting runtime in uber jar mode");
         }
-        Minho.builder().build().start();
+        SimpleMain.main(args);
     }
-
 }

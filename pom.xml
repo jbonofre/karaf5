@@ -101,6 +101,18 @@
                 <artifactId>minho-http</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.yupiik.uship</groupId>
+                <artifactId>json-dependencies</artifactId>
+                <version>1.0.15</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>io.yupiik.uship</groupId>
+                <artifactId>backbone-johnzon</artifactId>
+                <version>1.0.15</version>
+                <type>pom</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

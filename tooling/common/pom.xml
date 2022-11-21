@@ -33,6 +33,11 @@
     <artifactId>common</artifactId>
     <name>Apache Karaf Minho :: Tooling :: Common</name>
 
+    <properties>
+        <resolver.version>1.4.2</resolver.version>
+        <mvn.version>3.8.6</mvn.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -49,51 +54,46 @@
         <!-- maven -->
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-spi</artifactId>
+            <version>${resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-api</artifactId>
-            <version>1.4.1</version>
+            <version>${resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-impl</artifactId>
-            <version>1.4.1</version>
+            <version>${resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-transport-http</artifactId>
-            <version>1.4.1</version>
+            <version>${resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-connector-basic</artifactId>
-            <version>1.4.1</version>
+            <version>${resolver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.8.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-model-builder</artifactId>
-            <version>3.8.6</version>
+            <version>${mvn.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- model -->
         <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <version>1.1.4</version>
+            <groupId>io.yupiik.uship</groupId>
+            <artifactId>json-dependencies</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-mapper</artifactId>
-            <version>1.2.19</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.36</version>
+            <groupId>io.yupiik.uship</groupId>
+            <artifactId>backbone-johnzon</artifactId>
+            <type>pom</type>
         </dependency>
     </dependencies>
 

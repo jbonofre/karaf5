@@ -48,14 +48,14 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-json_1.1_spec</artifactId>
-            <version>1.5</version>
+            <groupId>io.yupiik.uship</groupId>
+            <artifactId>json-dependencies</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>org.apache.johnzon</groupId>
-            <artifactId>johnzon-jsonb</artifactId>
-            <version>1.2.19</version>
+            <groupId>io.yupiik.uship</groupId>
+            <artifactId>backbone-johnzon</artifactId>
+            <type>pom</type>
         </dependency>
     </dependencies>
 

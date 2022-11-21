@@ -48,8 +48,8 @@ class MinhoTest {
                 .start()) {
             final var configService = minho.getServiceRegistry().get(Config.class);
             assertNotNull(configService);
-            assertEquals("bar", configService.getProperty("foo"));
-            assertEquals("world", configService.getProperty("hello"));
+            assertEquals("bar", configService.property("foo"));
+            assertEquals("world", configService.property("hello"));
         }
     }
 

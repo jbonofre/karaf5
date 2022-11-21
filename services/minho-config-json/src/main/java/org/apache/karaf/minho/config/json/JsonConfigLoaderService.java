@@ -22,18 +22,19 @@ import org.apache.karaf.minho.boot.config.Config;
 import org.apache.karaf.minho.boot.service.ServiceRegistry;
 import org.apache.karaf.minho.boot.spi.Service;
 
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import java.io.*;
+import jakarta.json.bind.JsonbBuilder;
+import jakarta.json.bind.JsonbConfig;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Load Config from a JSON file.
  */
 @Log
 public class JsonConfigLoaderService implements Service {
-
-    private Jsonb jsonb = null;
-
     @Override
     public String name() {
         return "minho-config-json-service";
@@ -46,44 +47,61 @@ public class JsonConfigLoaderService implements Service {
 
     @Override
     public void onRegister(final ServiceRegistry serviceRegistry) throws Exception {
-        Config config = null;
-        if (System.getenv("MINHO_CONFIG") != null) {
-            log.info("Loading JSON configuration from MINHO_CONFIG env variable");
-            StringReader reader = new StringReader(System.getenv("MINHO_CONFIG"));
-            config = loadJson(new StringReader(System.getenv("MINHO_CONFIG")));
-        } else if (System.getenv("MINHO_CONFIG_FILE") != null) {
-            log.info("Loading JSON configuration from " + System.getenv("MINHO_CONFIG_FILE"));
-            config = loadJson(new FileInputStream(System.getenv("MINHO_CONFIG_FILE")));
-        } else if (System.getProperty("minho.config") != null) {
-            log.info("Loading JSON configuration from " + System.getProperty("minho.config"));
-            config = loadJson(new FileInputStream(System.getProperty("minho.config")));
-        } else if (JsonConfigLoaderService.class.getResourceAsStream("/META-INF/minho.json") != null) {
-            log.info("Loading JSON configuration from classpath META-INF/minho.json");
-            config = loadJson(JsonConfigLoaderService.class.getResourceAsStream("/META-INF/minho.json"));
-        } else if (JsonConfigLoaderService.class.getResourceAsStream("/minho.json") != null) {
-            log.info("Loading JSON configuration from classpath minho.json");
-            config = loadJson(JsonConfigLoaderService.class.getResourceAsStream("/minho.json"));
-        } else {
-            log.info("JSON configuration not found");
+        final var config = System.getProperty("minho.config");
+        if (config != null) {
+            log.info(() -> "Loading JSON configuration from " + config);
+            try (final var in = Files.newBufferedReader(Path.of(config))) {
+                doMerge(serviceRegistry, loadJson(in));
+            }
             return;
         }
 
-        final var existing = serviceRegistry.get(Config.class);
-        existing.merge(config);
-    }
-
-    private Config loadJson(InputStream inputStream) {
-        if (jsonb == null) {
-            jsonb = JsonbBuilder.create();
+        final var envConfigFile = System.getenv("MINHO_CONFIG_FILE");
+        if (envConfigFile != null) {
+            log.info(() -> "Loading JSON configuration from " + envConfigFile);
+            try (final var in = Files.newBufferedReader(Path.of(envConfigFile))) {
+                doMerge(serviceRegistry, loadJson(in));
+            }
+            return;
         }
-        return jsonb.fromJson(inputStream, Config.class);
-    }
 
-    private Config loadJson(Reader reader) {
-        if (jsonb == null) {
-            jsonb = JsonbBuilder.create();
+        final var envConfig = System.getenv("MINHO_CONFIG");
+        if (envConfig != null) {
+            log.info("Loading JSON configuration from MINHO_CONFIG env variable");
+            try (final var reader = new StringReader(envConfig)) {
+                doMerge(serviceRegistry, loadJson(reader));
+            }
+            return;
         }
-        return jsonb.fromJson(reader, Config.class);
+
+        final var metaInfMinHo = JsonConfigLoaderService.class.getResourceAsStream("/META-INF/minho.json");
+        if (metaInfMinHo != null) {
+            log.info("Loading JSON configuration from classpath META-INF/minho.json");
+            try (final var reader = new InputStreamReader(metaInfMinHo)) {
+                doMerge(serviceRegistry, loadJson(reader));
+            }
+            return;
+        }
+
+        final var rootMinho = JsonConfigLoaderService.class.getResourceAsStream("/minho.json");
+        if (rootMinho != null) {
+            log.info("Loading JSON configuration from classpath minho.json");
+            try (final var reader = new InputStreamReader(rootMinho)) {
+                doMerge(serviceRegistry, loadJson(reader));
+            }
+            return;
+        }
+
+        log.info("JSON configuration not found");
     }
 
+    private void doMerge(final ServiceRegistry serviceRegistry, final Config config) {
+        serviceRegistry.get(Config.class).merge(config);
+    }
+
+    private Config loadJson(final Reader reader) throws Exception {
+        try (final var jsonb = JsonbBuilder.create(new JsonbConfig().setProperty("johnzon.skip-cdi", true))) {
+            return jsonb.fromJson(reader, Config.class);
+        }
+    }
 }

@@ -46,7 +46,7 @@ public class LifeCycleService implements Service, AutoCloseable {
      * Add a start callback in the lifecycle.
      * @param callback The runnable start callback.
      */
-    public void onStart(Runnable callback) {
+    public void onStart(final Runnable callback) {
         startCallbacks.add(callback);
     }
 
@@ -54,7 +54,7 @@ public class LifeCycleService implements Service, AutoCloseable {
      * Add a stop callback in the lifecycle.
      * @param callback The runnable stop callback.
      */
-    public void onShutdown(Runnable callback) {
+    public void onShutdown(final Runnable callback) {
         shutdownCallbacks.add(callback);
     }
 
@@ -94,5 +94,4 @@ public class LifeCycleService implements Service, AutoCloseable {
             throw ise;
         }
     }
-
 }

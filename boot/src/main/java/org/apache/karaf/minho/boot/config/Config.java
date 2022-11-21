@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 @Data
 public class Config {
-
     private static Pattern envKeyPattern = Pattern.compile("\\.");
 
     private Map<String, String> properties = new HashMap<>();
@@ -44,15 +43,15 @@ public class Config {
         applications.addAll(config.getApplications());
     }
 
-    public String getProperty(String key) {
-        return getProperty(key, null);
+    public String property(String key) {
+        return property(key, null);
     }
 
-    public String getProperty(String key, String defaultValue) {
-        return getProperty(key, this.properties, defaultValue);
+    public String property(String key, String defaultValue) {
+        return property(key, this.properties, defaultValue);
     }
 
-    protected static String getProperty(String key, Map<String, String> properties, String defaultValue) {
+    protected static String property(String key, Map<String, String> properties, String defaultValue) {
         String envKey = envKeyPattern.matcher(key).replaceAll("_").toUpperCase();
         if (System.getenv(envKey) != null) {
             return System.getenv(envKey);
@@ -65,5 +64,4 @@ public class Config {
         }
         return defaultValue;
     }
-
 }
